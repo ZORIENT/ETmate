@@ -1,3 +1,6 @@
+<!-- 登录与注册页 -->
+<!-- 根据是否为管理员账户选择跳转的页面 -->
+
 <template>
   <div class="LoginRegister">
     <div class="container">
@@ -141,6 +144,8 @@ export default {
       // 显示哪个表单(默认为登录)
       isLogin: true,
 
+      nextPage:"MainPage",
+
       // 注册表单的数据
       registerForm: {
         email: "",
@@ -198,6 +203,8 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!" + formName);
+
+          this.$router.push(this.nextPage);
         } else {
           console.log("error submit!!");
           return false;
@@ -233,7 +240,7 @@ export default {
   height: 100%;
   /* border: 1px solid red; */
 
-  background: url("../assets/img/loginregisteryuan.jpg");
+  background: url("../assets/img/bg.jpg");
   background-size: cover;
 }
 
