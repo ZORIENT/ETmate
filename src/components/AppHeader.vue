@@ -3,7 +3,7 @@
 <template>
   <div class="appHeader">
     <!-- 占位 -->
-    <div class="content"></div>
+    <!-- <div class="content"></div> -->
 
     <!-- 功能区 -->
     <div class="center">
@@ -41,10 +41,10 @@
             </div>
           </el-image>
 
-          <transition name="triangle">
+          <!-- <transition name="triangle"> -->
             <!-- 上三角形 -->
-            <div v-show="isSettingSpread" class="triangle"></div>
-          </transition>
+            <!-- <div v-show="isSettingSpread" class="triangle"></div>
+          </transition> -->
 
           <transition name="settings">
             <!-- 头像下拉框 -->
@@ -72,7 +72,7 @@
     </div>
 
     <!-- 占位 -->
-    <div class="content"></div>
+    <!-- <div class="content"></div> -->
   </div>
 </template>
 
@@ -152,6 +152,9 @@ export default {
   z-index: 999;
 
   display: flex;
+  /* justify-items: center; */
+  align-items: center;
+  flex-direction: column;
   box-sizing: border-box;
   align-items: center;
   /* border: 1px solid brown; */
@@ -183,7 +186,7 @@ export default {
   justify-content: space-between;
   /* border: 1px solid brown; */
 
-  width: 100%;
+  width:calc( var(--width)  *1px);
   white-space: nowrap;
   height: 60px;
 }
@@ -311,7 +314,7 @@ export default {
   align-items: center;
 }
 
-.imgContent .triangle {
+/* .imgContent .triangle {
   position: absolute;
   top: 52px;
   width: 0px;
@@ -319,13 +322,14 @@ export default {
   border: 10px solid;
   border-color: transparent transparent #bababa transparent;
   opacity: 0.3;
-}
+  background: #fff;
+} */
 
 .imgContent .dropDown {
   position: absolute;
   /* float: left; */
   /* bottom: 10px; */
-  top: 72px;
+  top: 60px;
   /* border: 1px solid brown; */
   padding: 16px;
   width: 140px;
@@ -334,6 +338,7 @@ export default {
   flex-direction: column;
   border-radius: 4px;
   box-shadow: 0px 2px 6px #2b2b2b;
+  background: #fff;
   /* opacity: 0.6;
     background-color: var(--primaryThemeWhite); */
 }

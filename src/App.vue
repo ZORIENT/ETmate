@@ -29,6 +29,7 @@ export default {
 /* 定义全局尺度变量 */
 
  --fontSize:16;
+ --width:1180;
 
 
 }

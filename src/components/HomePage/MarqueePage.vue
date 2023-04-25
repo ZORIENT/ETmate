@@ -86,7 +86,7 @@ export default {
 
 .leftPart {
   /* border: 1px solid green; */
-  min-width: 720px;
+  min-width: 710px;
   /* height: 100%; */
   border-radius: 8px;
   overflow: hidden;
