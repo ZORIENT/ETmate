@@ -37,6 +37,8 @@ export default {
 html,
 body {
   height: 100%;
+  user-select:none;
+  
 }
 
 /* App局部样式 */

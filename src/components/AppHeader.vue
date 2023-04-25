@@ -2,11 +2,16 @@
 
 <template>
   <div class="appHeader">
-    <!-- 网站的名称 -->
-    <span class="projectName">{{ projectName }}</span>
+    <!-- 占位 -->
+    <div class="content"></div>
 
-    <!-- header导航栏，主页，电影，游戏，公告，个人中心 -->
-    <div class="navBtns">
+    <!-- 功能区 -->
+    <div class="center">
+      <!-- 网站的名称 -->
+      <span class="projectName">{{ projectName }}</span>
+
+      <!-- header导航栏，主页，电影，游戏，公告，个人中心 -->
+      <div class="navBtns">
         <router-link
           active-class="navBtnActive"
           class="navBtn"
@@ -17,53 +22,57 @@
             // name: navBtn.pageName
           }"
         >
-        <span>{{ navBtn.name }}</span>
+          <span>{{ navBtn.name }}</span>
         </router-link>
-    </div>
+      </div>
 
-    <!-- 搜索框 -->
-    <div class="searchBox">
-      <span class="el-icon-search"></span>
-      <input type="text" placeholder="电影/游戏/书籍" />
-    </div>
+      <!-- 搜索框 -->
+      <div class="searchBox">
+        <span class="el-icon-search"></span>
+        <input type="text" placeholder="电影/游戏/书籍" />
+      </div>
 
-    <!-- 头像 -->
-    <div class="userInfo">
-      <div @click="isSettingSpread = !isSettingSpread" class="imgContent">
-        <el-image :src="profileImg" class="profile" lazy>
-          <div slot="error" class="image-slot">
-            <i class="el-icon-picture-outline"></i>
-          </div>
-        </el-image>
+      <!-- 头像 -->
+      <div class="userInfo">
+        <div @click="isSettingSpread = !isSettingSpread" class="imgContent">
+          <el-image :src="profileImg" class="profile" lazy>
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline"></i>
+            </div>
+          </el-image>
 
-        <transition name="triangle">
-          <!-- 上三角形 -->
-          <div v-show="isSettingSpread" class="triangle"></div>
-        </transition>
+          <transition name="triangle">
+            <!-- 上三角形 -->
+            <div v-show="isSettingSpread" class="triangle"></div>
+          </transition>
 
-        <transition name="settings">
-          <!-- 头像下拉框 -->
-          <ul v-show="isSettingSpread" class="dropDown">
-            <router-link
-              tag="li"
-              v-for="setting in settingList"
-              :key="setting.iconClass"
-              :to="{
-                name: `${setting.pageName}`,
-              }"
-            >
-              <span :class="setting.iconClass"></span>
-              <span>{{ setting.settingName }}</span>
-            </router-link>
+          <transition name="settings">
+            <!-- 头像下拉框 -->
+            <ul v-show="isSettingSpread" class="dropDown">
+              <router-link
+                tag="li"
+                v-for="setting in settingList"
+                :key="setting.iconClass"
+                :to="{
+                  name: `${setting.pageName}`,
+                }"
+              >
+                <span :class="setting.iconClass"></span>
+                <span>{{ setting.settingName }}</span>
+              </router-link>
 
-            <li @click="loginOut">
-              <span class="el-icon-warning-outline"></span>
-              <span>登 出</span>
-            </li>
-          </ul>
-        </transition>
+              <li @click="loginOut">
+                <span class="el-icon-warning-outline"></span>
+                <span>登 出</span>
+              </li>
+            </ul>
+          </transition>
+        </div>
       </div>
     </div>
+
+    <!-- 占位 -->
+    <div class="content"></div>
   </div>
 </template>
 
@@ -93,24 +102,24 @@ export default {
       ],
       navBtns: [
         {
-            name:"首页",
-            path:"HomePage",
+          name: "首页",
+          path: "HomePage",
         },
         {
-            name:"电影",
-            path:"MyFilms",
+          name: "电影",
+          path: "MyFilms",
         },
         {
-            name:"游戏",
-            path:"MyGames",
+          name: "游戏",
+          path: "MyGames",
         },
         {
-            name:"书籍",
-            path:"MyBooks",
+          name: "书籍",
+          path: "MyBooks",
         },
         {
-            name:"公告",
-            path:"BulletinList",
+          name: "公告",
+          path: "BulletinList",
         },
       ],
       // setting是否展开
@@ -124,13 +133,19 @@ export default {
     // 点击退出登录，并且跳转到登录页面
     loginOut() {
       //   console.log("Login Out");
-      this.$router.push({name:'LoginRegister'});
+      this.$router.push({ name: "LoginRegister" });
     },
   },
 };
 </script>
 
 <style scoped>
+.content {
+  width: 222px;
+  height: 60px;
+  /* z-index: 999; */
+  /* background: red; */
+}
 .appHeader {
   position: fixed;
   top: 0px;
@@ -139,13 +154,13 @@ export default {
   display: flex;
   box-sizing: border-box;
   align-items: center;
-  justify-content: space-between;
   /* border: 1px solid brown; */
 
   width: 100%;
+  white-space: nowrap;
   height: 60px;
 
-  box-shadow: 0px 0px 8px var(--darkTheme);
+  box-shadow: 0px 0px 4px var(--darkTheme);
   background: rgba(14, 85, 113, 0.95);
 }
 
@@ -161,13 +176,64 @@ export default {
   z-index: -1;
 }
 
+.center {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  /* border: 1px solid brown; */
+
+  width: 100%;
+  white-space: nowrap;
+  height: 60px;
+}
+
 .projectName {
   font-size: 24px;
   color: var(--lightTheme);
   font-weight: bold;
   font-family: Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     "WenQuanYi Micro Hei", sans-serif;
-  margin-left: 10%;
+}
+
+.navBtns {
+  /* border: 1px solid red; */
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  height: 100%;
+  width: 35%;
+}
+
+.navBtn span {
+  display: block;
+  /* background: red; */
+  padding: 8px 14px;
+  color: var(--lightTheme);
+  font-size: 16px;
+}
+
+.navBtn span:hover {
+  color: #bababa;
+  transition: all 0.4s;
+}
+
+.navBtnActive {
+  background: var(--lightTheme);
+  border-radius: 4px;
+  box-shadow: 2px 2px 4px #2b2b2b;
+  transition: all 0.4s;
+}
+
+.navBtnActive span {
+  color: var(--primaryColor);
+  font-weight: bold;
+}
+
+.navBtnActive span:hover {
+  color: var(--primaryColor);
 }
 
 .searchBox {
@@ -209,7 +275,6 @@ export default {
   display: flex;
   align-items: center;
   /* border: 1px solid brown; */
-  margin-right: 10%;
 }
 
 .userInfo .profile {
