@@ -53,8 +53,12 @@ const router = new VueRouter({
       ],
     },
   ],
-});
 
+  // 路由跳转时自动滚动到顶部
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
+});
 
 // 前置路由守卫，将不存在的路由地址重定向至主页
 router.beforeEach((to, from, next) => {
@@ -63,7 +67,7 @@ router.beforeEach((to, from, next) => {
     from.name ? next({ name: from.name }) : next("/");
   } else {
     // 如果匹配到正确跳转
-    next(); 
+    next();
   }
 });
 

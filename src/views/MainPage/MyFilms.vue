@@ -61,17 +61,17 @@
         </ul>
       </div>
 
-      <div class="rate">
+      <div class="sort">
         <template>
-          <el-radio v-model="checked.rate" label="1">最近更新</el-radio>
-          <el-radio v-model="checked.rate" label="2">添加时间</el-radio>
-          <el-radio v-model="checked.rate" label="3">评分最高</el-radio>
+          <el-radio v-model="checked.sort" :label="1">最近更新</el-radio>
+          <el-radio v-model="checked.sort" :label="2">添加时间</el-radio>
+          <el-radio v-model="checked.sort" :label="3">评分最高</el-radio>
         </template>
       </div>
     </div>
 
     <div class="filmList">
-      <CardPage v-for="film in 30" :key="film" :item="item" />
+      <CardPage v-for="film in 30" :key="film" :item="films" />
     </div>
 
     <div class="pagination">
@@ -195,11 +195,11 @@ export default {
         year: 0,
         location: 0,
         language: 0,
-        rate: 1
+        sort: 1
       },
 
       //   电影列表数据
-      item: {
+      films: {
         id: 3,
         cover: "http://img1.doubanio.com/view/subject/s/public/s29555070.jpg",
         name: "围城",
@@ -255,12 +255,24 @@ export default {
 .left,
 .right {
   display: flex;
-  padding: 5px 0px;
   font-size: 13px;
+}
+
+.left{
+    /* display: flex; */
+    white-space: nowrap;
+    padding-top: 5px;
+
+}
+
+.right{
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .right li {
   margin-right: 8px;
+  padding: 5px 0px;
 }
 
 .right li span {
@@ -298,27 +310,27 @@ export default {
   background: #29a681;
 }
 
-.rate {
+.sort {
   /* border: 1px solid green; */
   margin: 16px 0px;
 }
 
-.rate >>> .el-radio__label {
+.sort >>> .el-radio__label {
   line-height: 13px;
   font-size: 13px;
   margin-left: -4px;
 }
 
-.rate >>> .is-checked + .el-radio__label {
+.sort >>> .is-checked + .el-radio__label {
   color: var(--primaryColor);
 }
 
-.rate >>> .el-radio__input.is-checked .el-radio__inner {
+.sort >>> .el-radio__input.is-checked .el-radio__inner {
   border-color: var(--primaryColor);
   background: var(--primaryColor);
 }
 
-.rate >>> .el-radio__inner:hover {
+.sort >>> .el-radio__inner:hover {
   border-color: var(--primaryColor);
 }
 

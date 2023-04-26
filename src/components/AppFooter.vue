@@ -19,7 +19,7 @@ export default {
   align-items: center;
   height: 60px;
   position: relative;
-  z-index: 999;
+  z-index: 900;
   border-top:1px solid var(--lightTheme);
   white-space:nowrap;
 }

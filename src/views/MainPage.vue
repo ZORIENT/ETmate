@@ -6,13 +6,7 @@
 
     <!-- 内容区 -->
     <div class="section">
-      <!-- 左侧占位 -->
-      <!-- <div class="contentLeft"></div> -->
-
       <router-view></router-view>
-
-      <!-- 右侧占位 -->
-      <!-- <div class="contentRight"></div> -->
     </div>
 
     <!-- 底部footer -->
@@ -35,19 +29,21 @@ export default {
 .container {
   /* background: yellow; */
   /* height: 1000px; */
-  /* height: 100%; */
+  /* height: 100%;
+  position: relative; */
 }
 
-
 .section {
-display: flex;
-flex-direction: column;
-justify-items: center;
-align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
 
   margin-top: 60px;
   margin-bottom: 24px;
   /* border: 1px solid red; */
+
+  /* height: 100%; */
 }
 
 .contentLeft,
@@ -55,6 +51,4 @@ align-items: center;
   width: 200px;
   /* border: 1px solid red; */
 }
-
-
 </style>
