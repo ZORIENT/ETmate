@@ -20,6 +20,7 @@
           :to="{
             name: `${navBtn.path}`,
             // name: navBtn.pageName
+            // 
           }"
         >
           <span>{{ navBtn.name }}</span>
@@ -42,8 +43,8 @@
           </el-image>
 
           <!-- <transition name="triangle"> -->
-            <!-- 上三角形 -->
-            <!-- <div v-show="isSettingSpread" class="triangle"></div>
+          <!-- 上三角形 -->
+          <!-- <div v-show="isSettingSpread" class="triangle"></div>
           </transition> -->
 
           <transition name="settings">
@@ -54,7 +55,8 @@
                 v-for="setting in settingList"
                 :key="setting.iconClass"
                 :to="{
-                  name: `${setting.pageName}`,
+                  // name: `${setting.pageName}`,
+                  name:'FilmDetail'
                 }"
               >
                 <span :class="setting.iconClass"></span>
@@ -101,26 +103,11 @@ export default {
         },
       ],
       navBtns: [
-        {
-          name: "首页",
-          path: "HomePage",
-        },
-        {
-          name: "电影",
-          path: "MyFilms",
-        },
-        {
-          name: "游戏",
-          path: "MyGames",
-        },
-        {
-          name: "书籍",
-          path: "MyBooks",
-        },
-        {
-          name: "公告",
-          path: "BulletinList",
-        },
+        { name: "首页", path: "HomePage" },
+        { name: "电影", path: "MyFilms" },
+        { name: "游戏", path: "MyGames" },
+        { name: "书籍", path: "MyBooks" },
+        { name: "公告", path: "BulletinList" },
       ],
       // setting是否展开
       isSettingSpread: false,
@@ -186,7 +173,7 @@ export default {
   justify-content: space-between;
   /* border: 1px solid brown; */
 
-  width:calc( var(--width)  *1px);
+  width: calc(var(--width) * 1px);
   white-space: nowrap;
   height: 60px;
 }

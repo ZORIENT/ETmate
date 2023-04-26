@@ -39,11 +39,11 @@ export default {
   justify-items: center;
   align-items: center;
 
-  margin-top: 60px;
-  margin-bottom: 24px;
-  /* border: 1px solid red; */
+  min-height: 100%;
 
-  /* height: 100%; */
+  padding: 60px 0px 84px 0px;
+  /* margin-bottom: 24px; */
+  /* border: 1px solid red; */
 }
 
 .contentLeft,

@@ -7,6 +7,10 @@ import MyFilms from "../views/MainPage/MyFilms";
 import MyGames from "../views/MainPage/MyGames";
 import MyBooks from "../views/MainPage/MyBooks";
 import BulletinList from "../views/MainPage/BulletinList";
+import FilmDetail from "../views/Detail/FilmDetail"
+import GameDetail from "../views/Detail/GameDetail"
+import BookDetail from "../views/Detail/BookDetail"
+
 
 const router = new VueRouter({
   routes: [
@@ -49,6 +53,21 @@ const router = new VueRouter({
           name: "BulletinList",
           path: "BulletinList",
           component: BulletinList,
+        },
+        {
+          name:"FilmDetail",
+          path:"FilmDetail",
+          component:FilmDetail,
+        },
+        {
+          name: "GameDetail",
+          path: "GameDetail",
+          component: GameDetail,
+        },
+        {
+          name: "BookDetail",
+          path: "BookDetail",
+          component: BookDetail,
         },
       ],
     },

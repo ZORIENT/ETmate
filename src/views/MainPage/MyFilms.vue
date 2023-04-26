@@ -31,15 +31,15 @@
         </ul>
       </div>
 
-      <div class="location">
+      <div class="region">
         <div class="left">地区：</div>
         <ul class="right">
           <li
-            v-for="option in location"
+            v-for="option in region"
             :key="option.id"
-            @click="changeLocation(option.id)"
+            @click="changeRegion(option.id)"
           >
-            <span :class="checked.location === option.id ? 'active3' : ''">
+            <span :class="checked.region === option.id ? 'active3' : ''">
               {{ option.name }}
             </span>
           </li>
@@ -144,7 +144,7 @@ export default {
         { id: 19, name: "70年代" },
         { id: 20, name: "更早" },
       ],
-      location: [
+      region: [
         { id: 0, name: "全部" },
         { id: 1, name: "华语" },
         { id: 2, name: "欧美" },
@@ -193,7 +193,7 @@ export default {
       checked: {
         category: 0,
         year: 0,
-        location: 0,
+        region: 0,
         language: 0,
         sort: 1
       },
@@ -221,8 +221,8 @@ export default {
     changeYear(id) {
       this.checked.year = id;
     },
-    changeLocation(id) {
-      this.checked.location = id;
+    changeRegion(id) {
+      this.checked.region = id;
     },
     changeLanguage(id) {
       this.checked.language = id;
@@ -245,7 +245,7 @@ export default {
 
 .category,
 .year,
-.location,
+.region,
 .language {
   display: flex;
   padding: 12px 0px;
@@ -262,6 +262,7 @@ export default {
     /* display: flex; */
     white-space: nowrap;
     padding-top: 5px;
+    font-weight: bold;
 
 }
 

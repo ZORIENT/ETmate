@@ -22,6 +22,9 @@ export default {
   z-index: 900;
   border-top:1px solid var(--lightTheme);
   white-space:nowrap;
+
+  /* 应该是60px，设定59是为了防抖 */
+  margin-top: -59px;
 }
 
 .container a,h1{

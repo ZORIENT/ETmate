@@ -257,6 +257,7 @@ export default {
     /* display: flex; */
     white-space: nowrap;
     padding-top: 5px;
+    font-weight: bold;
 
 }
 
