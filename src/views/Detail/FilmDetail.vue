@@ -13,8 +13,7 @@
             {{ filmInfo.name_ch }} {{ filmInfo.name_en }} ({{ filmInfo.year }})
           </h1>
           <p>
-            <span>导演：</span
-            ><span class="inner">{{ filmInfo.director }}</span>
+            <span>导演：</span><span class="inner">{{ filmInfo.director }}</span>
           </p>
 
           <p>
@@ -30,8 +29,7 @@
           </p>
 
           <p>
-            <span>语言：</span
-            ><span class="inner">{{ filmInfo.language }}</span>
+            <span>语言：</span><span class="inner">{{ filmInfo.language }}</span>
           </p>
 
           <p><span>上映：</span>{{ filmInfo.releaseDate }}</p>
@@ -41,8 +39,7 @@
           <p><span>别名：</span>{{ filmInfo.alias }}</p>
 
           <p>
-            <span>评分：</span
-            ><span class="rate">豆瓣 {{ filmInfo.rate }}</span>
+            <span>评分：</span><span class="rate">豆瓣 {{ filmInfo.rate }}</span>
           </p>
 
           <p><span>IMDB：</span>{{ filmInfo.imdb }}</p>
@@ -82,34 +79,84 @@
 
         <div class="rateInfo">
           <div class="rate">
-            <h1>{{ rateInfo.rate * 2}}</h1>
+            <h1>{{ rateInfo.rate * 2 }}</h1>
             <div class="stars">
-              <el-rate v-model="rateInfo.rate" disabled text-color="#ff9900"></el-rate>
-              <h2>{{rateInfo.numberOfRate}}人已评价</h2>
+              <el-rate
+                v-model="rateInfo.rate"
+                disabled
+                text-color="#ff9900"
+              ></el-rate>
+              <h2>{{ rateInfo.numberOfRate }}人已评价</h2>
             </div>
           </div>
 
           <div class="process">
-            <div><span>5星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star5" ></el-progress></div>
-            <div><span>4星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star4" ></el-progress></div>
-            <div><span>3星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star3" ></el-progress></div>
-            <div><span>2星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star2" ></el-progress></div>
-            <div><span>1星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star1" ></el-progress></div>
+            <div>
+              <span>5星</span
+              ><el-progress
+                :text-inside="true"
+                :stroke-width="18"
+                :percentage="rateInfo.stars.star5"
+              ></el-progress>
+            </div>
+            <div>
+              <span>4星</span
+              ><el-progress
+                :text-inside="true"
+                :stroke-width="18"
+                :percentage="rateInfo.stars.star4"
+              ></el-progress>
+            </div>
+            <div>
+              <span>3星</span
+              ><el-progress
+                :text-inside="true"
+                :stroke-width="18"
+                :percentage="rateInfo.stars.star3"
+              ></el-progress>
+            </div>
+            <div>
+              <span>2星</span
+              ><el-progress
+                :text-inside="true"
+                :stroke-width="18"
+                :percentage="rateInfo.stars.star2"
+              ></el-progress>
+            </div>
+            <div>
+              <span>1星</span
+              ><el-progress
+                :text-inside="true"
+                :stroke-width="18"
+                :percentage="rateInfo.stars.star1"
+              ></el-progress>
+            </div>
+          </div>
+
+          <div class="favoriteBtn">
+            <el-button class="notFavorited" v-show="!isFavorited" @click="handleFavorited">添加至收藏</el-button>
+            <el-button class="favorited" v-show="isFavorited" @click="handleFavorited">从收藏中移出</el-button>
           </div>
         </div>
       </div>
 
       <!-- 电影推荐区域 -->
       <div class="recommendList">
-        <div class="left">
-          <img src="https://1b2a.net/img/mv/nKdd.webp">
-        </div>
+        <div class="title">热门电影</div>
 
-        <div class="right">
-          <h1>流浪地球</h1>
-          <h2>类型：科幻/冒险/灾难</h2>
-          <h3>主演：吴京/刘德华/李雪健/沙溢/宁理/王智/吴京/刘德华/李雪健/沙溢/宁理/王智</h3>
-          <h4>评分：豆瓣 7.6</h4>
+        <div class="recommendFilm" v-for="film in 6" :key="film">
+          <div class="left">
+            <img src="https://1b2a.net/img/mv/nKdd.webp" />
+          </div>
+
+          <div class="right">
+            <h1>流浪地球</h1>
+            <h2>类型：科幻/冒险/灾难</h2>
+            <h3>
+              主演：吴京/刘德华/李雪健/沙溢/宁理/王智/吴京/刘德华/李雪健/沙溢/宁理/王智
+            </h3>
+            <h4>评分：豆瓣 7.6</h4>
+          </div>
         </div>
       </div>
     </div>
@@ -117,15 +164,16 @@
 </template>
 
 <script>
-import CommentPage from "@/components/Detail/CommentPage.vue"
+import CommentPage from "@/components/Detail/CommentPage.vue";
 import CardPage from "@/components/CardPage.vue";
 
 export default {
   name: "FilmDetail",
-  components: { CardPage , CommentPage},
+  components: { CardPage, CommentPage },
 
   data() {
     return {
+      isFavorited:false,
       filmInfo: {
         cover: "https://1b2a.net/img/mv/0Pdr.webp",
         name_ch: "看不见的客人",
@@ -198,6 +246,11 @@ export default {
         },
       },
     };
+  },
+  methods:{
+    handleFavorited(){
+      this.isFavorited=!this.isFavorited;
+    }
   }
 };
 </script>
@@ -332,7 +385,7 @@ export default {
   /* margin-right: 50px; */
 }
 
-.rateArea .rateInfo .rate h1{
+.rateArea .rateInfo .rate h1 {
   /* border: 1px solid yellow; */
   color: var(--primaryColor);
   display: flex;
@@ -342,7 +395,7 @@ export default {
   padding: 10px;
 }
 
-.rateArea .rateInfo .rate .stars{
+.rateArea .rateInfo .rate .stars {
   /* border: 1px solid red; */
   display: flex;
   justify-content: center;
@@ -351,9 +404,9 @@ export default {
   width: 150px;
 }
 
-.rateArea .rateInfo .rate h2{
+.rateArea .rateInfo .rate h2 {
   /* color: red; */
-  color:var(--primaryColor);
+  color: var(--primaryColor);
   font-size: 13px;
 }
 
@@ -363,43 +416,43 @@ export default {
   /* border: 1px solid red; */
 }
 
-.rateArea .rateInfo .process div{
+.rateArea .rateInfo .process div {
   display: flex;
   /* flex-direction: column; */
   padding: 4px 0px;
   align-items: center;
 }
 
-.rateArea .rateInfo .process div span{
+.rateArea .rateInfo .process div span {
   width: 30px;
   font-size: 13px;
   line-height: 18px;
 }
 
-.rateArea .rateInfo .process div >>> .el-progress{
+.rateArea .rateInfo .process div >>> .el-progress {
   /* background: red; */
   height: 18px;
   width: 270px;
 }
 
-.rateArea .rateInfo .process div >>> .el-progress-bar__outer{
+.rateArea .rateInfo .process div >>> .el-progress-bar__outer {
   background: none !important;
   border-radius: 4px;
 }
 
-.rateArea .rateInfo .process div >>> .el-progress-bar__inner{
+.rateArea .rateInfo .process div >>> .el-progress-bar__inner {
   background: var(--primaryColor);
   border-radius: 4px;
 }
 
-.rateArea .rateInfo .process div >>> .el-progress-bar__innerText{
+.rateArea .rateInfo .process div >>> .el-progress-bar__innerText {
   color: var(--lightTheme) !important;
 }
 
 /* ********************************************** */
-.comments{
+.comments {
   /* width: 400px; */
-  
+
   /* border: 1px solid green; */
   /* height: 100%; */
 
@@ -407,14 +460,102 @@ export default {
 }
 
 /* ************************************************** */
-.recommendList{
-  border: 1px solid red;
+.recommendList {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
 }
 
-.recommendList .left img{
-  background: red;
+.recommendList .recommendFilm{
+  display: flex;
+  /* border: 1px solid green; */
+  padding: 10px 0px;
+  border-bottom: 1px solid var(--lightTheme);
+}
+
+.recommendList .left {
+  /* border: 1px solid green; */
   width: 60px;
   height: 88px;
+
 }
 
+.recommendList .left img {
+  /* background: red; */
+  border-radius: 4px;
+}
+
+.recommendList .right h1,h2,h3,h4{
+  color: #333333;
+  font-size: 13px;
+  line-height: 22px;
+  /* 限制文字显示行数 */
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  padding-left: 10px;
+}
+
+.recommendList .right h1{
+  color: var(--primaryColor);
+  font-weight: bold;
+}
+
+/* ******************************************************** */
+.favoriteBtn{
+  display: flex;
+  flex-direction: column;
+}
+
+
+.favoriteBtn .notFavorited{
+  background: var(--primaryColor);
+  color: #fff;
+
+}
+
+.favoriteBtn .favorited{
+  background: var(--lightTheme);
+  color: var(--primaryColor);
+}
+
+.favoriteBtn .notFavorited,
+.favoriteBtn .favorited{
+  border-radius: 4px;
+  font-size: 14px;
+  width: 120px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+  margin: 10px 0px;
+  width: 100%;
+  border: none;
+}
+
+.favoriteBtn .notFavorited::before,
+.favoriteBtn .favorited::before{
+  content: "";
+  position: absolute;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.6) 50%
+  );
+  background-size: 210% 100%;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  transition: all 0.4s;
+  background-position: right bottom;
+}
+
+.favoriteBtn .notFavorited:hover::before,
+.favoriteBtn .favorited:hover::before{
+  background-position: left bottom;
+}
 </style>
