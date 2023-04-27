@@ -42,7 +42,7 @@ export default {
           name: "杀死比尔",
           intro:
             "杀死比尔的音乐很好听好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4好想看基努里维斯主演的疾速追杀4",
-          img: "https://img1.gamersky.com/thirdparty_steam/2018/07/23/small_201807230230477402.jpg",
+          img: "https://img1.gamersky.com/upimg/pic/2023/02/24/202302241620479544_small.png",
         },
         {
           id: 2,

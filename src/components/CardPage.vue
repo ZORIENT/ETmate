@@ -31,11 +31,24 @@ export default {
   overflow: hidden;
 }
 
+.name,
+.score,
+.line2{
+  /* 限制文字显示行数 */
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
 .line1 {
   display: flex;
   justify-content: space-between;
   padding-top: 8px;
   font-size: 13px;
+  color:var(--primaryColor);
+  font-weight: bold;
 }
 
 .line1 .score {
@@ -47,12 +60,7 @@ export default {
   font-size: 12px;
   line-height: 22px;
   color: #717171;
-
-  /* 限制文字显示行数 */
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
 }
+
+
 </style>

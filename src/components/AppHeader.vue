@@ -55,8 +55,8 @@
                 v-for="setting in settingList"
                 :key="setting.iconClass"
                 :to="{
-                  // name: `${setting.pageName}`,
-                  name:'FilmDetail'
+                  name: `${setting.pageName}`,
+                  // name:'FilmDetail'
                 }"
               >
                 <span :class="setting.iconClass"></span>
@@ -89,17 +89,17 @@ export default {
         {
           iconClass: "el-icon-user",
           settingName: "我的信息",
-          //   pageName: "SettingPage",
+            pageName: "FilmDetail",
         },
         {
           iconClass: "el-icon-collection-tag",
           settingName: "我的收藏",
-          //   pageName: "UserPage",
+            pageName: "GameDetail",
         },
         {
           iconClass: "el-icon-document",
           settingName: "我的评论",
-          //   pageName: "SettingPage",
+            pageName: "FilmDetail",
         },
       ],
       navBtns: [

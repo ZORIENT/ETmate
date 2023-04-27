@@ -5,7 +5,7 @@
       <!-- 电影详情 -->
       <div class="detail">
         <div class="img">
-          <img src="https://1b2a.net/img/mv/0Pdr.webp" />
+          <img :src="filmInfo.cover"/>
         </div>
 
         <div class="info">
@@ -135,7 +135,7 @@
 
           <div class="favoriteBtn">
             <el-button class="notFavorited" v-show="!isFavorited" @click="handleFavorited">添加至收藏</el-button>
-            <el-button class="favorited" v-show="isFavorited" @click="handleFavorited">从收藏中移出</el-button>
+            <el-button class="favorited" v-show="isFavorited" @click="handleFavorited">从收藏移出</el-button>
           </div>
         </div>
       </div>
@@ -281,7 +281,7 @@ export default {
 }
 
 .detail img {
-  border: 1px solid green;
+  /* border: 1px solid green; */
   width: 240px;
   height: 340px;
   border-radius: 4px;
@@ -427,6 +427,8 @@ export default {
   width: 30px;
   font-size: 13px;
   line-height: 18px;
+  color:var(--primaryColor);
+  font-weight: bold;
 }
 
 .rateArea .rateInfo .process div >>> .el-progress {
@@ -466,11 +468,17 @@ export default {
   flex-direction: column;
 }
 
+
 .recommendList .recommendFilm{
   display: flex;
   /* border: 1px solid green; */
   padding: 10px 0px;
   border-bottom: 1px solid var(--lightTheme);
+}
+
+.recommendList .recommendFilm:hover{
+  background: var(--lightTheme);
+  transition: all 0.4s;
 }
 
 .recommendList .left {
