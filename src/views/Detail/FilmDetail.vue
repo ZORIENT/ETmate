@@ -70,21 +70,59 @@
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        
-    </div>
+        <CommentPage></CommentPage>
+      </div>
     </div>
 
     <!-- 右侧电影推荐的容器 -->
-    <div class="right">右侧电影推荐的容器</div>
+    <div class="right">
+      <!-- 评分展示区域 -->
+      <div class="rateArea">
+        <div class="title">电影评分</div>
+
+        <div class="rateInfo">
+          <div class="rate">
+            <h1>{{ rateInfo.rate * 2}}</h1>
+            <div class="stars">
+              <el-rate v-model="rateInfo.rate" disabled text-color="#ff9900"></el-rate>
+              <h2>{{rateInfo.numberOfRate}}人已评价</h2>
+            </div>
+          </div>
+
+          <div class="process">
+            <div><span>5星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star5" ></el-progress></div>
+            <div><span>4星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star4" ></el-progress></div>
+            <div><span>3星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star3" ></el-progress></div>
+            <div><span>2星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star2" ></el-progress></div>
+            <div><span>1星</span><el-progress :text-inside="true" :stroke-width="18" :percentage="rateInfo.stars.star1" ></el-progress></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 电影推荐区域 -->
+      <div class="recommendList">
+        <div class="left">
+          <img src="https://1b2a.net/img/mv/nKdd.webp">
+        </div>
+
+        <div class="right">
+          <h1>流浪地球</h1>
+          <h2>类型：科幻/冒险/灾难</h2>
+          <h3>主演：吴京/刘德华/李雪健/沙溢/宁理/王智/吴京/刘德华/李雪健/沙溢/宁理/王智</h3>
+          <h4>评分：豆瓣 7.6</h4>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import CommentPage from "@/components/Detail/CommentPage.vue"
 import CardPage from "@/components/CardPage.vue";
 
 export default {
   name: "FilmDetail",
-  components: { CardPage },
+  components: { CardPage , CommentPage},
 
   data() {
     return {
@@ -117,7 +155,8 @@ export default {
         },
         {
           id: 2,
-          cover: "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2458866562.jpg",
+          cover:
+            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2458866562.jpg",
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
@@ -131,7 +170,8 @@ export default {
         },
         {
           id: 4,
-          cover: "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2558964271.jpg",
+          cover:
+            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2558964271.jpg",
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
@@ -142,18 +182,27 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        }
+        },
       ],
+      rateInfo: {
+        // 此处评分是星级乘2
+        rate: 4.3,
+        numberOfRate: 213,
+        // 评分具体分布
+        stars: {
+          star1: 10,
+          star2: 20,
+          star3: 30,
+          star4: 30,
+          star5: 10,
+        },
+      },
     };
-  },
-
-  mounted() {},
-
-  methods: {},
+  }
 };
 </script>
 
-<style  scoped>
+<style scoped>
 .container {
   display: flex;
   justify-content: space-between;
@@ -219,10 +268,9 @@ export default {
 }
 
 /* ********************************************************** */
-
 .intro,
-.related {
-  /* border: 1px solid green; */
+.related,
+.comments {
   margin-top: 10px;
 }
 
@@ -257,7 +305,116 @@ export default {
 /* ********************************************************** */
 .right {
   display: flex;
+  flex-direction: column;
   /* border: 1px solid yellow; */
   width: 300px;
 }
+
+.rateArea {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--lightTheme);
+}
+.rateArea .rateInfo {
+  /* border: 1px solid green; */
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  /* justify-content: space-between; */
+}
+
+.rateArea .rateInfo .rate {
+  /* border: 1px solid yellow; */
+  /* background: yellow; */
+  display: flex;
+  /* margin-right: 50px; */
+}
+
+.rateArea .rateInfo .rate h1{
+  /* border: 1px solid yellow; */
+  color: var(--primaryColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  padding: 10px;
+}
+
+.rateArea .rateInfo .rate .stars{
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 150px;
+}
+
+.rateArea .rateInfo .rate h2{
+  /* color: red; */
+  color:var(--primaryColor);
+  font-size: 13px;
+}
+
+/* ********************************************* */
+.rateArea .rateInfo .process {
+  width: 300px;
+  /* border: 1px solid red; */
+}
+
+.rateArea .rateInfo .process div{
+  display: flex;
+  /* flex-direction: column; */
+  padding: 4px 0px;
+  align-items: center;
+}
+
+.rateArea .rateInfo .process div span{
+  width: 30px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.rateArea .rateInfo .process div >>> .el-progress{
+  /* background: red; */
+  height: 18px;
+  width: 270px;
+}
+
+.rateArea .rateInfo .process div >>> .el-progress-bar__outer{
+  background: none !important;
+  border-radius: 4px;
+}
+
+.rateArea .rateInfo .process div >>> .el-progress-bar__inner{
+  background: var(--primaryColor);
+  border-radius: 4px;
+}
+
+.rateArea .rateInfo .process div >>> .el-progress-bar__innerText{
+  color: var(--lightTheme) !important;
+}
+
+/* ********************************************** */
+.comments{
+  /* width: 400px; */
+  
+  /* border: 1px solid green; */
+  /* height: 100%; */
+
+  border-top: 1px solid var(--lightTheme);
+}
+
+/* ************************************************** */
+.recommendList{
+  border: 1px solid red;
+}
+
+.recommendList .left img{
+  background: red;
+  width: 60px;
+  height: 88px;
+}
+
 </style>
