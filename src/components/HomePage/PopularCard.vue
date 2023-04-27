@@ -4,18 +4,22 @@
       <h1>{{ category }}</h1>
       <div class="btns">
         <button>
-        <span class="el-icon-refresh"></span>
-        <span>换一换</span>
-      </button>
-      <button>
-        <span>更多</span>
-        <span class="el-icon-arrow-right"></span>
-      </button>
+          <span class="el-icon-refresh"></span>
+          <span>换一换</span>
+        </button>
+        <button>
+          <span>更多</span>
+          <span class="el-icon-arrow-right"></span>
+        </button>
       </div>
     </div>
 
     <div class="cardContainer">
-      <CardPage v-for="item in itemList" :key="item.id" :item="item"></CardPage>
+      <CardPage
+        v-for="item in itemList"
+        :key="item.id"
+        :item="item"
+      ></CardPage>
     </div>
   </div>
 </template>
@@ -37,6 +41,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 1,
@@ -44,6 +49,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 2,
@@ -51,6 +57,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 3,
@@ -58,6 +65,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 4,
@@ -65,6 +73,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 5,
@@ -72,6 +81,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 6,
@@ -79,6 +89,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 7,
@@ -86,6 +97,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
         {
           id: 8,
@@ -93,6 +105,7 @@ export default {
           name: "围城",
           score: "9.7",
           intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+          route:"FilmDetail"
         },
       ],
     };
@@ -127,7 +140,7 @@ export default {
   /* line-height: 48px; */
 }
 
-.btns button{
+.btns button {
   background: #fff;
   color: var(--primaryColor);
   border: 1px solid var(--primaryColor);
@@ -137,9 +150,9 @@ export default {
   transition: all 0.2s;
 }
 
-.btns button:hover{
+.btns button:hover {
   background: var(--primaryColor);
-  color:#fff ;
+  color: #fff;
 }
 
 .cardContainer {

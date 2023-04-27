@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" @click="$router.push({ name: item.route })">
     <img :src="item.cover" />
     <div class="line1">
       <span class="name">{{ item.name }}</span>
@@ -22,6 +22,7 @@ export default {
 .card {
   width: 160px;
   /* border: 1px solid green; */
+  cursor: pointer;
 }
 
 .card img {

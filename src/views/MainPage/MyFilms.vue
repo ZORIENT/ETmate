@@ -205,6 +205,7 @@ export default {
         name: "围城",
         score: "9.7",
         intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
+        route:"FilmDetail"
       },
 
       pagination:{

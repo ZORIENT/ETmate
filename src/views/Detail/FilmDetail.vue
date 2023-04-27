@@ -250,6 +250,9 @@ export default {
   methods:{
     handleFavorited(){
       this.isFavorited=!this.isFavorited;
+    },
+    test(){
+      console.log("test");
     }
   }
 };

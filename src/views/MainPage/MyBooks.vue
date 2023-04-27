@@ -166,7 +166,7 @@ export default {
         sort: 1,
       },
 
-      // 游戏列表数据
+      // 书籍列表数据
       books: {
         id: 3,
         cover: "http://img1.doubanio.com/view/subject/s/public/s29053580.jpg",
@@ -174,6 +174,7 @@ export default {
         score: "9.7",
         intro:
           "日本动画/经典/冒险/奇幻/非主流经典/Q版/剧情丰富/角色扮演/好评原声音乐/单人/",
+          route:"BookDetail"
       },
 
       //   底部页码选择器数据
