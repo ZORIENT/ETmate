@@ -10,6 +10,10 @@ import BulletinList from "../views/MainPage/BulletinList";
 import FilmDetail from "../views/Detail/FilmDetail"
 import GameDetail from "../views/Detail/GameDetail"
 import BookDetail from "../views/Detail/BookDetail"
+import UserInfo from "../views/User/UserInfo"
+import UserFavorites from "../views/User/UserFavorites"
+import UserComments from "../views/User/UserComments"
+
 
 
 const router = new VueRouter({
@@ -68,6 +72,21 @@ const router = new VueRouter({
           name: "BookDetail",
           path: "BookDetail",
           component: BookDetail,
+        },
+        {
+          name: "UserInfo",
+          path: "UserInfo",
+          component: UserInfo,
+        },
+        {
+          name: "UserFavorites",
+          path: "UserFavorites",
+          component: UserFavorites,
+        },
+        {
+          name: "UserComments",
+          path: "UserComments",
+          component: UserComments,
         },
       ],
     },

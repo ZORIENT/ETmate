@@ -89,17 +89,17 @@ export default {
         {
           iconClass: "el-icon-user",
           settingName: "我的信息",
-            pageName: "FilmDetail",
+            pageName: "UserInfo",
         },
         {
           iconClass: "el-icon-collection-tag",
           settingName: "我的收藏",
-            pageName: "GameDetail",
+            pageName: "UserFavorites",
         },
         {
           iconClass: "el-icon-document",
           settingName: "我的评论",
-            pageName: "FilmDetail",
+            pageName: "UserComments",
         },
       ],
       navBtns: [
