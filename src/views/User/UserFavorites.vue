@@ -7,10 +7,17 @@
 
     <!-- 分类导航按钮 -->
     <div class="navs">
-      <button>全部</button>
-      <button>电影</button>
-      <button>游戏</button>
-      <button>书籍</button>
+      <ul>
+        <li
+          v-for="nav in navs"
+          :key="nav.id"
+          @click="changeNav(nav.id)"
+        >
+          <span :class="activedNav === nav.id ? 'activedNav' : ''">
+            {{ nav.name }}
+          </span>
+        </li>
+      </ul>
     </div>
 
     <!-- 收藏展示 -->
@@ -33,6 +40,24 @@ export default {
 
   data() {
     return {
+      navs:[
+        {
+          id:0,
+          name:"全部",
+        },
+        {
+          id:1,
+          name:"电影",
+        },
+        {
+          id:2,
+          name:"游戏",
+        },
+        {
+          id:3,
+          name:"书籍",
+        },
+      ],
       results: [
         {
           id: 1,
@@ -203,12 +228,19 @@ export default {
           route:"GameDetail"
         },
       ],
+
+      activedNav:0,
     };
   },
 
   mounted() {},
 
-  methods: {},
+  methods: {
+    changeNav(id){
+      this.activedNav=id;
+      console.log(this.activedNav);
+    }
+  },
 };
 </script>
 
@@ -232,15 +264,75 @@ export default {
 /* *********************************************************************** */
 .navs{
     /* border: 1px solid green; */
+    padding: 10px 0px;
 }
+
+.navs ul{
+  display: flex;
+  margin: 10px 0px;
+}
+
+.navs ul li span{
+  border: 1px solid var(--primaryColor);
+  padding: 5px 20px;
+  color: var(--primaryColor);
+  transition: all 0.4s;
+  /* border-radius: 4px; */
+}
+
+.activedNav{
+  background: var(--primaryColor);
+  color: #fff !important;
+}
+
+/* ********************************************************** */
 
 .collectionList{
     /* display: flex; */
-    display: grid;
+  display: grid;
   grid-template-columns: repeat(7, auto);
   grid-gap: 10px;
+  /* border: 1px solid red; */
+}
 
+.collection{
+  /* border: 1px solid red; */
+}
 
+.collection button{
+  width: 100%;
+  padding: 10px;
+  background: var(--primaryColor);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--lightTheme);
+  margin: 5px 0px;
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+}
+
+.collection button::before{
+  content: "";
+  position: absolute;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.6) 50%
+  );
+  background-size: 210% 100%;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  transition: all 0.4s;
+  background-position: right bottom;
+}
+
+.collection button:hover::before{
+  background-position: left bottom;
 }
 
 </style>

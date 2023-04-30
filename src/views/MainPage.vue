@@ -31,6 +31,8 @@ export default {
   /* height: 1000px; */
   /* height: 100%;
   position: relative; */
+  /* overflow-x: hidden;
+  overflow-y: auto; */
 }
 
 .section {

@@ -24,7 +24,7 @@ export default {
   white-space:nowrap;
 
   /* 应该是60px，设定59是为了防抖 */
-  margin-top: -59px;
+  margin-top: -60px;
 }
 
 .container a,h1{

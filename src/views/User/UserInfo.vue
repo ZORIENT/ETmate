@@ -25,7 +25,7 @@
         <el-form label-position="right" label-width="100px" :model="userInfo">
           <!-- 邮箱 -->
           <el-form-item label="邮箱">
-            <el-input v-model="userInfo.email" type="email"></el-input>
+            <el-input disabled v-model="userInfo.email" type="email"></el-input>
           </el-form-item>
 
           <!-- 昵称 -->
@@ -35,7 +35,7 @@
 
           <!-- 性别 -->
           <el-form-item label="性别">
-            <el-select v-model="userInfo.gender" placeholder="性别">
+            <el-select v-model="userInfo.gender" placeholder="性别" popper-class="select">
               <el-option label="男" :value="1"></el-option>
               <el-option label="女" :value="2"></el-option>
             </el-select>
@@ -64,8 +64,6 @@
           </el-form-item>
         </el-form>
       </div>
-
-      
     </div>
   </div>
 </template>
@@ -180,4 +178,125 @@ export default {
   height: 178px;
   display: block;
 }
+
+
+/* ********************************************************** */
+.right{
+  /* border: 1px solid red; */
+  margin: 20px 0px;
+  width: 500px;
+  border-left: 1px solid var(--lightTheme);
+  display: flex;
+}
+
+.right .el-form{
+  display: flex;
+  /* align-items: center; */
+  /* justify-content: center; */
+  flex-direction: column;
+}
+/* ******************************************************** */
+.container >>> .el-input {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  line-height: 100%;
+  width: 250px;
+}
+
+.container >>> .el-input__suffix {
+  right: 24%;
+  font-size: 20px;
+}
+.container >>> .el-input__inner {
+  width: 80%;
+  border: none;
+  border-radius: 4px;
+  /* box-shadow: inset 4px 4px 4px #cbced1, inset -4px -4px 4px #fff !important; */
+  transition: all 0.4s;
+  border: 1px solid var(--lightTheme);
+}
+
+.container >>> .el-form-item__content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.container >>> .el-input__inner:focus {
+  border-radius: 10px;
+  border: 1px solid var(--primaryColor);
+}
+
+/* 输入框下方错误信息 */
+.container >>> .el-form-item__error {
+  /* color: var(--primaryThemeColor); */
+  left: 10%;
+}
+/* 输入框后面的小按钮 */
+.container >>> .el-input__suffix {
+  right: 15%;
+  font-size: 20px;
+}
+
+.container >>> .el-button {
+  border-radius: 4px;
+  font-size: 16px;
+  margin: 0px;
+  width: 40%;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 12px;
+  font-weight: bold;
+  color: var(--primaryColor);
+  position: relative;
+  border: none;
+  width: 200px !important;
+}
+
+.container >>> .el-button:before {
+  content: "";
+  position: absolute;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.6) 50%
+  );
+  background-size: 210% 100%;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  transition: all 0.4s;
+  background-position: right bottom;
+}
+
+.container >>> .el-button {
+  background-color: var(--primaryColor);
+  color: var(--lightTheme);
+  width: 100px;
+}
+
+.container >>> .el-button:hover::before {
+  background-position: left bottom;
+}
+
+.container >>> .el-input.is-focus .el-input__inner{
+  border-color: var(--primaryColor) !important;
+}
+
+.el-select-dropdown{
+  border: 1px solid red;
+}
+
+.el-select-dropdown__item.hover{
+  background: var(--lightTheme);
+  /* background: red; */
+}
+
+.el-select-dropdown__item.selected{
+  color: var(--primaryColor);
+}
+
 </style>

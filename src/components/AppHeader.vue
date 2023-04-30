@@ -127,12 +127,6 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  width: 222px;
-  height: 60px;
-  /* z-index: 999; */
-  /* background: red; */
-}
 .appHeader {
   position: fixed;
   top: 0px;
@@ -143,7 +137,6 @@ export default {
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  align-items: center;
   /* border: 1px solid brown; */
 
   width: 100%;
@@ -173,7 +166,7 @@ export default {
   justify-content: space-between;
   /* border: 1px solid brown; */
 
-  width: calc(var(--width) * 1px);
+  width: calc(var(--width)*1px);
   white-space: nowrap;
   height: 60px;
 }
