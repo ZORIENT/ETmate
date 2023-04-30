@@ -20,7 +20,7 @@
           :to="{
             name: `${navBtn.path}`,
             // name: navBtn.pageName
-            // 
+            //
           }"
         >
           <span>{{ navBtn.name }}</span>
@@ -35,21 +35,16 @@
 
       <!-- 头像 -->
       <div class="userInfo">
-        <div @click="isSettingSpread = !isSettingSpread" class="imgContent">
+        <!-- <div @click="isSettingSpread = !isSettingSpread" class="imgContent">
           <el-image :src="profileImg" class="profile" lazy>
             <div slot="error" class="image-slot">
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
 
-          <!-- <transition name="triangle"> -->
-          <!-- 上三角形 -->
-          <!-- <div v-show="isSettingSpread" class="triangle"></div>
-          </transition> -->
-
-          <transition name="settings">
-            <!-- 头像下拉框 -->
-            <ul v-show="isSettingSpread" class="dropDown">
+          <transition name="settings"> -->
+        <!-- 头像下拉框 -->
+        <!-- <ul v-show="isSettingSpread" class="dropDown">
               <router-link
                 tag="li"
                 v-for="setting in settingList"
@@ -69,7 +64,35 @@
               </li>
             </ul>
           </transition>
-        </div>
+        </div> -->
+
+        <el-dropdown trigger="click"  @command="handleCommand" class="imgContent">
+          <!-- <span class="el-dropdown-link">
+            下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+          </span> -->
+
+          <el-image :src="profileImg" class="profile" lazy >
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline"></i>
+            </div>
+          </el-image>
+
+          <el-dropdown-menu slot="dropdown" class="dropDown">
+            <el-dropdown-item 
+            v-for="setting in settingList" 
+            :key="setting.iconClass"
+            :command="setting.pageName"
+            >
+              <span :class="setting.iconClass"></span>
+              <span>{{ setting.settingName }}</span>
+            </el-dropdown-item>
+
+            <el-dropdown-item command="LoginRegister">
+              <span class="el-icon-warning-outline"></span>
+              <span>登 出</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
 
@@ -89,17 +112,17 @@ export default {
         {
           iconClass: "el-icon-user",
           settingName: "我的信息",
-            pageName: "UserInfo",
+          pageName: "UserInfo",
         },
         {
           iconClass: "el-icon-collection-tag",
           settingName: "我的收藏",
-            pageName: "UserFavorites",
+          pageName: "UserFavorites",
         },
         {
           iconClass: "el-icon-document",
           settingName: "我的评论",
-            pageName: "UserComments",
+          pageName: "UserComments",
         },
       ],
       navBtns: [
@@ -117,9 +140,15 @@ export default {
   },
 
   methods: {
+    handleCommand(command) {
+        // this.$message('click on item ' + command);
+        this.$router.push({name:command});
+      },
+
+
     // 点击退出登录，并且跳转到登录页面
     loginOut() {
-      //   console.log("Login Out");
+        // console.log("Login Out");
       this.$router.push({ name: "LoginRegister" });
     },
   },
@@ -166,7 +195,7 @@ export default {
   justify-content: space-between;
   /* border: 1px solid brown; */
 
-  width: calc(var(--width)*1px);
+  width: calc(var(--width) * 1px);
   white-space: nowrap;
   height: 60px;
 }
@@ -293,18 +322,7 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-
-/* .imgContent .triangle {
-  position: absolute;
-  top: 52px;
-  width: 0px;
-  height: 0px;
-  border: 10px solid;
-  border-color: transparent transparent #bababa transparent;
-  opacity: 0.3;
-  background: #fff;
-} */
-
+/* ******************************************************************* */
 .imgContent .dropDown {
   position: absolute;
   /* float: left; */
@@ -335,17 +353,6 @@ export default {
   color: var(--primaryColor);
 }
 
-.imgContent .dropDown li:last-child span {
-  /* color:rgb(253, 85, 85); */
-  opacity: 0.6;
-  color: rgb(221, 0, 0);
-}
-
-.imgContent .dropDown li:last-child:hover span {
-  color: rgb(221, 0, 0);
-  opacity: 1;
-}
-
 .imgContent .dropDown li:not(:last-child) {
   margin-bottom: 20px;
 }
@@ -355,7 +362,7 @@ export default {
   margin: 0px 12px 0px 0px;
 }
 
-/* 动画 */
+/* 动画
 @keyframes spreadTriangle {
   from {
     opacity: 0;
@@ -390,5 +397,5 @@ export default {
 
 .settings-leave-active {
   animation: spreadSettings 0.4s reverse;
-}
+} */
 </style>

@@ -86,6 +86,17 @@ body {
 .el-table-filter__bottom button.is-disabled:hover{
   color: #c0c4cc !important;
 }
+
+/* ***************************************************** */
+.el-dropdown-menu__item:hover{
+  background: var(--lightTheme) !important;
+  color: var(--primaryColor) !important;
+
+}
+
+.el-dropdown-menu__item span:first-child{
+  margin-right: 10px;
+}
 </style>
 
 

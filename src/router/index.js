@@ -14,6 +14,19 @@ import UserInfo from "../views/User/UserInfo"
 import UserFavorites from "../views/User/UserFavorites"
 import UserComments from "../views/User/UserComments"
 
+import AdminPage from "../views/AdminPage.vue"
+
+import UserManage from "../views/Admin/User/UserManage"
+import CommentManage from "../views/Admin/User/CommentManage"
+import GameManage from "../views/Admin/Game/GameManage"
+import GameTags from "../views/Admin/Game/GameTags"
+import FilmManage from "../views/Admin/Film/FilmManage"
+import FilmTags from "../views/Admin/Film/FilmTags"
+import BookManage from "../views/Admin/Book/BookManage"
+import BookTags from "../views/Admin/Book/BookTags"
+import BulletinManage from "../views/Admin/System/BulletinManage"
+import OperateLog from "../views/Admin/System/OperateLog"
+
 
 
 const router = new VueRouter({
@@ -89,6 +102,96 @@ const router = new VueRouter({
           component: UserComments,
         },
       ],
+    },
+    {
+      name:"AdminPage",
+      path:"/AdminPage",
+      component:AdminPage,
+      meta:{
+        title:"首页"
+      },
+      children:[
+        {
+          name: "UserManage",
+          path: "UserManage",
+          component: UserManage,
+          meta:{
+            title:"用户信息管理",
+          }
+        },
+        {
+          name: "CommentManage",
+          path: "CommentManage",
+          component: CommentManage,
+          meta:{
+            title:"评论信息管理",
+          }
+        },
+        {
+          name: "GameManage",
+          path: "GameManage",
+          component: GameManage,
+          meta:{
+            title:"游戏信息管理",
+          }
+        },
+        {
+          name: "GameTags",
+          path: "GameTags",
+          component: GameTags,
+          meta:{
+            title:"游戏标签管理",
+          }
+        },
+        {
+          name: "FilmManage",
+          path: "FilmManage",
+          component: FilmManage,
+          meta:{
+            title:"电影信息管理",
+          }
+        },
+        {
+          name: "FilmTags",
+          path: "FilmTags",
+          component: FilmTags,
+          meta:{
+            title:"电影标签管理",
+          }
+        },
+        {
+          name: "BookManage",
+          path: "BookManage",
+          component: BookManage,
+          meta:{
+            title:"书籍信息管理",
+          }
+        },
+        {
+          name: "BookTags",
+          path: "BookTags",
+          component: BookTags,
+          meta:{
+            title:"书籍标签管理",
+          }
+        },
+        {
+          name: "BulletinManage",
+          path: "BulletinManage",
+          component: BulletinManage,
+          meta:{
+            title:"系统公告管理",
+          }
+        },
+        {
+          name: "OperateLog",
+          path: "OperateLog",
+          component: OperateLog,
+          meta:{
+            title:"操作日志管理",
+          }
+        },
+      ]
     },
   ],
 
