@@ -230,7 +230,7 @@ export default {
     },
     currentPageChanged(currentPage){
         this.pagination.currentPage=currentPage;
-        console.log(this.pagination.currentPage);
+        // console.log(this.pagination.currentPage);
     }
   },
 };

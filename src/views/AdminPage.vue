@@ -14,8 +14,8 @@
             <template slot="title">
               <i class="el-icon-user">用户模块管理</i>
             </template>
-            <router-link :to="{ name: 'UserManage' }">用户管理</router-link>
-            <router-link :to="{ name: 'CommentManage' }">评论管理</router-link>
+            <router-link :to="{ name: 'UserManage' }">用户信息管理</router-link>
+            <router-link :to="{ name: 'CommentManage' }">评论信息管理</router-link>
           </el-collapse-item>
           <el-collapse-item>
             <template slot="title">
@@ -242,7 +242,7 @@ export default {
   /* border: 1px solid black; */
   width: calc(100% - 222px);
   /* height: 2000px; */
-  background: red;
+  /* background: red; */
   width: 100%;
 }
 
@@ -259,6 +259,8 @@ export default {
   position: fixed;
   left: 222px;
   top: 0px;
+
+  z-index: 999;
 }
 
 .bread {
@@ -283,7 +285,7 @@ export default {
   /* width: 100%; */
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .menu img {
@@ -298,6 +300,6 @@ export default {
   margin-top: 60px;
   margin-left: 222px;
   /* width: 100%; */
-  /* height: 100%; */
+  height: calc(100% - 60px);
 }
 </style>

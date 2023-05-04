@@ -39,6 +39,9 @@ const router = new VueRouter({
       name: "LoginRegister",
       path: "/LoginRegister",
       component: LoginRegister,
+      meta:{
+        title:"登录与注册",
+      }
     },
     {
       name: "MainPage",
@@ -50,56 +53,89 @@ const router = new VueRouter({
           name: "HomePage",
           path: "HomePage",
           component: HomePage,
+          meta:{
+            title:"首页",
+          },
         },
         {
           name: "MyFilms",
           path: "MyFilms",
           component: MyFilms,
+          meta:{
+            title:"电影",
+          },
         },
         {
           name: "MyGames",
           path: "MyGames",
           component: MyGames,
+          meta:{
+            title:"游戏",
+          },
         },
         {
           name: "MyBooks",
           path: "MyBooks",
           component: MyBooks,
+          meta:{
+            title:"书籍",
+          },
         },
         {
           name: "BulletinList",
           path: "BulletinList",
           component: BulletinList,
+          meta:{
+            title:"公告",
+          },
         },
         {
           name:"FilmDetail",
           path:"FilmDetail",
           component:FilmDetail,
+          meta:{
+            title:"电影详情",
+          },
         },
         {
           name: "GameDetail",
           path: "GameDetail",
           component: GameDetail,
+          meta:{
+            title:"游戏详请",
+          },
         },
         {
           name: "BookDetail",
           path: "BookDetail",
           component: BookDetail,
+          meta:{
+            title:"书籍详情",
+          },
         },
         {
           name: "UserInfo",
           path: "UserInfo",
           component: UserInfo,
+          meta:{
+            title:"我的信息",
+          },
         },
         {
           name: "UserFavorites",
           path: "UserFavorites",
           component: UserFavorites,
+          meta:{
+            title:"我的收藏",
+          },
         },
         {
           name: "UserComments",
           path: "UserComments",
           component: UserComments,
+          meta:{
+            title:"我的评论",
+          },
         },
       ],
     },
@@ -211,5 +247,13 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+// 后置路由守卫
+router.afterEach((to) => {
+  // console.log(to,from);
+
+  // 将页面标题设置为meta中的title属性值
+  document.title = to.meta.title || "ETMATE";
+})
 
 export default router;
