@@ -5,12 +5,12 @@
         <div class="left">类型：</div>
         <ul class="right">
           <li
-            v-for="option in category"
-            :key="option.id"
-            @click="changeCategory(option.id)"
+            v-for="(option, index) in category"
+            :key="index"
+            @click="changeCategory(option)"
           >
-            <span :class="checked.category === option.id ? 'active1' : ''">
-              {{ option.name }}
+            <span :class="checked.category === option ? 'active1' : ''">
+              {{ option }}
             </span>
           </li>
         </ul>
@@ -20,11 +20,11 @@
         <div class="left">年代：</div>
         <ul class="right">
           <li
-            v-for="option in year"
-            :key="option.id"
-            @click="changeYear(option.id)"
+            v-for="(option,index) in year"
+            :key="index"
+            @click="changeYear(option.value)"
           >
-            <span :class="checked.year === option.id ? 'active2' : ''">
+            <span :class="checked.year === option.value ? 'active2' : ''">
               {{ option.name }}
             </span>
           </li>
@@ -35,12 +35,12 @@
         <div class="left">地区：</div>
         <ul class="right">
           <li
-            v-for="option in region"
-            :key="option.id"
-            @click="changeRegion(option.id)"
+            v-for="(option,index) in region"
+            :key="index"
+            @click="changeRegion(option)"
           >
-            <span :class="checked.region === option.id ? 'active3' : ''">
-              {{ option.name }}
+            <span :class="checked.region === option ? 'active3' : ''">
+              {{ option }}
             </span>
           </li>
         </ul>
@@ -50,12 +50,12 @@
         <div class="left">语言：</div>
         <ul class="right">
           <li
-            v-for="option in language"
-            :key="option.id"
-            @click="changeLanguage(option.id)"
+            v-for="(option,index) in language"
+            :key="index"
+            @click="changeLanguage(option)"
           >
-            <span :class="checked.language === option.id ? 'active4' : ''">
-              {{ option.name }}
+            <span :class="checked.language === option ? 'active4' : ''">
+              {{ option }}
             </span>
           </li>
         </ul>
@@ -63,23 +63,24 @@
 
       <div class="sort">
         <template>
-          <el-radio v-model="checked.sort" :label="1">最近更新</el-radio>
-          <el-radio v-model="checked.sort" :label="2">添加时间</el-radio>
-          <el-radio v-model="checked.sort" :label="3">评分最高</el-radio>
+          <el-radio v-model="checked.sort" :label="1">评分最高</el-radio>
+          <el-radio v-model="checked.sort" :label="2">时长最长</el-radio>
+          <el-radio v-model="checked.sort" :label="3">上映时间</el-radio>
         </template>
       </div>
     </div>
 
     <div class="filmList">
-      <CardPage v-for="film in 30" :key="film" :item="films" />
+      <FilmCard v-for="(film,index) in films" :key="index" :item="film"/>
     </div>
 
     <div class="pagination">
-      <el-pagination  
-      background 
-      layout="prev, pager, next" 
-      :total="pagination.total"
-      @current-change="currentPageChanged"
+      <el-pagination
+        background
+        layout="prev, pager, next,jumper"
+        :total="pagination.total"
+        :page-size="35"
+        @current-change="currentPageChanged"
       >
       </el-pagination>
     </div>
@@ -87,152 +88,168 @@
 </template>
 
 <script>
-import CardPage from "@/components/CardPage.vue";
+import FilmCard from "@/components/FilmCard.vue";
+import { selectByCondition } from "@/api/film";
 
 export default {
   name: "MyFilms",
 
-  components: { CardPage },
+  components: { FilmCard },
+
+  mounted() {
+    // 获取电影数据
+    this.getFilms();
+  },
 
   data() {
     return {
       category: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "戏剧" },
-        { id: 2, name: "爱情" },
-        { id: 3, name: "动作" },
-        { id: 4, name: "科幻" },
-        { id: 5, name: "动画" },
-        { id: 6, name: "悬疑" },
-        { id: 7, name: "犯罪" },
-        { id: 8, name: "惊悚" },
-        { id: 9, name: "冒险" },
-        { id: 10, name: "音乐" },
-        { id: 11, name: "历史" },
-        { id: 12, name: "奇幻" },
-        { id: 13, name: "恐怖" },
-        { id: 14, name: "战争" },
-        { id: 15, name: "传记" },
-        { id: 16, name: "歌舞" },
-        { id: 17, name: "武侠" },
-        { id: 18, name: "情色" },
-        { id: 19, name: "灾难" },
-        { id: 20, name: "西部" },
-        { id: 21, name: "纪录片" },
-        { id: 22, name: "短片" },
+        "全部",
+        "剧情",
+        "爱情",
+        "动作",
+        "科幻",
+        "动画",
+        "悬疑",
+        "犯罪",
+        "惊悚",
+        "冒险",
+        "音乐",
+        "历史",
+        "奇幻",
+        "恐怖",
+        "战争",
+        "传记",
+        "歌舞",
+        "武侠",
+        "情色",
+        "灾难",
+        "西部",
+        "传记",
+        "音乐",
       ],
       year: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "2023" },
-        { id: 2, name: "2022" },
-        { id: 3, name: "2021" },
-        { id: 4, name: "2020" },
-        { id: 5, name: "2019" },
-        { id: 6, name: "2018" },
-        { id: 7, name: "2017" },
-        { id: 8, name: "2016" },
-        { id: 9, name: "2015" },
-        { id: 10, name: "2014" },
-        { id: 11, name: "2013" },
-        { id: 12, name: "2012" },
-        { id: 13, name: "2011" },
-        { id: 14, name: "2010" },
-        { id: 15, name: "10年代" },
-        { id: 16, name: "00年代" },
-        { id: 17, name: "90年代" },
-        { id: 18, name: "80年代" },
-        { id: 19, name: "70年代" },
-        { id: 20, name: "更早" },
+        { name: "全部" ,value:"全部"},
+        { name: "2023" ,value:"2023"},
+        { name: "2022" ,value:"2022"},
+        { name: "2021" ,value:"2021"},
+        { name: "2020" ,value:"2020"},
+        { name: "2019" ,value:"2019"},
+        { name: "2018" ,value:"2018"},
+        { name: "2017" ,value:"2017"},
+        { name: "2016" ,value:"2016"},
+        { name: "2015" ,value:"2015"},
+        { name: "2014" ,value:"2014"},
+        { name: "2013" ,value:"2013"},
+        { name: "2012" ,value:"2012"},
+        { name: "2011" ,value:"2011"},
+        { name: "2010" ,value:"2010"},
+        { name: "00年代" ,value:"200"},
+        { name: "90年代" ,value:"199"},
+        { name: "80年代" ,value:"198"},
+        { name: "70年代" ,value:"197"},
+        { name: "60年代" ,value:"196"}
       ],
-      region: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "华语" },
-        { id: 2, name: "欧美" },
-        { id: 3, name: "韩国" },
-        { id: 4, name: "日本" },
-        { id: 5, name: "中国大陆" },
-        { id: 6, name: "美国" },
-        { id: 7, name: "中国香港" },
-        { id: 8, name: "中国台湾" },
-        { id: 9, name: "英国" },
-        { id: 10, name: "法国" },
-        { id: 11, name: "德国" },
-        { id: 12, name: "意大利" },
-        { id: 13, name: "西班牙" },
-        { id: 14, name: "印度" },
-        { id: 15, name: "泰国" },
-        { id: 16, name: "俄罗斯" },
-        { id: 17, name: "加拿大" },
-        { id: 18, name: "澳大利亚" },
-        { id: 19, name: "爱尔兰" },
-        { id: 20, name: "瑞典" },
-        { id: 21, name: "巴西" },
-        { id: 22, name: "丹麦" },
-      ],
-      language: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "国语" },
-        { id: 2, name: "粤语" },
-        { id: 3, name: "英语" },
-        { id: 4, name: "法语" },
-        { id: 5, name: "日语" },
-        { id: 6, name: "韩语" },
-        { id: 7, name: "泰语" },
-        { id: 8, name: "德语" },
-        { id: 9, name: "俄语" },
-        { id: 10, name: "闽南语" },
-        { id: 11, name: "丹麦语" },
-        { id: 12, name: "波兰语" },
-        { id: 13, name: "瑞典语" },
-        { id: 14, name: "印地语" },
-        { id: 15, name: "挪威语" },
-        { id: 16, name: "意大利语" },
-        { id: 17, name: "西班牙语" },
-      ],
+      region: ["全部","中国大陆","中国香港","美国","韩国","日本","法国","中国台湾","英国","澳大利亚","德国","意大利","西班牙","印度","泰国","俄罗斯","加拿大","丹麦","爱尔兰","瑞典","巴西","瑞士"],
+      language: ["全部","国语","粤语","英语","法语","日语","韩语","泰语","德语","俄语","闽南语","丹麦语","波兰语","瑞典语","印地语","挪威语","意大利语","西班牙语"],
       //   被选中的id
       checked: {
-        category: 0,
-        year: 0,
-        region: 0,
-        language: 0,
-        sort: 1
+        category: "全部",
+        year: "全部",
+        region: "全部",
+        language: "全部",
+        sort: 1,
       },
 
       //   电影列表数据
-      films: {
-        id: 3,
-        cover: "http://img1.doubanio.com/view/subject/s/public/s29555070.jpg",
-        name: "围城",
-        score: "9.7",
-        intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        route:"FilmDetail"
-      },
+      films:[],
 
-      pagination:{
-        total:200,
-        currentPage:1
-      }
+      pagination: {
+        total: 1,
+        currentPage: 1,
+      },
     };
   },
 
   methods: {
-    changeCategory(id) {
-      this.checked.category = id;
+    changeCategory(option) {
+      this.checked.category = option;
     },
-    changeYear(id) {
-      this.checked.year = id;
+    changeYear(value) {
+      this.checked.year = value;
     },
-    changeRegion(id) {
-      this.checked.region = id;
+    changeRegion(option) {
+      this.checked.region = option;
     },
-    changeLanguage(id) {
-      this.checked.language = id;
+    changeLanguage(option) {
+      this.checked.language = option;
     },
-    currentPageChanged(currentPage){
-        this.pagination.currentPage=currentPage;
-        // console.log(this.pagination.currentPage);
-    }
+    currentPageChanged(currentPage) {
+      this.pagination.currentPage = currentPage;
+      // console.log(this.pagination.currentPage);
+    },
+
+    getFilms() {
+      let params = {
+        genres: "",
+        languages: "",
+        regions: "",
+        releaseYear: "",
+        tags: "",
+        sortId: 1,
+        page: 1,
+        pageSize:35,
+      };
+
+      if (this.checked.category !== "全部") {
+        params.genres = this.checked.category;
+      }
+      if (this.checked.language !== "全部") {
+        params.languages = this.checked.language;
+      }
+      if (this.checked.region !== "全部") {
+        params.regions = this.checked.region;
+      }
+      if(this.checked.year!=="全部"){
+        params.releaseYear=this.checked.year;
+      }
+      params.sortId=this.checked.sort;
+      params.page=this.pagination.currentPage;
+
+      // console.log(params);
+
+      selectByCondition(params)
+        .then((res) => {
+          // console.log(res);
+          if(res.code===1){
+            // 电影数据请求成功
+            this.films=res.data.rows;
+            this.pagination.total=res.data.total;
+            // console.log(this.films);
+          }else{
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
+
+  watch:{
+    checked:{
+      deep:true,
+      handler(){
+        this.getFilms();
+      }
+    },
+    pagination:{
+      deep:true,
+      handler(){
+        this.getFilms();
+      }
+    }
+  }
 };
 </script>
 
@@ -259,17 +276,16 @@ export default {
   font-size: 13px;
 }
 
-.left{
-    /* display: flex; */
-    white-space: nowrap;
-    padding-top: 5px;
-    font-weight: bold;
-
+.left {
+  /* display: flex; */
+  white-space: nowrap;
+  padding-top: 5px;
+  font-weight: bold;
 }
 
-.right{
-    display: flex;
-    flex-wrap: wrap;
+.right {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .right li {
@@ -345,25 +361,26 @@ export default {
   grid-template-rows: repeat(6, auto);
 }
 
-.pagination{
-    display: flex;
-    flex-direction: column;
-    /* justify-items: center; */
-    align-items: center;
-    margin-top: 16px;
-    color: var(--primaryColor) !important;
+.pagination {
+  display: flex;
+  flex-direction: column;
+  /* justify-items: center; */
+  align-items: center;
+  margin-top: 16px;
+  color: var(--primaryColor) !important;
 }
 
-.pagination >>> .el-pagination.is-background .el-pager li:not(.disabled).active{
-    /* color: var(--primaryColor); */
-    /* color: red; */
-    background: rgba(14, 85, 113, 0.95);
+.pagination
+  >>> .el-pagination.is-background
+  .el-pager
+  li:not(.disabled).active {
+  /* color: var(--primaryColor); */
+  /* color: red; */
+  background: rgba(14, 85, 113, 0.95);
 }
 
 .pagination >>> .el-pager li:hover {
-    color: var(--primaryColor) !important;
-    /* color: red !important; */
+  color: var(--primaryColor) !important;
+  /* color: red !important; */
 }
-
-
 </style>

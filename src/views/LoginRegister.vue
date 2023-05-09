@@ -92,6 +92,9 @@
 </template>
 
 <script>
+import md5 from "js-md5";
+import { register } from "@/api/user";
+
 export default {
   name: "LoginRegister",
 
@@ -123,9 +126,9 @@ export default {
     var validateAccountLogin = (rule, value, callback) => {
       // 数据测试
       if (value === "") {
-        callback(new Error("请输入正确的邮箱地址"));
-      } else if (value !== "zorient") {
-        callback(new Error("该账户不存在"));
+        callback(new Error("请输入邮箱地址"));
+      } else if (!this.isEmail(value)) {
+        callback(new Error("邮箱格式不正确"));
       } else {
         callback();
       }
@@ -144,7 +147,7 @@ export default {
       // 显示哪个表单(默认为登录)
       isLogin: true,
 
-      nextPage:"MainPage",
+      nextPage: "MainPage",
 
       // 注册表单的数据
       registerForm: {
@@ -161,20 +164,13 @@ export default {
 
       // 注册表单规则
       registerRules: {
-        email: [
-          { required: true, message: "请输入邮箱地址", trigger: "blur" },
-          {
-            type: "email",
-            message: "请输入正确的邮箱地址",
-            trigger: ["blur", "change"],
-          },
-        ],
+        email: [{ validator: validateAccountLogin, trigger: "blur" }],
         password: [
           { validator: validatePassRegister, trigger: "blur" },
           {
             min: 6,
             max: 16,
-            message: "密码长度应为6-10个字符",
+            message: "密码长度应为6-16个字符",
             trigger: "blur",
           },
         ],
@@ -202,17 +198,52 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!" + formName);
+          if (formName === "registerForm") {
+            let user = {
+              email: this.registerForm.email.trim(),
+              username: this.registerForm.email,
+              password: md5(this.registerForm.password),
+              privilege: 2,
+            };
 
-          this.$router.push(this.nextPage);
+            register(user)
+              .then((res) => {
+                if (res.code == 1) {
+                  console.log(res);
+                  this.isLogin = true;
+                  this.loginForm.account = user.email;
+
+                  this.$message.success("注册成功！");
+                } else {
+                  this.$message.error(res.msg);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else if (formName === "loginForm") {
+            let user = {
+              email: this.loginForm.account.trim(),
+              password: md5(this.loginForm.password),
+            };
+
+            this.$store.dispatch("login", user);
+          }
         } else {
-          console.log("error submit!!");
+          console.log("表单提交错误");
           return false;
         }
       });
     },
+
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+
+    isEmail(email) {
+      return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(
+        email
+      );
     },
 
     // 切换到登录

@@ -8,6 +8,9 @@ import "./assets/css/reset.css";
 import VueRouter from "vue-router";
 import router from "./router";
 
+//引入store
+import store from "./store/index";
+
 // 引入element-ui
 import ElementUI from "element-ui"
 // import 'element-ui/lib/theme-chalk/index.css';
@@ -30,6 +33,7 @@ Vue.use(ElementUI)
 new Vue({
   render: (h) => h(App),
   router,
+  store,
 
   // 全局事件总线
   beforeCreate() {

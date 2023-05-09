@@ -5,8 +5,18 @@
 </template>
 
 <script>
+import {getToken} from "@/utils/auth"
+import jwtDecode from 'jwt-decode';
+
 export default {
   name: "App",
+
+  mounted(){
+    let token=getToken();
+    let id=jwtDecode(token).id;
+
+    this.$store.dispatch("getUserInfo", id);
+  },
 };
 </script>
 

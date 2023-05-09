@@ -2,9 +2,6 @@
 
 <template>
   <div class="appHeader">
-    <!-- 占位 -->
-    <!-- <div class="content"></div> -->
-
     <!-- 功能区 -->
     <div class="center">
       <!-- 网站的名称 -->
@@ -66,28 +63,32 @@
           </transition>
         </div> -->
 
-        <el-dropdown trigger="click"  @command="handleCommand" class="imgContent">
+        <el-dropdown
+          trigger="click"
+          @command="handleCommand"
+          class="imgContent"
+        >
           <!-- <span class="el-dropdown-link">
             下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
           </span> -->
 
-          <el-image :src="profileImg" class="profile" lazy >
+          <el-image :src="profileImg" class="profile" lazy>
             <div slot="error" class="image-slot">
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
 
           <el-dropdown-menu slot="dropdown" class="dropDown">
-            <el-dropdown-item 
-            v-for="setting in settingList" 
-            :key="setting.iconClass"
-            :command="setting.pageName"
+            <el-dropdown-item
+              v-for="setting in settingList"
+              :key="setting.iconClass"
+              :command="setting.pageName"
             >
               <span :class="setting.iconClass"></span>
               <span>{{ setting.settingName }}</span>
             </el-dropdown-item>
 
-            <el-dropdown-item command="LoginRegister">
+            <el-dropdown-item command="loginOut">
               <span class="el-icon-warning-outline"></span>
               <span>登 出</span>
             </el-dropdown-item>
@@ -95,13 +96,11 @@
         </el-dropdown>
       </div>
     </div>
-
-    <!-- 占位 -->
-    <!-- <div class="content"></div> -->
   </div>
 </template>
 
 <script>
+import { removeToken } from "@/utils/auth";
 export default {
   name: "AppHeader",
 
@@ -134,22 +133,28 @@ export default {
       ],
       // setting是否展开
       isSettingSpread: false,
-      //   头像的链接
-      profileImg: require("../assets/img/bg.jpg"),
     };
   },
 
   methods: {
     handleCommand(command) {
-        // this.$message('click on item ' + command);
-        this.$router.push({name:command});
-      },
-
-
-    // 点击退出登录，并且跳转到登录页面
-    loginOut() {
+      // this.$message('click on item ' + command);
+      if(command==="loginOut"){
         // console.log("Login Out");
+      removeToken();
+      this.$store.commit("RESET_STATE");
+      this.$message.success("退出登录成功！");
       this.$router.push({ name: "LoginRegister" });
+      }else{
+        this.$router.push({ name: command });
+      }
+    },
+  },
+
+  computed: {
+    //   头像的链接
+    profileImg() {
+      return this.$store.state.user.userInfo.avatar;
     },
   },
 };
