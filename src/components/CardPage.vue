@@ -52,6 +52,10 @@ export default {
   font-weight: bold;
 }
 
+.line1 .name{
+    width: 120px;
+  }
+
 .line1 .score {
   color: #ff722c;
 }

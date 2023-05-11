@@ -2,15 +2,15 @@
   <div class="container">
     <!-- 书籍类型 -->
     <div class="category">
-      <div class="left">类型：</div>
+      <div class="left">作者：</div>
       <ul class="right">
         <li
-          v-for="option in category"
-          :key="option.id"
-          @click="changeCategory(option.id)"
+          v-for="(option, index) in author"
+          :key="index"
+          @click="changeAuthor(option)"
         >
-          <span :class="checked.category === option.id ? 'active1' : ''">
-            {{ option.name }}
+          <span :class="checked.author === option ? 'active1' : ''">
+            {{ option }}
           </span>
         </li>
       </ul>
@@ -21,11 +21,11 @@
       <div class="left">发售：</div>
       <ul class="right">
         <li
-          v-for="option in year"
-          :key="option.id"
-          @click="changeYear(option.id)"
+          v-for="(option, index) in year"
+          :key="index"
+          @click="changeYear(option.value)"
         >
-          <span :class="checked.year === option.id ? 'active2' : ''">
+          <span :class="checked.year === option.value ? 'active2' : ''">
             {{ option.name }}
           </span>
         </li>
@@ -37,12 +37,28 @@
       <div class="left">标签：</div>
       <ul class="right">
         <li
-          v-for="option in tag"
-          :key="option.id"
-          @click="changeTag(option.id)"
+          v-for="(option, index) in tag"
+          :key="index"
+          @click="changeTag(option)"
         >
-          <span :class="checked.tag === option.id ? 'active3' : ''">
-            {{ option.name }}
+          <span :class="checked.tag === option ? 'active3' : ''">
+            {{ option }}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 出版社 -->
+    <div class="publisher">
+      <div class="left">出版：</div>
+      <ul class="right">
+        <li
+          v-for="(option, index) in publisher"
+          :key="index"
+          @click="changePublisher(option)"
+        >
+          <span :class="checked.publisher === option ? 'active4' : ''">
+            {{ option }}
           </span>
         </li>
       </ul>
@@ -51,23 +67,24 @@
     <!-- 排序方式 -->
     <div class="sort">
       <template>
-        <el-radio v-model="checked.sort" :label="1">最近更新</el-radio>
-        <el-radio v-model="checked.sort" :label="2">添加时间</el-radio>
-        <el-radio v-model="checked.sort" :label="3">评分最高</el-radio>
+        <el-radio v-model="checked.sort" :label="1">豆瓣评分</el-radio>
+        <el-radio v-model="checked.sort" :label="2">出版时间</el-radio>
+        <el-radio v-model="checked.sort" :label="3">价格正序</el-radio>
       </template>
     </div>
 
     <!-- 书籍列表 -->
     <div class="gameList">
-      <CardPage v-for="book in 30" :key="book" :item="books" />
+      <BookCard v-for="(book,index) in books" :key="index" :item="book"/>
     </div>
 
     <!-- 底部页码选择器 -->
     <div class="pagination">
       <el-pagination
         background
-        layout="prev, pager, next"
+        layout="prev, pager, next,jumper"
         :total="pagination.total"
+        :page-size="35"
         @current-change="currentPageChanged"
       >
       </el-pagination>
@@ -76,111 +93,137 @@
 </template>
 
 <script>
-import CardPage from "@/components/CardPage.vue";
+import BookCard from "@/components/BookCard.vue";
+import { selectByCondition } from '@/api/book';
 
 export default {
   name: "MyBooks",
-  components: { CardPage },
+  components: { BookCard },
+
+  mounted(){
+    this.getBooks();
+  },
 
   data() {
     return {
-      category: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "小说" },
-        { id: 2, name: "文学" },
-        { id: 3, name: "人文社科" },
-        { id: 4, name: "经济管理" },
-        { id: 5, name: "科技科普" },
-        { id: 6, name: "计算机" },
-        { id: 7, name: "成功励志" },
-        { id: 8, name: "生活" },
-        { id: 9, name: "少儿" },
-        { id: 10, name: "艺术设计" },
-        { id: 11, name: "漫画" },
-        { id: 12, name: "教育" },
-        { id: 13, name: "杂志" },
+      author: [
+        "全部",
+        "刘慈欣",
+        "吴军",
+        "加西亚·马尔克斯",
+        "马伯庸",
+        "金庸",
+        "村上春树",
+        "吴晓波",
+        "东野圭吾",
+        "南派三叔",
+        "张爱玲",
+        "余华",
+        "石黑一雄",
+        "三毛",
+        "路遥",
       ],
 
       year: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "2023" },
-        { id: 2, name: "2022" },
-        { id: 3, name: "2021" },
-        { id: 4, name: "2020" },
-        { id: 5, name: "2019" },
-        { id: 6, name: "2018" },
-        { id: 7, name: "2017" },
-        { id: 8, name: "2016" },
-        { id: 9, name: "2015" },
-        { id: 10, name: "2014" },
-        { id: 11, name: "2013" },
-        { id: 12, name: "2012" },
-        { id: 13, name: "2011" },
-        { id: 14, name: "2010" },
-        { id: 15, name: "10年代" },
-        { id: 16, name: "00年代" },
-        { id: 17, name: "90年代" },
-        { id: 20, name: "更早" },
+        { name: "全部", value: "全部" },
+        { name: "2023", value: "2023" },
+        { name: "2022", value: "2022" },
+        { name: "2021", value: "2021" },
+        { name: "2020", value: "2020" },
+        { name: "2019", value: "2019" },
+        { name: "2018", value: "2018" },
+        { name: "2017", value: "2017" },
+        { name: "2016", value: "2016" },
+        { name: "2015", value: "2015" },
+        { name: "2014", value: "2014" },
+        { name: "2013", value: "2013" },
+        { name: "2012", value: "2012" },
+        { name: "2011", value: "2011" },
+        { name: "2010", value: "2010" },
+        { name: "00年代", value: "200" },
+        { name: "90年代", value: "199" },
+        { name: "80年代", value: "198" },
+        { name: "70年代", value: "197" },
       ],
 
       tag: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "名著" },
-        { id: 2, name: "推理悬疑" },
-        { id: 3, name: "科幻" },
-        { id: 4, name: "言情" },
-        { id: 5, name: "都市" },
-        { id: 6, name: "幻想" },
-        { id: 7, name: "武侠" },
-        { id: 8, name: "科幻" },
-        { id: 9, name: "历史" },
-        { id: 10, name: "文学经典" },
-        { id: 11, name: "散文" },
-        { id: 12, name: "传记" },
-        { id: 13, name: "诗歌" },
-        { id: 14, name: "寓言童话" },
-        { id: 15, name: "心理学" },
-        { id: 16, name: "社会学" },
-        { id: 17, name: "人类学" },
-        { id: 18, name: "政治" },
-        { id: 19, name: "法律" },
-        { id: 20, name: "宗教" },
-        { id: 21, name: "市场营销" },
-        { id: 22, name: "金融" },
-        { id: 23, name: "科普" },
-        { id: 24, name: "物理" },
-        { id: 25, name: "化学" },
-        { id: 26, name: "天文" },
-        { id: 27, name: "生物" },
-        { id: 28, name: "自然" },
-        { id: 29, name: "网络安全" },
-        { id: 30, name: "人工智能" },
+        "全部",
+        "名著",
+        "悬疑",
+        "科幻",
+        "言情",
+        "都市",
+        "幻想",
+        "武侠",
+        "历史",
+        "文学",
+        "散文",
+        "传记",
+        "诗歌",
+        "寓言",
+        "心理学",
+        "社会学",
+        "人类学",
+        "政治",
+        "法律",
+        "宗教",
+        "市场营销",
+        "金融",
+        "科普",
+        "物理",
+        "化学",
+        "天文",
+        "生物",
+        "自然",
+        "网络安全",
+        "人工智能",
       ],
 
+      publisher: [
+        "全部",
+        "中信",
+        "电子工业",
+        "人民邮电",
+        "上海译文",
+        "南海",
+        "机械工业",
+        "北京联合",
+        "湖南文艺",
+        "人民文学",
+        "译林",
+        "新星",
+        "江苏凤凰文艺",
+        "长江文艺",
+        "上海人民",
+        "上海文艺",
+        "清华大学",
+        "浙江文艺",
+        "社会科学文献",
+        "重庆",
+        "中国人民大学",
+        "中国友谊",
+        "江苏文艺",
+        "北京大学",
+        "中国华侨",
+        "浙江大学",
+        "百花洲文艺",
+      ],
       //   被选中的标签
       checked: {
-        category: 0,
-        platform: 0,
-        year: 0,
-        tag: 0,
+        author: "全部",
+        year: "全部",
+        tag: "全部",
+        publisher: "全部",
         sort: 1,
       },
 
       // 书籍列表数据
-      books: {
-        id: 3,
-        cover: "http://img1.doubanio.com/view/subject/s/public/s29053580.jpg",
-        name: "活着",
-        score: "9.7",
-        intro:
-          "日本动画/经典/冒险/奇幻/非主流经典/Q版/剧情丰富/角色扮演/好评原声音乐/单人/",
-          route:"BookDetail"
-      },
+      books: {},
 
       //   底部页码选择器数据
       pagination: {
         // 总数据量
-        total: 300,
+        total: 1,
         // 当前页码
         currentPage: 1,
       },
@@ -188,18 +231,85 @@ export default {
   },
 
   methods: {
-    changeCategory(id) {
-      this.checked.category = id;
+    // 切换作者
+    changeAuthor(option) {
+      this.checked.author = option;
     },
-    changeYear(id) {
-      this.checked.year = id;
+    // 切换年份
+    changeYear(value) {
+      this.checked.year = value;
     },
-    changeTag(id) {
-      this.checked.tag = id;
+    // 切换标签
+    changeTag(option) {
+      this.checked.tag = option;
     },
+    // 切换出版社
+    changePublisher(option) {
+      this.checked.publisher = option;
+    },
+    // 切换页码
     currentPageChanged(currentPage) {
       this.pagination.currentPage = currentPage;
-      console.log(this.pagination.currentPage);
+    },
+
+    // 获取书籍
+    getBooks() {
+      let params = {
+        author: "",
+        releaseYear: "",
+        tags: "",
+        publisher: "",
+        sortId: 1,
+        page: 1,
+        pageSize: 35,
+      };
+
+      if (this.checked.author !== "全部") {
+        params.author = this.checked.author;
+      }
+      if(this.checked.year!=="全部"){
+        params.releaseYear=this.checked.year;
+      }
+      if (this.checked.tag !== "全部") {
+        params.tags = this.checked.tag;
+      }
+      if (this.checked.publisher !== "全部") {
+        params.publisher = this.checked.publisher;
+      }
+      params.sortId=this.checked.sort;
+      params.page=this.pagination.currentPage;
+
+      // console.log(params);
+
+      selectByCondition(params)
+        .then((res) => {
+          // console.log(res);
+          if(res.code===1){
+            // 书籍数据请求成功
+            this.books=res.data.rows;
+            this.pagination.total=res.data.total;
+          }else{
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+
+  watch: {
+    checked: {
+      deep: true,
+      handler() {
+        this.getBooks();
+      },
+    },
+    pagination: {
+      deep: true,
+      handler() {
+        this.getBooks();
+      },
     },
   },
 };
@@ -214,7 +324,7 @@ export default {
 }
 
 .category,
-.platform,
+.publisher,
 .year,
 .tag {
   display: flex;

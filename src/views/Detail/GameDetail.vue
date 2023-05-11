@@ -10,10 +10,10 @@
 
         <div class="info">
           <h1>
-            {{ gameInfo.name_ch }}
+            {{ gameInfo.gameName }}
           </h1>
 
-          <h1>{{ gameInfo.name_en }} ({{ gameInfo.year }})</h1>
+          <h1>{{ gameInfo.gameNameEn }} ({{ gameInfo.timePlatform }})</h1>
           <p>
             <span>制作发行：</span
             ><span class="inner">{{ gameInfo.publisher }}</span>
@@ -21,17 +21,17 @@
 
           <p>
             <span>游戏类型：</span
-            ><span class="inner">{{ gameInfo.type }}</span>
+            ><span class="inner">{{ gameInfo.genres }}</span>
           </p>
 
           <p>
             <span>平台支持：</span
-            ><span class="inner">{{ gameInfo.platform }}</span>
+            ><span class="inner">{{ gameInfo.platforms }}</span>
           </p>
 
           <p>
             <span>发行时间：</span
-            ><span class="inner">{{ gameInfo.releaseDate }}</span>
+            ><span class="inner">{{ gameInfo.timePlatform }}</span>
           </p>
 
           <p>
@@ -39,9 +39,12 @@
             ><span class="inner">{{ gameInfo.tags }}</span>
           </p>
 
-          <p><span>游戏别名：</span>{{ gameInfo.name_en }}</p>
+          <p><span>游戏别名：</span>{{ gameInfo.gameNameEn }}</p>
 
-          <p><span>游戏地址：</span><a :href="gameInfo.gameUrl">点击此处</a></p>
+          <p>
+            <span>游戏地址：</span
+            ><a :href="gameInfo.gameUrl" target="_blank">点击此处</a>
+          </p>
         </div>
       </div>
 
@@ -49,8 +52,18 @@
       <div class="video">
         <h1 class="title">游戏视频</h1>
         <div class="videoRate">
-          <video width="530px" height="298px" controls autoplay loop>
-            <source :src="gameInfo.videoUrl" type="video/mp4" />
+          <video
+            width="530px"
+            height="298px"
+            :src="gameInfo.video"
+            muted
+            controls
+            autoplay
+            loop
+          >
+            <source src="" type="video/mp4" />
+            <source src="" type="video/webm" />
+            <source src="" type="video/ogg" />
             暂时无法播放
           </video>
 
@@ -60,14 +73,14 @@
 
             <div class="rateInfo">
               <div class="rate">
-                <h1>{{ rateInfo.rate * 2 }}</h1>
+                <h1>{{ starAvg }}</h1>
                 <div class="stars">
                   <el-rate
                     v-model="rateInfo.rate"
                     disabled
                     text-color="#ff9900"
                   ></el-rate>
-                  <h2>{{ rateInfo.numberOfRate }}人已评价</h2>
+                  <h2>{{ rateInfo.rateNum }}人已评价</h2>
                 </div>
               </div>
 
@@ -77,7 +90,7 @@
                   ><el-progress
                     :text-inside="true"
                     :stroke-width="18"
-                    :percentage="rateInfo.stars.star5"
+                    :percentage="star5"
                   ></el-progress>
                 </div>
                 <div>
@@ -85,7 +98,7 @@
                   ><el-progress
                     :text-inside="true"
                     :stroke-width="18"
-                    :percentage="rateInfo.stars.star4"
+                    :percentage="star4"
                   ></el-progress>
                 </div>
                 <div>
@@ -93,7 +106,7 @@
                   ><el-progress
                     :text-inside="true"
                     :stroke-width="18"
-                    :percentage="rateInfo.stars.star3"
+                    :percentage="star3"
                   ></el-progress>
                 </div>
                 <div>
@@ -101,7 +114,7 @@
                   ><el-progress
                     :text-inside="true"
                     :stroke-width="18"
-                    :percentage="rateInfo.stars.star2"
+                    :percentage="star2"
                   ></el-progress>
                 </div>
                 <div>
@@ -109,7 +122,7 @@
                   ><el-progress
                     :text-inside="true"
                     :stroke-width="18"
-                    :percentage="rateInfo.stars.star1"
+                    :percentage="star1"
                   ></el-progress>
                 </div>
               </div>
@@ -136,25 +149,33 @@
       <!-- 游戏简介 -->
       <div class="intro">
         <h1 class="title">游戏简介</h1>
-        <p>{{ gameInfo.intro }}</p>
+        <p>{{ gameInfo.introduce }}</p>
+      </div>
+
+      <!-- 游戏测评 -->
+      <div class="intro" v-show="gameInfo.evalute">
+        <h1 class="title">游戏测评</h1>
+        <p>{{ gameInfo.evalute }}</p>
       </div>
 
       <!-- 相关电影列表 -->
       <div class="related">
         <h1 class="title">相关游戏</h1>
         <div class="relatedGames">
-          <CardPage
-            v-for="game in relatedGames"
-            :key="game.id"
+          <GameCard
+            v-for="(game, index) in relatedGames"
+            :key="index"
             :item="game"
-          ></CardPage>
+          ></GameCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage></CommentPage>
+        <CommentPage
+          :params="{ itemId: $route.params.id, type: 2 }"
+        ></CommentPage>
       </div>
     </div>
 
@@ -166,7 +187,9 @@
 
         <div class="recommendGame" v-for="game in 10" :key="game">
           <div class="left">
-            <img src="https://imgs.gamersky.com/ku/2017/ku_thewalkingdeadseason2.jpg" />
+            <img
+              src="https://imgs.gamersky.com/ku/2017/ku_thewalkingdeadseason2.jpg"
+            />
           </div>
 
           <div class="right">
@@ -185,92 +208,254 @@
   
   <script>
 import CommentPage from "@/components/Detail/CommentPage.vue";
-import CardPage from "@/components/CardPage.vue";
+import GameCard from "@/components/GameCard.vue";
+import { selectById, getSimilarGames } from "@/api/game";
+import { getUserId } from "@/utils/auth";
+import { getRates } from "@/api/comment";
+import {
+  selectCollectionByCondition,
+  insertCollection,
+  deleteCollection,
+} from "@/api/collection";
 
 export default {
   name: "GameDetail",
-  components: { CardPage, CommentPage },
+  components: { GameCard, CommentPage },
 
   data() {
     return {
       isFavorited: false,
-      gameInfo: {
-        cover:
-          "https://imgs.gamersky.com/upimg/new_preview/2021/06/11/origin_b_202106110758463268.jpg",
-        videoUrl:
-          "http://cdn.akamai.steamstatic.com/steam/apps/256867721/movie480_vp9.webm?t=1645830839",
-        name_ch: "艾尔登法环",
-        name_en: "Elden Ring",
-        year: "2022",
-        publisher: "From Software/Bandai Namco",
-        type: "动作游戏",
-        platform: "PC/PS5/PS4/XSX/XboxOne",
-        releaseDate: "2022-02-25(PC)",
-        tags: "类魂系列/开放世界/角色扮演/奇幻/困难/动作/动作角色扮演/单人/黑暗奇幻/氛围",
-        alias: "Elden Ring",
-        imdb: "tt4855822565",
-        gameUrl: "https://ku.gamersky.com/2020/elden-ring/",
-        intro:
-          "《艾尔登法环》是一款以正统黑暗奇幻世界为舞台的动作RPG游戏。走进辽阔的场景与地下迷宫探索未知，挑战困难重重的险境，享受克服困境时的成就感吧。不仅如此，登场角色之间的利害关系谱成的群像剧，更是不容错过。",
-      },
-      relatedGames: [
-        {
-          id: 1,
-          cover: "https://imgs.gamersky.com/ku/2013/ku_crusaderkings2.jpg",
-          name: "十字军之王2",
-          score: "策略游戏",
-          intro: "中世纪/历史/多人/政治/重玩价值/单人/政治性/即时战略/好评原声音轨/策略",
-        },
-        {
-          id: 2,
-          cover:
-            "https://imgs.gamersky.com/ku/2017/ku_eurotrucksimulator2.jpg",
-          name: "欧洲卡车模拟2",
-          score: "模拟游戏",
-          intro: "历史/多人/政治/重玩价值/单人/政治性/即时战略/好评原声音轨/策略",
-        },
-        {
-          id: 3,
-          cover: "https://imgs.gamersky.com/ku/2013/ku_fasterthanlight.jpg",
-          name: "超越光速",
-          score: "策略游戏",
-          intro: "多人/政治/重玩价值/单人/政治性/即时战略/好评原声音轨/策略",
-        },
-        {
-          id: 4,
-          cover:
-            "https://imgs.gamersky.com/ku/2017/ku_ff7.jpg",
-          name: "最终幻想7",
-          score: "角色扮演",
-          intro: "重玩价值/单人/政治性/即时战略/好评原声音轨/策略",
-        },
-        {
-          id: 5,
-          cover: "https://imgs.gamersky.com/ku/2013/ku_halflifecryoffear.jpg",
-          name: "半条命：恐惧之泣",
-          score: "第一人称射击",
-          intro: "政治性/即时战略/好评原声音轨/策略",
-        },
-      ],
-      rateInfo: {
-        // 此处评分是星级乘2
-        rate: 4.3,
-        numberOfRate: 213,
-        // 评分具体分布
-        stars: {
-          star1: 10,
-          star2: 20,
-          star3: 30,
-          star4: 30,
-          star5: 10,
-        },
-      },
+      collectionLoading: false,
+      gameInfo: {},
+      relatedGames: [],
+      rateInfo: {},
     };
   },
+
+  computed: {
+    star5() {
+      if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star4() {
+      if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star3() {
+      if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star2() {
+      if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star1() {
+      if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    starAvg() {
+      if (this.rateInfo.rateAvg) {
+        return parseFloat(this.rateInfo.rateAvg.toFixed(1));
+      } else {
+        return 0;
+      }
+    },
+  },
+
   methods: {
     handleFavorited() {
-      this.isFavorited = !this.isFavorited;
+      this.collectionLoading = true;
+      // 已经收藏过了
+      if (this.isFavorited) {
+        // 只能取消收藏
+        this.deleteCollection();
+        this.isFavorited = false;
+      } else {
+        // 只能添加收藏
+        this.insertCollection();
+        this.isFavorited = true;
+      }
+      this.collectionLoading = false;
     },
+
+    // 根据id查询游戏信息
+    selectById(id) {
+      selectById(id)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.gameInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 条件查询游戏收藏，是否已经收藏
+    selectCollection(params) {
+      selectCollectionByCondition(params)
+        .then((res) => {
+          // console.log(res.data.total);
+          if (res.code === 1) {
+            if (res.data.total >= 1) {
+              this.isFavorited = true;
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 添加收藏
+    insertCollection() {
+      let data = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 2,
+      };
+
+      insertCollection(data)
+        .then((res) => {
+          if (res.code === 1) {
+            this.$message.success("收藏成功！");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 取消收藏
+    deleteCollection() {
+      // 判断当前电影是否已经被收藏
+      let params = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 2,
+        page: 1,
+        pageSize: 35,
+      };
+
+      selectCollectionByCondition(params)
+        .then((res) => {
+          if (res.code === 1) {
+            deleteCollection(res.data.rows[0].id)
+              .then((res) => {
+                if (res.code === 1) {
+                  this.$message.success("取消收藏成功！");
+                } else {
+                  this.$message.error(res.msg);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            this.$message.err(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 获取游戏的详细评分信息
+    getRates(params) {
+      getRates(params)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.rateInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    getSimilarGames(id) {
+      getSimilarGames(id)
+        .then((res) => {
+          if (res.code === 1) {
+            this.relatedGames = res.data.rows;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    page(id) {
+      let gameId = id;
+      let userId = getUserId();
+
+      // 判断当前游戏是否已经被收藏
+      let params = {
+        userId: userId,
+        collectionId: gameId,
+        type: 2,
+        page: 1,
+        pageSize: 35,
+      };
+
+      let params2 = {
+        itemId: id,
+        type: 2,
+      };
+
+      // 查询判断当前游戏是否已经被收藏
+      this.selectCollection(params);
+
+      // 获取当前游戏的评分详情
+      this.getRates(params2);
+
+      // 根据id查询游戏详情信息
+      this.selectById(gameId);
+
+      // 根据id推荐相关游戏
+      this.getSimilarGames(gameId);
+    },
+  },
+
+  mounted() {
+    this.page(this.$route.params.id);
   },
 };
 </script>
@@ -299,8 +484,8 @@ export default {
   margin-top: 10px;
 }
 
-.left .video .videoRate{
-    display: flex;
+.left .video .videoRate {
+  display: flex;
 }
 
 .left .video video {

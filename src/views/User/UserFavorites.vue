@@ -22,21 +22,35 @@
 
     <!-- 收藏展示 -->
     <div class="collectionList">
-      <div class="collection" v-for="result in results" :key="result.id">
-        <CardPage :item="result"></CardPage>
-        <button>取消收藏</button>
+      <div class="collection" v-show="activedNav===1||activedNav===0" v-for="collection in filmCollections.rows" :key="collection.id">
+        <FilmCard :item="collection.film"></FilmCard>
+        <button @click="deleteCollection(collection.id)">取消收藏</button>
+      </div>
+
+      <div class="collection" v-show="activedNav===2||activedNav===0" v-for="collection in gameCollections.rows" :key="collection.id">
+        <GameCard :item="collection.game"></GameCard>
+        <button @click="deleteCollection(collection.id)">取消收藏</button>
+      </div>
+
+      <div class="collection" v-show="activedNav===3||activedNav===0" v-for="collection in bookCollections.rows" :key="collection.id">
+        <BookCard :item="collection.book"></BookCard>
+        <button @click="deleteCollection(collection.id)">取消收藏</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import CardPage from "@/components/CardPage.vue";
+import FilmCard from "@/components/FilmCard.vue";
+import GameCard from "@/components/GameCard.vue";
+import BookCard from "@/components/BookCard.vue";
+import {selectCollectionByCondition,deleteCollection} from "@/api/collection"
+import { getUserId } from '@/utils/auth';
 
 export default {
   name: "UserFavorites",
 
-  components: { CardPage },
+  components: { FilmCard,GameCard,BookCard },
 
   data() {
     return {
@@ -229,17 +243,94 @@ export default {
         },
       ],
 
+      // 各类型收藏详细信息
+      filmCollections:[],
+      gameCollections:[],
+      bookCollections:[],
+
+      // 当前活动按钮
       activedNav:0,
     };
   },
 
-  mounted() {},
+  mounted() {
+    this.selectCollection();
+  },
 
   methods: {
+    // 切换活动按钮
     changeNav(id){
       this.activedNav=id;
-      console.log(this.activedNav);
-    }
+      // console.log(this.activedNav);
+    },
+
+    // 查询当前用户的所有收藏
+    selectCollection(){
+      let films={
+        userId:getUserId(),
+        type:1
+      };
+      let games={
+        userId:getUserId(),
+        type:2
+      }
+      let books={
+        userId:getUserId(),
+        type:3
+      }
+
+      // 查询电影收藏
+      selectCollectionByCondition(films).then(res=>{
+        if(res.code===1){
+          // console.log(res.data);
+          this.filmCollections=res.data;
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+
+      // 查询游戏收藏
+      selectCollectionByCondition(games).then(res=>{
+        if(res.code===1){
+          // console.log(res);
+          this.gameCollections=res.data;
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+
+      // 查询书籍收藏
+      selectCollectionByCondition(books).then(res=>{
+        if(res.code===1){
+          // console.log(res);
+          this.bookCollections=res.data;
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+    },
+
+    // 取消收藏
+    deleteCollection(id){
+      // console.log(id);
+      deleteCollection(id).then(res=>{
+        if(res.code===1){
+          this.$message.success("取消收藏成功！");
+          // 更新收藏信息
+          this.selectCollection();
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+    },
   },
 };
 </script>
@@ -290,7 +381,7 @@ export default {
 .collectionList{
     /* display: flex; */
   display: grid;
-  grid-template-columns: repeat(7, auto);
+  grid-template-columns: repeat(7, 160px);
   grid-gap: 10px;
   /* border: 1px solid red; */
 }
@@ -300,7 +391,7 @@ export default {
 }
 
 .collection button{
-  width: 100%;
+  width: 160px;
   padding: 10px;
   background: var(--primaryColor);
   border: none;

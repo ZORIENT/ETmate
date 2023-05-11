@@ -5,7 +5,7 @@
     </div>
 
     <div class="table">
-      <el-table border height="580" :data="commentData">
+      <el-table border height="560" :data="commentData">
         <el-table-column
           prop="type"
           label="类型"
@@ -19,34 +19,70 @@
         >
         </el-table-column>
 
-        <el-table-column prop="name" label="来源" width="200">
+        <el-table-column prop="film" label="来源" width="200">
           <template slot-scope="scope">
-            <img :src="scope.row.img" style="width:50px;">
-            <span>《{{ scope.row.name }}》</span>
+            <div v-show="scope.row.type==='电影'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+            <span>《{{ scope.row.film.filmName }}》</span>
+            </div>
+
+            <div v-show="scope.row.type==='游戏'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+            <span>《{{ scope.row.film.gameName }}》</span>
+            </div>
+
+            <div v-show="scope.row.type==='书籍'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+            <span>《{{ scope.row.film.bookName }}》</span>
+            </div>
           </template>
         </el-table-column>
 
         <el-table-column prop="comment" label="内容"></el-table-column>
 
-        <el-table-column prop="releaseTime" label="发布时间" width="160"></el-table-column>
+        <el-table-column prop="score" width="100" label="评分"></el-table-column>
+
+        <el-table-column
+          prop="releaseTime"
+          label="发布时间"
+          width="160"
+        >
+        <template slot-scope="scope">
+          {{scope.row.createTime?scope.row.createTime.replace("T", " "):''}}
+        </template>
+      </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text">编辑</el-button>
-            <el-button type="text" @click="deleteComment(scope.row)">删除</el-button>
+            <el-button @click="handleClick(scope.row)" type="text"
+              >编辑</el-button
+            >
+            <el-button type="text" @click="deleteComment(scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
 
       <el-dialog title="修改评论" :visible.sync="dialogFormVisible">
         <el-form :model="commentDialog">
+          <el-form-item label="评分" :label-width="formLabelWidth">
+            <el-rate v-model="commentDialog.score"></el-rate>
+          </el-form-item>
           <el-form-item label="评论" :label-width="formLabelWidth">
-            <el-input v-model="commentDialog.comment" type="textarea"  autosize auto-complete="off"></el-input>
+            <el-input
+              v-model="commentDialog.comment"
+              type="textarea"
+              autosize
+              auto-complete="off"
+            ></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false" >确 定</el-button >
+          <el-button type="primary" @click="updateComment()"
+            >确 定</el-button
+          >
         </div>
       </el-dialog>
     </div>
@@ -54,109 +90,162 @@
 </template>
 
 <script>
+import { selectCommentByCondition,updateComment,deleteById } from "@/api/comment";
+import { getUserId } from "@/utils/auth";
+
 export default {
   name: "UserComments",
 
   data() {
     return {
-      commentDialog:{
-        type: "",
-          name: "",
-          comment: "",
-          data: "",
-          img:""
+      commentDialog: {
+        id:"",
+        comment: "",
+        score:5,
       },
-      commentData: [
-        {
-          type: "电影",
-          name: "疾速追杀",
-          comment: "这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣这里是一条评论大卡卡的微辣",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/ZXXG.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "游戏",
-          name: "GTA5",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "书籍",
-          name: "假如给我三天光明",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/ZXXG.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "电影",
-          name: "复仇者联盟",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "电影",
-          name: "龙与地下城",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "书籍",
-          name: "假如给我三天光明",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/ZXXG.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "电影",
-          name: "复仇者联盟",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-        {
-          type: "电影",
-          name: "龙与地下城",
-          comment: "这里是一条评论",
-          data: "2023-10-25 10:15:20",
-          img:"https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime:"2023-05-01 12:15:24"
-        },
-      ],
-      formLabelWidth: "50px",
+
+      // 电影评论信息
+      filmComments: [],
+      // 游戏评论信息
+      gameComments: [],
+      // 书籍评论信息
+      bookComments: [],
+
+      // 评论修改是否显示
       dialogFormVisible: false,
+      formLabelWidth: "50px",
     };
   },
 
-  mounted() {},
+  mounted() {
+    this.selectComment();
+  },
 
   methods: {
+    // 打开评论编辑框
     handleClick(row) {
       // row是一个对象
       this.dialogFormVisible = !this.dialogFormVisible;
-      this.commentDialog=row;
-      console.log(row);
+      this.commentDialog.id=row.id;
+      this.commentDialog.comment=row.comment;
+      this.commentDialog.score=row.score;
     },
-    deleteComment(row){
-      this.commentData.splice(this.commentData.indexOf(row),1);
-      // console.log("删除成功",obj);
-    },
-    filterTag(value, row) {
-      // console.log("value",value);
-      // console.log("row",row);
 
+    // 删除评论
+    deleteComment(row) {
+      this.$confirm("是否删除该评论？","提示",{
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(()=>{
+        // 确定的回调
+        deleteById(row.id).then(res=>{
+          if(res.code===1){
+            this.selectComment();
+            this.$message.success("评论删除成功！");
+          }else{
+            this.$message.error(res.msg);
+          }
+        }).catch(err=>{
+          console.log(err);
+        })
+      }).catch(()=>{
+        // 取消的回调
+        this.$message.info("已取消删除");
+      })
+    },
+
+    // 提交编辑评论
+    updateComment(){
+      updateComment(this.commentDialog).then(res=>{
+        if(res.code===1){
+          // console.log(res);
+          this.selectComment();
+          this.$message.success("评论修改成功！");
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+
+      this.dialogFormVisible = false;
+    },
+
+    // 筛选电影，游戏，书籍
+    filterTag(value, row) {
       return row.type === value;
     },
+    // 查询当前用户的所有评论信息
+    selectComment() {
+      let filmParams = {
+        userId: getUserId(),
+        type: 1,
+      };
+      let gameParams = {
+        userId: getUserId(),
+        type: 2,
+      };
+      let bookParams = {
+        userId: getUserId(),
+        type: 3,
+      };
+      selectCommentByCondition(filmParams)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.filmComments = res.data.rows;
+            this.filmComments.forEach((film) => {
+              film.type = "电影";
+            });
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      selectCommentByCondition(gameParams)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.gameComments = res.data.rows;
+            this.gameComments.forEach((game) => {
+              game.type = "游戏";
+              game.film=game.game;
+            });
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      selectCommentByCondition(bookParams)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.bookComments = res.data.rows;
+            this.bookComments.forEach((book) => {
+              book.type = "书籍";
+              book.film=book.book;
+            });
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 
+  computed: {
+    commentData() {
+      return this.filmComments.concat(
+        this.gameComments.concat(this.bookComments)
+      );
+    },
   },
 };
 </script>
@@ -184,74 +273,78 @@ export default {
   margin: 10px 0px;
 }
 
-.table>>>  .el-table th.el-table__cell>.cell,
-.table >>> .el-table .cell{
+.table >>> .el-table th.el-table__cell > .cell,
+.table >>> .el-table .cell {
   text-align: center;
 }
 
-.table >>> .el-table th.el-table__cell>.cell.highlight{
+.table >>> .el-table th.el-table__cell > .cell.highlight {
   color: var(--primaryColor) !important;
 }
 
-
 /* 表格第二列 */
-.table >>> .el-table td:nth-child(2) div{
+.table >>> .el-table td:nth-child(2) div {
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
   align-items: center;
 }
 
-
 /* 表格第三列 */
-.table >>> .el-table td:nth-child(3) div{
+.table >>> .el-table td:nth-child(3) div {
   text-align: left;
   /* border: 1px solid red; */
 }
 
 /* 表格第四列 */
-.table >>> .el-table td:nth-child(5) div{
+.table >>> .el-table td:nth-child(6) div {
   text-align: center;
 }
 
-.table >>> .el-table td:nth-child(5) div button{
+.table >>> .el-table td:nth-child(6) div button {
   color: var(--primaryColor);
 }
 
-.table >>> .el-table td:nth-child(5) div button:hover{
+.table >>> .el-table td:nth-child(6) div button:hover {
   opacity: 0.9;
 }
 
-.table >>> .el-table td:nth-child(5) div button:nth-child(2){
+.table >>> .el-table td:nth-child(6) div button:nth-child(2) {
   color: #dd0000;
 }
 
-.table >>> .el-table td:nth-child(5) div button:nth-child(2):hover{
+.table >>> .el-table td:nth-child(6) div button:nth-child(2):hover {
   color: #dd0000;
   opacity: 0.9;
 }
 
 /* ***************************************************************** */
-.container >>> .el-dialog{
+.container >>> .el-dialog {
   /* border: 1px solid red; */
   border-radius: 4px;
 }
 
-.container >>> .el-dialog__header span{
+.container >>> .el-dialog__header span {
   color: var(--primaryColor);
   font-size: 16px;
   font-weight: bold;
 }
 
-.container >>> .el-dialog__headerbtn .el-dialog__close:hover{
+.container >>> .el-form-item__content{
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.container >>> .el-dialog__headerbtn .el-dialog__close:hover {
   color: var(--primaryColor);
 }
 
-.container >>> .el-textarea__inner{
+.container >>> .el-textarea__inner {
   border-color: var(--primaryColor);
 }
 
-.container >>> .el-dialog__footer div button{
+.container >>> .el-dialog__footer div button {
   width: 100px;
   padding: 10px;
   background: var(--primaryColor);
@@ -265,7 +358,7 @@ export default {
   position: relative;
 }
 
-.container >>> .el-dialog__footer div button::before{
+.container >>> .el-dialog__footer div button::before {
   content: "";
   position: absolute;
   background: linear-gradient(
@@ -283,7 +376,7 @@ export default {
   background-position: right bottom;
 }
 
-.container >>> .el-dialog__footer div button:hover::before{
+.container >>> .el-dialog__footer div button:hover::before {
   background-position: left bottom;
 }
 </style>

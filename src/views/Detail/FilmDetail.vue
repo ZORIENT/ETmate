@@ -5,15 +5,14 @@
       <!-- 电影详情 -->
       <div class="detail">
         <div class="img">
-          <img :src="filmInfo.cover"/>
+          <img :src="filmInfo.cover" />
         </div>
 
         <div class="info">
-          <h1>
-            {{ filmInfo.filmName }} ({{ filmInfo.releaseYear }})
-          </h1>
+          <h1>{{ filmInfo.filmName }} ({{ filmInfo.releaseYear }})</h1>
           <p>
-            <span>导演：</span><span class="inner">{{ filmInfo.director }}</span>
+            <span>导演：</span
+            ><span class="inner">{{ filmInfo.director }}</span>
           </p>
 
           <p>
@@ -29,7 +28,8 @@
           </p>
 
           <p>
-            <span>语言：</span><span class="inner">{{ filmInfo.languages }}</span>
+            <span>语言：</span
+            ><span class="inner">{{ filmInfo.languages }}</span>
           </p>
 
           <p><span>上映：</span>{{ filmInfo.releaseDate }}</p>
@@ -39,7 +39,8 @@
           <p><span>别名：</span>{{ filmInfo.alias }}</p>
 
           <p>
-            <span>评分：</span><span class="rate">豆瓣 {{ filmInfo.doubanScore }}</span>
+            <span>评分：</span
+            ><span class="rate">豆瓣 {{ filmInfo.doubanScore }}</span>
           </p>
 
           <p><span>IMDB：</span>{{ filmInfo.imdbId }}</p>
@@ -56,18 +57,20 @@
       <div class="related">
         <h1 class="title">相关电影</h1>
         <div class="relatedFilms">
-          <CardPage
-            v-for="film in relatedFilms"
-            :key="film.id"
+          <FilmCard
+            v-for="(film, index) in relatedFilms"
+            :key="index"
             :item="film"
-          ></CardPage>
+          ></FilmCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage></CommentPage>
+        <CommentPage
+          :params="{ itemId: this.$route.params.id, type: 1 }"
+        ></CommentPage>
       </div>
     </div>
 
@@ -79,14 +82,14 @@
 
         <div class="rateInfo">
           <div class="rate">
-            <h1>{{ rateInfo.rate * 2 }}</h1>
+            <h1>{{ starAvg }}</h1>
             <div class="stars">
               <el-rate
-                v-model="rateInfo.rate"
+                v-model="rateInfo.rateAvg"
                 disabled
                 text-color="#ff9900"
               ></el-rate>
-              <h2>{{ rateInfo.numberOfRate }}人已评价</h2>
+              <h2>{{ rateInfo.rateNum }}人已评价</h2>
             </div>
           </div>
 
@@ -96,7 +99,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star5"
+                :percentage="star5"
               ></el-progress>
             </div>
             <div>
@@ -104,7 +107,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star4"
+                :percentage="star4"
               ></el-progress>
             </div>
             <div>
@@ -112,7 +115,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star3"
+                :percentage="star3"
               ></el-progress>
             </div>
             <div>
@@ -120,7 +123,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star2"
+                :percentage="star2"
               ></el-progress>
             </div>
             <div>
@@ -128,14 +131,24 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star1"
+                :percentage="star1"
               ></el-progress>
             </div>
           </div>
 
-          <div class="favoriteBtn">
-            <el-button class="notFavorited" v-show="!isFavorited" @click="handleFavorited">添加至收藏</el-button>
-            <el-button class="favorited" v-show="isFavorited" @click="handleFavorited">从收藏移出</el-button>
+          <div class="favoriteBtn" v-loading="collectionLoading">
+            <el-button
+              class="notFavorited"
+              v-show="!isFavorited"
+              @click="handleFavorited"
+              >添加至收藏</el-button
+            >
+            <el-button
+              class="favorited"
+              v-show="isFavorited"
+              @click="handleFavorited"
+              >从收藏移出</el-button
+            >
           </div>
         </div>
       </div>
@@ -165,100 +178,265 @@
 
 <script>
 import CommentPage from "@/components/Detail/CommentPage.vue";
-import CardPage from "@/components/CardPage.vue";
-import {selectById} from "@/api/film"
+import FilmCard from "@/components/FilmCard.vue";
+import { selectById, getSimilarFilms } from "@/api/film";
+import { getUserId } from "@/utils/auth";
+import {
+  selectCollectionByCondition,
+  insertCollection,
+  deleteCollection,
+} from "@/api/collection";
+import { getRates } from "@/api/comment";
+import router from "@/router";
 
 export default {
   name: "FilmDetail",
-  components: { CardPage, CommentPage },
+  components: { FilmCard, CommentPage },
 
   data() {
     return {
-      isFavorited:false,
+      isFavorited: false,
+      collectionLoading: false,
       filmInfo: {},
-      relatedFilms: [
-        {
-          id: 1,
-          cover: "http://img1.doubanio.com/view/subject/s/public/s29555070.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 2,
-          cover:
-            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2458866562.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 3,
-          cover: "https://img3.doubanio.com/view/subject/l/public/s4473806.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 4,
-          cover:
-            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2558964271.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 5,
-          cover: "https://img3.doubanio.com/view/subject/l/public/s2987672.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-      ],
-      rateInfo: {
-        // 此处评分是星级乘2
-        rate: 4.3,
-        numberOfRate: 213,
-        // 评分具体分布
-        stars: {
-          star1: 10,
-          star2: 20,
-          star3: 30,
-          star4: 30,
-          star5: 10,
-        },
-      },
+      relatedFilms: [],
+      rateInfo: {},
+      film_id:router.history.current.params.id
     };
   },
-  methods:{
-    handleFavorited(){
-      this.isFavorited=!this.isFavorited;
+
+  computed: {
+    star5() {
+      if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
     },
-    test(){
-      console.log("test");
+    star4() {
+      if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star3() {
+      if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star2() {
+      if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star1() {
+      if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    starAvg() {
+      if (this.rateInfo.rateAvg) {
+        return parseFloat(this.rateInfo.rateAvg.toFixed(1));
+      } else {
+        return 0;
+      }
+    }
+  },
+
+  methods: {
+    handleFavorited() {
+      this.collectionLoading = true;
+      // 已经收藏过了
+      if (this.isFavorited) {
+        // 只能取消收藏
+        this.deleteCollection();
+        this.isFavorited = false;
+      } else {
+        // 只能添加收藏
+        this.insertCollection();
+        this.isFavorited = true;
+      }
+      this.collectionLoading = false;
     },
 
     // 根据id查询电影信息
-    selectById(id){
-      selectById(id).then(res=>{
-        if(res.code===1){
-          console.log(res.data);
-          this.filmInfo=res.data;
-        }else{
-          this.$message.error(res.msg);
-        }
+    selectById(id) {
+      selectById(id)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res.data);
+            this.filmInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
 
-      }).catch(err=>{
-        console.log(err);
-      })
-    }
+    // 条件查询电影收藏，是否已经收藏
+    selectCollection(params) {
+      selectCollectionByCondition(params)
+        .then((res) => {
+          // console.log(res.data.total);
+          if (res.code === 1) {
+            if (res.data.total >= 1) {
+              this.isFavorited = true;
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 添加收藏
+    insertCollection() {
+      let data = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 1,
+      };
+
+      insertCollection(data)
+        .then((res) => {
+          if (res.code === 1) {
+            this.$message.success("收藏成功！");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 取消收藏
+    deleteCollection() {
+      // 判断当前电影是否已经被收藏
+      let params = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 1,
+        page: 1,
+        pageSize: 35,
+      };
+
+      selectCollectionByCondition(params)
+        .then((res) => {
+          if (res.code === 1) {
+            deleteCollection(res.data.rows[0].id)
+              .then((res) => {
+                if (res.code === 1) {
+                  this.$message.success("取消收藏成功！");
+                } else {
+                  this.$message.error(res.msg);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            this.$message.err(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 获取电影的详细评分信息
+    getRates(params) {
+      // let params = {
+      //   itemId: this.$route.params.id,
+      //   type: 1,
+      // };
+
+      getRates(params)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.rateInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 根据id推荐相关电影
+    getSimilarFilms(id) {
+      getSimilarFilms(id)
+        .then((res) => {
+          if (res.code === 1) {
+            this.relatedFilms = res.data.rows;
+            // console.log(res.data.rows);
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    page(id) {
+      // let filmId = this.$route.params.id;
+      let filmId=id;
+      let userId = getUserId();
+
+      // 判断当前电影是否已经被收藏
+      let params = {
+        userId: userId,
+        collectionId: filmId,
+        type: 1,
+        page: 1,
+        pageSize: 35,
+      };
+
+      let params2={
+        itemId:filmId,
+        type:1
+      }
+
+      // 查询判断当前电影是否已经被收藏
+      this.selectCollection(params);
+
+      // 获取当前电影的评分详情
+      this.getRates(params2);
+
+      // 根据id查询电影详情信息
+      this.selectById(filmId);
+
+      // 根据id推荐相关电影
+      this.getSimilarFilms(filmId);
+    },
   },
-  mounted(){
-    let id=this.$route.params.id;
 
-    // 根据id查询电影详情信息
-    this.selectById(id);
-  }
+  mounted() {
+    this.page(this.$route.params.id);
+  },
 };
 </script>
 
@@ -434,7 +612,7 @@ export default {
   width: 30px;
   font-size: 13px;
   line-height: 18px;
-  color:var(--primaryColor);
+  color: var(--primaryColor);
   font-weight: bold;
 }
 
@@ -475,15 +653,14 @@ export default {
   flex-direction: column;
 }
 
-
-.recommendList .recommendFilm{
+.recommendList .recommendFilm {
   display: flex;
   /* border: 1px solid green; */
   padding: 10px 0px;
   border-bottom: 1px solid var(--lightTheme);
 }
 
-.recommendList .recommendFilm:hover{
+.recommendList .recommendFilm:hover {
   background: var(--lightTheme);
   transition: all 0.4s;
 }
@@ -492,7 +669,6 @@ export default {
   /* border: 1px solid green; */
   width: 60px;
   height: 88px;
-
 }
 
 .recommendList .left img {
@@ -500,7 +676,10 @@ export default {
   border-radius: 4px;
 }
 
-.recommendList .right h1,h2,h3,h4{
+.recommendList .right h1,
+h2,
+h3,
+h4 {
   color: #333333;
   font-size: 13px;
   line-height: 22px;
@@ -513,31 +692,29 @@ export default {
   padding-left: 10px;
 }
 
-.recommendList .right h1{
+.recommendList .right h1 {
   color: var(--primaryColor);
   font-weight: bold;
 }
 
 /* ******************************************************** */
-.favoriteBtn{
+.favoriteBtn {
   display: flex;
   flex-direction: column;
 }
 
-
-.favoriteBtn .notFavorited{
+.favoriteBtn .notFavorited {
   background: var(--primaryColor);
   color: #fff;
-
 }
 
-.favoriteBtn .favorited{
+.favoriteBtn .favorited {
   background: var(--lightTheme);
   color: var(--primaryColor);
 }
 
 .favoriteBtn .notFavorited,
-.favoriteBtn .favorited{
+.favoriteBtn .favorited {
   border-radius: 4px;
   font-size: 14px;
   width: 120px;
@@ -551,7 +728,7 @@ export default {
 }
 
 .favoriteBtn .notFavorited::before,
-.favoriteBtn .favorited::before{
+.favoriteBtn .favorited::before {
   content: "";
   position: absolute;
   background: linear-gradient(
@@ -570,7 +747,7 @@ export default {
 }
 
 .favoriteBtn .notFavorited:hover::before,
-.favoriteBtn .favorited:hover::before{
+.favoriteBtn .favorited:hover::before {
   background-position: left bottom;
 }
 </style>

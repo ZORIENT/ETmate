@@ -1,10 +1,10 @@
 <template>
-    <div class="card" @click="toFilmDetail()">
+    <div class="card" @click="toGameDetail()">
       <img :src="item.cover"/>
 
       <div class="line1">
-        <span class="name">{{ item.filmName }}</span>
-        <span class="score">{{ item.doubanScore }}</span>
+        <span class="name">{{ item.gameName }}</span>
+        <span class="score">{{ item.genres }}</span>
       </div>
 
       <div class="line2">
@@ -18,15 +18,15 @@
     name: "FilmCard",
     props: ["item"],
     methods:{
-        toFilmDetail(){
+        toGameDetail(){
             this.$router.push({
-                name:"FilmDetail",
+                name:"GameDetail",
                 params:{
                     id:this.item.id
                 }
             })
         }
-    },
+    }
   };
   </script>
   
@@ -63,7 +63,7 @@
     color:var(--primaryColor);
     font-weight: bold;
   }
-
+  
   .line1 .name{
     width: 120px;
   }

@@ -5,12 +5,12 @@
       <div class="left">类型：</div>
       <ul class="right">
         <li
-          v-for="option in category"
-          :key="option.id"
-          @click="changeCategory(option.id)"
+          v-for="(option,index) in category"
+          :key="index"
+          @click="changeCategory(option)"
         >
-          <span :class="checked.category === option.id ? 'active1' : ''">
-            {{ option.name }}
+          <span :class="checked.category === option ? 'active1' : ''">
+            {{ option }}
           </span>
         </li>
       </ul>
@@ -21,12 +21,12 @@
       <div class="left">平台：</div>
       <ul class="right">
         <li
-          v-for="option in platform"
-          :key="option.id"
-          @click="changePlatform(option.id)"
+          v-for="(option,index) in platform"
+          :key="index"
+          @click="changePlatform(option)"
         >
-          <span :class="checked.platform === option.id ? 'active2' : ''">
-            {{ option.name }}
+          <span :class="checked.platform === option ? 'active2' : ''">
+            {{ option }}
           </span>
         </li>
       </ul>
@@ -37,11 +37,11 @@
       <div class="left">发售：</div>
       <ul class="right">
         <li
-          v-for="option in year"
-          :key="option.id"
-          @click="changeYear(option.id)"
+          v-for="(option,index) in year"
+          :key="index"
+          @click="changeYear(option.value)"
         >
-          <span :class="checked.year === option.id ? 'active3' : ''">
+          <span :class="checked.year === option.value ? 'active3' : ''">
             {{ option.name }}
           </span>
         </li>
@@ -53,12 +53,12 @@
       <div class="left">标签：</div>
       <ul class="right">
         <li
-          v-for="option in tag"
-          :key="option.id"
-          @click="changeTag(option.id)"
+          v-for="(option,index) in tag"
+          :key="index"
+          @click="changeTag(option)"
         >
-          <span :class="checked.tag === option.id ? 'active4' : ''">
-            {{ option.name }}
+          <span :class="checked.tag === option ? 'active4' : ''">
+            {{ option }}
           </span>
         </li>
       </ul>
@@ -67,15 +67,15 @@
     <!-- 排序方式 -->
     <div class="sort">
       <template>
-        <el-radio v-model="checked.sort" :label="1">最近更新</el-radio>
-        <el-radio v-model="checked.sort" :label="2">添加时间</el-radio>
-        <el-radio v-model="checked.sort" :label="3">评分最高</el-radio>
+        <el-radio v-model="checked.sort" :label="1">名称正序</el-radio>
+        <el-radio v-model="checked.sort" :label="2">发行时间</el-radio>
+        <el-radio v-model="checked.sort" :label="3">发行平台</el-radio>
       </template>
     </div>
 
     <!-- 游戏列表 -->
     <div class="gameList">
-      <CardPage v-for="game in 30" :key="game" :item="games" />
+      <GameCard v-for="(game,index) in games" :key="index" :item="game" />
     </div>
 
 
@@ -83,8 +83,9 @@
     <div class="pagination">
       <el-pagination  
       background 
-      layout="prev, pager, next" 
+      layout="prev, pager, next,jumper" 
       :total="pagination.total"
+      :page-size="35"
       @current-change="currentPageChanged"
       >
       </el-pagination>
@@ -94,115 +95,60 @@
 </template>
 
 <script>
-import CardPage from "@/components/CardPage.vue"
+import GameCard from "@/components/GameCard.vue"
+import { selectByCondition } from '@/api/game';
 
 export default {
   name: "MyGames",
 
-  components:{CardPage},
+  components:{GameCard},
+
+  mounted(){
+    // 获取游戏详情
+    this.getGames();
+  },
+
   data() {
     return {
-      category: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "第一人称射击" },
-        { id: 2, name: "第三人称射击" },
-        { id: 3, name: "动作射击" },
-        { id: 4, name: "角色扮演" },
-        { id: 5, name: "动作角色扮演" },
-        { id: 6, name: "竞速" },
-        { id: 7, name: "即时战略" },
-        { id: 8, name: "策略" },
-        { id: 9, name: "冒险" },
-        { id: 10, name: "体育" },
-        { id: 11, name: "模拟" },
-        { id: 12, name: "格斗" },
-        { id: 13, name: "飞行" },
-        { id: 14, name: "益智" },
-        { id: 15, name: "音乐" },
-        { id: 16, name: "恋爱养成" },
-      ],
-      platform: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "PC" },
-        { id: 2, name: "XboxOne" },
-        { id: 3, name: "Xbox360" },
-        { id: 4, name: "PS5" },
-        { id: 5, name: "PS4" },
-        { id: 6, name: "PS3" },
-        { id: 7, name: "Switch" },
-        { id: 8, name: "PS Vita" },
-        { id: 9, name: "3DS" },
-        { id: 10, name: "IOS" },
-        { id: 11, name: "Android" },
-      ],
+      category: ["全部","第一人称射击","第三人称射击","角色扮演","动作角色扮演","竞速","即时战略","策略","冒险","体育","模拟","格斗","飞行","益智","音乐","恋爱养成"],
+      platform: ["全部","PC","XboxOne","Xbox360","PS5","PS4","PS3","Switch","PS Vita","3DS","IOS","Android"],
       year: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "2023" },
-        { id: 2, name: "2022" },
-        { id: 3, name: "2021" },
-        { id: 4, name: "2020" },
-        { id: 5, name: "2019" },
-        { id: 6, name: "2018" },
-        { id: 7, name: "2017" },
-        { id: 8, name: "2016" },
-        { id: 9, name: "2015" },
-        { id: 10, name: "2014" },
-        { id: 11, name: "2013" },
-        { id: 12, name: "2012" },
-        { id: 13, name: "2011" },
-        { id: 14, name: "2010" },
-        { id: 15, name: "10年代" },
-        { id: 16, name: "00年代" },
-        { id: 17, name: "90年代" },
-        { id: 20, name: "更早" },
+        { name: "全部" ,value:"全部"},
+        { name: "2023" ,value:"2023"},
+        { name: "2022" ,value:"2022"},
+        { name: "2021" ,value:"2021"},
+        { name: "2020" ,value:"2020"},
+        { name: "2019" ,value:"2019"},
+        { name: "2018" ,value:"2018"},
+        { name: "2017" ,value:"2017"},
+        { name: "2016" ,value:"2016"},
+        { name: "2015" ,value:"2015"},
+        { name: "2014" ,value:"2014"},
+        { name: "2013" ,value:"2013"},
+        { name: "2012" ,value:"2012"},
+        { name: "2011" ,value:"2011"},
+        { name: "2010" ,value:"2010"},
+        { name: "00年代" ,value:"200"},
+        { name: "90年代" ,value:"199"}
       ],
-      tag: [
-        { id: 0, name: "全部" },
-        { id: 1, name: "国产" },
-        { id: 2, name: "独立游戏" },
-        { id: 3, name: "回合制" },
-        { id: 4, name: "二战" },
-        { id: 5, name: "现代战争" },
-        { id: 6, name: "未来战争" },
-        { id: 7, name: "丧尸" },
-        { id: 8, name: "科幻" },
-        { id: 9, name: "奇幻" },
-        { id: 10, name: "恐怖" },
-        { id: 11, name: "末世" },
-        { id: 12, name: "剑侠" },
-        { id: 13, name: "漫画英雄" },
-        { id: 14, name: "赛博朋克" },
-        { id: 15, name: "蒸汽朋克" },
-        { id: 16, name: "忍者" },
-        { id: 17, name: "沙盒" },
-        { id: 18, name: "横版卷轴" },
-        { id: 19, name: "暗杀" },
-        { id: 20, name: "改编" },
-      ],
+      tag: ["全部","国产","独立游戏","回合制","二战","多人","未来战争","丧尸","科幻","奇幻","恐怖","末世","剑侠","漫画英雄","赛博朋克","蒸汽朋克","忍者","沙盒","横版卷轴","暗杀","改编"],
 
       //   被选中的标签
       checked: {
-        category: 0,
-        platform: 0,
-        year: 0,
-        tag: 0,
+        category: "全部",
+        platform: "全部",
+        year: "全部",
+        tag: "全部",
         sort: 1,
       },
 
       // 游戏列表数据
-       games: {
-        id: 3,
-        cover: "https://imgs.gamersky.com/ku/2014/ku_ys6.jpg",
-        name: "伊苏6",
-        score: "9.7",
-        intro: "日本动画/经典/冒险/奇幻/非主流经典/Q版/剧情丰富/角色扮演/好评原声音乐/单人/",
-        route:"GameDetail"
-      },
+       games:[],
 
     //   底部页码选择器数据
       pagination:{
         // 总数据量
-        total:100,
+        total:1,
         // 当前页码
         currentPage:1
       }
@@ -210,23 +156,83 @@ export default {
   },
 
   methods: {
-    changeCategory(id) {
-      this.checked.category = id;
+    // 切换类型
+    changeCategory(option) {
+      this.checked.category = option;
     },
-    changePlatform(id) {
-      this.checked.platform = id;
+    // 切换平台
+    changePlatform(option) {
+      this.checked.platform = option;
     },
-    changeYear(id) {
-      this.checked.year = id;
+    // 切换年份
+    changeYear(value) {
+      this.checked.year = value;
     },
-    changeTag(id) {
-      this.checked.tag = id;
+    // 切换标签
+    changeTag(option) {
+      this.checked.tag = option;
     },
+    // 切换页码
     currentPageChanged(currentPage){
         this.pagination.currentPage=currentPage;
-        console.log(this.pagination.currentPage);
+    },
+
+    getGames(){
+      let params={
+        genres: "",
+        platforms: "",
+        releaseYear: "",
+        tags: "",
+        sortId: 1,
+        page: 1,
+        pageSize:35,
+      };
+
+      if(this.checked.category!=="全部"){
+        params.genres=this.checked.category;
+      }
+      if(this.checked.platform!=="全部"){
+        params.platforms=this.checked.platform;
+      }
+      if(this.checked.year!=="全部"){
+        params.releaseYear=this.checked.year;
+      }
+      if(this.checked.tag!=="全部"){
+        params.tags=this.checked.tag;
+      }
+      params.sortId=this.checked.sort;
+      params.page=this.pagination.currentPage;
+
+      // console.log(params);
+      selectByCondition(params).then(res=>{
+        if(res.code===1){
+          // 游戏数据请求成功
+          this.games=res.data.rows;
+          this.pagination.total=res.data.total;
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      })
+
     }
   },
+
+  watch:{
+    checked:{
+      deep:true,
+      handler(){
+        this.getGames();
+      }
+    },
+    pagination:{
+      deep:true,
+      handler(){
+        this.getGames();
+      }
+    }
+  }
 };
 </script>
 

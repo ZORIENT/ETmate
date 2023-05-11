@@ -1,9 +1,9 @@
 <template>
-    <div class="card" @click="toFilmDetail()">
+    <div class="card" @click="toBookDetail()">
       <img :src="item.cover"/>
 
       <div class="line1">
-        <span class="name">{{ item.filmName }}</span>
+        <span class="name">{{ item.bookName }}</span>
         <span class="score">{{ item.doubanScore }}</span>
       </div>
 
@@ -18,15 +18,15 @@
     name: "FilmCard",
     props: ["item"],
     methods:{
-        toFilmDetail(){
+        toBookDetail(){
             this.$router.push({
-                name:"FilmDetail",
+                name:"BookDetail",
                 params:{
                     id:this.item.id
                 }
             })
         }
-    },
+    }
   };
   </script>
   

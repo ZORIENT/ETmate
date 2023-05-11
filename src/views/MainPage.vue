@@ -6,7 +6,7 @@
 
     <!-- 内容区 -->
     <div class="section">
-      <router-view></router-view>
+        <router-view :key="$route.params.id"></router-view>
     </div>
 
     <!-- 底部footer -->

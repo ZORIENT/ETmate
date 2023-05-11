@@ -10,35 +10,37 @@
 
         <div class="info">
           <h1>
-            {{ bookInfo.name_ch }}
+            {{ bookInfo.bookName }}
           </h1>
           <p>
             <span>作者：</span><span class="inner">{{ bookInfo.author }}</span>
           </p>
 
           <p>
-            <span>译者：</span><span class="inner">{{ bookInfo.translator }}</span>
+            <span>译者：</span
+            ><span class="inner">{{ bookInfo.translator }}</span>
           </p>
           <p>
             <span>标签：</span><span class="inner">{{ bookInfo.tags }}</span>
           </p>
 
           <p>
-            <span>出版商：</span><span class="inner">{{ bookInfo.publisher }}</span>
-            </p>
-
-          <p><span>页数：</span>{{ bookInfo.pages }}页</p>
-          
-          <p><span>价格：</span>{{ bookInfo.price }}</p>
-
-          <p><span>出版时间：</span>{{ bookInfo.releaseDate }}</p>
-
-          <p>
-            <span>评分：</span><span class="rate">豆瓣 {{ bookInfo.rate }}</span>
+            <span>出版商：</span
+            ><span class="inner">{{ bookInfo.publisher }}</span>
           </p>
 
-          <p><span>ISBN：</span>{{ bookInfo.ISBN }}</p>
+          <p><span>页数：</span>{{ bookInfo.pages }}页</p>
 
+          <p><span>价格：</span>{{ bookInfo.price }}元</p>
+
+          <p><span>出版时间：</span>{{ bookInfo.publicationTime }}</p>
+
+          <p>
+            <span>评分：</span
+            ><span class="rate">豆瓣 {{ bookInfo.doubanScore }}</span>
+          </p>
+
+          <p><span>ISBN：</span>{{ bookInfo.ibsn }}</p>
         </div>
       </div>
 
@@ -51,25 +53,27 @@
       <!-- 书籍简介 -->
       <div class="intro">
         <h1 class="title">书籍简介</h1>
-        <p>{{ bookInfo.intro }}</p>
+        <p>{{ bookInfo.introduction }}</p>
       </div>
 
       <!-- 相关书籍列表 -->
       <div class="related">
         <h1 class="title">相关书籍</h1>
         <div class="relatedBooks">
-          <CardPage
-            v-for="book in relatedBooks"
-            :key="book.id"
+          <BookCard
+            v-for="(book,index) in relatedBooks"
+            :key="index"
             :item="book"
-          ></CardPage>
+          ></BookCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage></CommentPage>
+        <CommentPage
+          :params="{ itemId: $route.params.id, type: 3 }"
+        ></CommentPage>
       </div>
     </div>
 
@@ -81,14 +85,14 @@
 
         <div class="rateInfo">
           <div class="rate">
-            <h1>{{ rateInfo.rate * 2 }}</h1>
+            <h1>{{ starAvg }}</h1>
             <div class="stars">
               <el-rate
-                v-model="rateInfo.rate"
+                v-model="rateInfo.rateAvg"
                 disabled
                 text-color="#ff9900"
               ></el-rate>
-              <h2>{{ rateInfo.numberOfRate }}人已评价</h2>
+              <h2>{{ rateInfo.rateNum }}人已评价</h2>
             </div>
           </div>
 
@@ -98,7 +102,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star5"
+                :percentage="star5"
               ></el-progress>
             </div>
             <div>
@@ -106,7 +110,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star4"
+                :percentage="star4"
               ></el-progress>
             </div>
             <div>
@@ -114,7 +118,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star3"
+                :percentage="star3"
               ></el-progress>
             </div>
             <div>
@@ -122,7 +126,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star2"
+                :percentage="star2"
               ></el-progress>
             </div>
             <div>
@@ -130,7 +134,7 @@
               ><el-progress
                 :text-inside="true"
                 :stroke-width="18"
-                :percentage="rateInfo.stars.star1"
+                :percentage="star1"
               ></el-progress>
             </div>
           </div>
@@ -177,92 +181,253 @@
   
   <script>
 import CommentPage from "@/components/Detail/CommentPage.vue";
-import CardPage from "@/components/CardPage.vue";
+import BookCard from "@/components/BookCard.vue";
+import { selectById,getSimilarBooks } from "@/api/book";
+import { getUserId } from "@/utils/auth";
+import {
+  selectCollectionByCondition,
+  insertCollection,
+  deleteCollection,
+} from "@/api/collection";
+import { getRates } from "@/api/comment";
 
 export default {
   name: "BookDetail",
-  components: { CardPage, CommentPage },
+  components: { BookCard, CommentPage },
 
   data() {
     return {
       isFavorited: false,
-      bookInfo: {
-        cover: "http://img1.doubanio.com/view/subject/s/public/s27264181.jpg",
-        name_ch: "解忧杂货店",
-        author: "[日] 东野圭吾",
-        translator: "李盈春",
-        publisher: "南海出版公司",
-        tags: "东野圭吾/治愈/温暖/小说/日本/日本文学/東野圭吾/推理/",
-        pages: 291,
-        price: "39.50元",
-        rate:8.5,
-        releaseDate: "2014年5月",
-        ISBN: "9787544270878",
-        intro:
-          "现代人内心流失的东西，这家杂货店能帮你找回——僻静的街道旁有一家杂货店，只要写下烦恼投进卷帘门的投信口，第二天就会在店后的牛奶箱里得到回答。因男友身患绝症，年轻女孩静子在爱情与梦想间徘徊；克郎为了音乐梦想离家漂泊，却在现实中寸步难行；少年浩介面临家庭巨变，挣扎在亲情与未来的迷茫中……他们将困惑写成信投进杂货店，随即奇妙的事情竟不断发生。生命中的一次偶然交会，将如何演绎出截然不同的人生？如今回顾写作过程，我发现自己始终在思考一个问题：站在人生的岔路口，人究竟应该怎么做？我希望读者能在掩卷时喃喃自语：我从未读过这样的小说。——东野圭吾",
-        authorIntro:"东野圭吾日本著名作家。1985年，《放学后》获第31届江户川乱步奖，开始专职写作；1999年，《秘密》获第52届日本推理作家协会奖；2005年出版的《嫌疑人X的献身》史无前例地同时获得第134届直木奖、第6届本格推理小说大奖，以及年度三大推理小说排行榜第1名；2008年，《流星之绊》获第43届新风奖；2009年出版的《新参者》获两大推理小说排行榜年度第1名；2012年，《解忧杂货店》获第7届中央公论文艺奖。2014年，《祈りの幕が下りる時》（暂译《祈祷落幕时》）获第48届吉川英治文学奖。"
-        },
-      relatedBooks: [
-        {
-          id: 1,
-          cover: "http://img1.doubanio.com/view/subject/s/public/s29555070.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 2,
-          cover:
-            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2458866562.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 3,
-          cover: "https://img3.doubanio.com/view/subject/l/public/s4473806.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 4,
-          cover:
-            "https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2558964271.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-        {
-          id: 5,
-          cover: "https://img3.doubanio.com/view/subject/l/public/s2987672.jpg",
-          name: "围城",
-          score: "9.7",
-          intro: "钱钟书/围城/中国文学/小说/经典/婚姻/现代文学/文学/",
-        },
-      ],
-      rateInfo: {
-        // 此处评分是星级乘2
-        rate: 4.3,
-        numberOfRate: 213,
-        // 评分具体分布
-        stars: {
-          star1: 10,
-          star2: 20,
-          star3: 30,
-          star4: 30,
-          star5: 10,
-        },
-      },
+      collectionLoading: false,
+      bookInfo: {},
+      relatedBooks: [],
+      rateInfo: {},
     };
   },
+
+  computed: {
+    star5() {
+      if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star4() {
+      if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star3() {
+      if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star2() {
+      if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    star1() {
+      if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
+        return parseFloat(
+          ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
+        );
+      } else {
+        return 0;
+      }
+    },
+    starAvg() {
+      if (this.rateInfo.rateAvg) {
+        return parseFloat(this.rateInfo.rateAvg.toFixed(1));
+      } else {
+        return 0;
+      }
+    },
+  },
+
   methods: {
     handleFavorited() {
-      this.isFavorited = !this.isFavorited;
+      this.collectionLoading = true;
+      // 已经收藏过了
+      if (this.isFavorited) {
+        // 只能取消收藏
+        this.deleteCollection();
+        this.isFavorited = false;
+      } else {
+        // 只能添加收藏
+        this.insertCollection();
+        this.isFavorited = true;
+      }
+      this.collectionLoading = false;
     },
-    test() {
-      console.log("test");
+
+    // 根据id查询书籍信息
+    selectById(id) {
+      selectById(id)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res.data);
+            this.bookInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
+
+    // 条件查询书籍收藏，是否已经收藏
+    selectCollection(params) {
+      selectCollectionByCondition(params)
+        .then((res) => {
+          // console.log(res.data.total);
+          if (res.code === 1) {
+            if (res.data.total >= 1) {
+              this.isFavorited = true;
+            }
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 添加收藏
+    insertCollection() {
+      let data = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 3,
+      };
+
+      insertCollection(data)
+        .then((res) => {
+          if (res.code === 1) {
+            this.$message.success("收藏成功！");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 取消收藏
+    deleteCollection() {
+      // 判断当前电影是否已经被收藏
+      let params = {
+        userId: getUserId(),
+        collectionId: this.$route.params.id,
+        type: 3,
+        page: 1,
+        pageSize: 35,
+      };
+
+      selectCollectionByCondition(params)
+        .then((res) => {
+          if (res.code === 1) {
+            deleteCollection(res.data.rows[0].id)
+              .then((res) => {
+                if (res.code === 1) {
+                  this.$message.success("取消收藏成功！");
+                } else {
+                  this.$message.error(res.msg);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            this.$message.err(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 获取书籍的详细评分信息
+    getRates(params) {
+      getRates(params)
+        .then((res) => {
+          if (res.code === 1) {
+            // console.log(res);
+            this.rateInfo = res.data;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 根据id推荐相关书籍
+    getSimilarBooks(id){
+      getSimilarBooks(id).then(res=>{
+        if(res.code===1){
+          this.relatedBooks=res.data.rows;
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      })
+    },
+
+    page(id) {
+      let bookId = id;
+      let userId = getUserId();
+
+      // 判断当前电影是否已经被收藏
+      let params = {
+        userId: userId,
+        collectionId: bookId,
+        type: 3,
+        page: 1,
+        pageSize: 35,
+      };
+
+      let params2={
+        itemId:bookId,
+        type:3
+      }
+
+      // 查询判断当前书籍是否已经被收藏
+      this.selectCollection(params);
+
+      // 获取当前电影的评分详情
+      this.getRates(params2);
+
+      // 根据id查询书籍详情信息
+      this.selectById(bookId);
+
+      // 根据id推荐相关书籍
+      this.getSimilarBooks(bookId);
+    },
+  },
+
+  mounted() {
+    this.page(this.$route.params.id);
   },
 };
 </script>

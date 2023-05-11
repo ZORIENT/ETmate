@@ -1,26 +1,26 @@
 import request from "@/utils/request"
 
-// 根据id查询电影信息
+// 根据id查询游戏信息
 export function selectById(id){
     return request({
-        url:'/film/'+id,
+        url:'/game/'+id,
         method:'get'
     })
 }
 
-// 条件分页查询电影信息
+// 条件分页查询游戏详情
 export function selectByCondition(params){
     return request({
-        url:"/film",
+        url:"/game",
         method:"get",
         params
     })
 }
 
-// 根据id推荐相关电影信息
-export function getSimilarFilms(id){
+// 根据id推荐相关游戏信息
+export function getSimilarGames(id){
     return request({
-        url:"/film/similarFilm/"+id,
+        url:"/game/similarGame/"+id,
         method:"get"
     })
 }

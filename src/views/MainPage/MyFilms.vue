@@ -172,30 +172,34 @@ export default {
   },
 
   methods: {
+    // 切换类型
     changeCategory(option) {
       this.checked.category = option;
     },
+    // 切换年份
     changeYear(value) {
       this.checked.year = value;
     },
+    // 切换地区
     changeRegion(option) {
       this.checked.region = option;
     },
+    // 切换语言
     changeLanguage(option) {
       this.checked.language = option;
     },
+    // 切换页码
     currentPageChanged(currentPage) {
       this.pagination.currentPage = currentPage;
-      // console.log(this.pagination.currentPage);
     },
 
+    // 获取电影
     getFilms() {
       let params = {
         genres: "",
         languages: "",
         regions: "",
         releaseYear: "",
-        tags: "",
         sortId: 1,
         page: 1,
         pageSize:35,
