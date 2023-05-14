@@ -159,7 +159,7 @@
       </div>
 
       <!-- 相关电影列表 -->
-      <div class="related">
+      <div class="related" v-show="relatedGames.length">
         <h1 class="title">相关游戏</h1>
         <div class="relatedGames">
           <GameCard
@@ -182,23 +182,24 @@
     <!-- 右侧游戏推荐的容器 -->
     <div class="right">
       <!-- 游戏推荐区域 -->
-      <div class="recommendList">
+      <div class="recommendList" v-loading="recommendGameLoading">
         <div class="title">热门游戏</div>
 
-        <div class="recommendGame" v-for="game in 10" :key="game">
+        <div
+          class="recommendGame"
+          v-for="(game, index) in popularGames.slice(0, 10)"
+          :key="index"
+          @click="toGameDetail(game.id)"
+        >
           <div class="left">
-            <img
-              src="https://imgs.gamersky.com/ku/2017/ku_thewalkingdeadseason2.jpg"
-            />
+            <img :src="game.cover" />
           </div>
 
           <div class="right">
-            <h1>行尸走肉：第二季</h1>
-            <h2>类型：动作游戏</h2>
-            <h3>
-              标签：生存/冒险/动作/恐怖/剧集/后末日/指向点击/自选历险体验/选择取向/剧情丰富
-            </h3>
-            <h4>厂商：Telltale Games</h4>
+            <h1>{{ game.gameName }}</h1>
+            <h2>类型：{{ game.genres }}</h2>
+            <h3>标签：{{ game.tags }}</h3>
+            <h4>厂商：{{ game.publisher }}</h4>
           </div>
         </div>
       </div>
@@ -217,6 +218,7 @@ import {
   insertCollection,
   deleteCollection,
 } from "@/api/collection";
+import { userCfRecommendGame } from "@/api/recommend";
 
 export default {
   name: "GameDetail",
@@ -226,9 +228,11 @@ export default {
     return {
       isFavorited: false,
       collectionLoading: false,
+      recommendGameLoading: true,
       gameInfo: {},
       relatedGames: [],
       rateInfo: {},
+      popularGames: [],
     };
   },
 
@@ -289,7 +293,6 @@ export default {
 
   methods: {
     handleFavorited() {
-      this.collectionLoading = true;
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -300,7 +303,15 @@ export default {
         this.insertCollection();
         this.isFavorited = true;
       }
-      this.collectionLoading = false;
+    },
+
+    toGameDetail(id){
+      this.$router.push({
+        name: "GameDetail",
+        params: {
+          id,
+        },
+      });
     },
 
     // 根据id查询游戏信息
@@ -345,10 +356,13 @@ export default {
         type: 2,
       };
 
+      this.collectionLoading = true;
+
       insertCollection(data)
         .then((res) => {
           if (res.code === 1) {
             this.$message.success("收藏成功！");
+            this.collectionLoading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -369,6 +383,8 @@ export default {
         pageSize: 35,
       };
 
+      this.collectionLoading = true;
+
       selectCollectionByCondition(params)
         .then((res) => {
           if (res.code === 1) {
@@ -376,6 +392,7 @@ export default {
               .then((res) => {
                 if (res.code === 1) {
                   this.$message.success("取消收藏成功！");
+                  this.collectionLoading = false;
                 } else {
                   this.$message.error(res.msg);
                 }
@@ -408,11 +425,29 @@ export default {
         });
     },
 
+    // 根据游戏id获取相似游戏信息
     getSimilarGames(id) {
       getSimilarGames(id)
         .then((res) => {
           if (res.code === 1) {
             this.relatedGames = res.data.rows;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 根据用户id更新化推荐相似游戏
+    getPopularGames(userId) {
+      this.recommendGameLoading = true;
+      userCfRecommendGame(userId)
+        .then((res) => {
+          if (res.code === 1) {
+            this.popularGames = res.data;
+            this.recommendGameLoading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -451,6 +486,9 @@ export default {
 
       // 根据id推荐相关游戏
       this.getSimilarGames(gameId);
+
+      // 根据用户id个性化推荐游戏
+      this.getPopularGames(userId);
     },
   },
 
@@ -469,6 +507,11 @@ export default {
   margin-top: 20px;
   /* border:1px solid red; */
   /* height: 800px; */
+}
+
+.container >>> .el-loading-mask {
+  z-index: 900;
+  /* margin-top: 100px; */
 }
 
 .left {
@@ -569,8 +612,8 @@ export default {
 
 .related .relatedGames {
   /* border: 1px solid green; */
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(5, 20%);
   padding: 5px 0px;
 }
 

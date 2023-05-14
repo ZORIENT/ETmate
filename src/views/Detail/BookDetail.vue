@@ -18,7 +18,9 @@
 
           <p>
             <span>译者：</span
-            ><span class="inner">{{ bookInfo.translator }}</span>
+            ><span class="inner">{{
+              bookInfo.translator ? bookInfo.translator : "N/A"
+            }}</span>
           </p>
           <p>
             <span>标签：</span><span class="inner">{{ bookInfo.tags }}</span>
@@ -57,11 +59,11 @@
       </div>
 
       <!-- 相关书籍列表 -->
-      <div class="related">
+      <div class="related" v-show="relatedBooks.length">
         <h1 class="title">相关书籍</h1>
         <div class="relatedBooks">
           <BookCard
-            v-for="(book,index) in relatedBooks"
+            v-for="(book, index) in relatedBooks"
             :key="index"
             :item="book"
           ></BookCard>
@@ -157,21 +159,24 @@
       </div>
 
       <!-- 书籍推荐区域 -->
-      <div class="recommendList">
+      <div class="recommendList" v-loading="recommendBookLoading">
         <div class="title">热门书籍</div>
 
-        <div class="recommendbook" v-for="book in 6" :key="book">
+        <div
+          class="recommendbook"
+          v-for="(book, index) in popularBooks.slice(0, 6)"
+          :key="index"
+          @click="toBookDetail(book.id)"
+        >
           <div class="left">
-            <img src="https://1b2a.net/img/mv/nKdd.webp" />
+            <img :src="book.cover" />
           </div>
 
           <div class="right">
-            <h1>流浪地球</h1>
-            <h2>类型：科幻/冒险/灾难</h2>
-            <h3>
-              主演：吴京/刘德华/李雪健/沙溢/宁理/王智/吴京/刘德华/李雪健/沙溢/宁理/王智
-            </h3>
-            <h4>评分：豆瓣 7.6</h4>
+            <h1>{{ book.bookName }}</h1>
+            <h2>类型：{{ book.genres }}</h2>
+            <h3>作者：{{ book.author }}</h3>
+            <h4>评分：豆瓣 {{ book.doubanScore }}</h4>
           </div>
         </div>
       </div>
@@ -182,7 +187,7 @@
   <script>
 import CommentPage from "@/components/Detail/CommentPage.vue";
 import BookCard from "@/components/BookCard.vue";
-import { selectById,getSimilarBooks } from "@/api/book";
+import { selectById, getSimilarBooks } from "@/api/book";
 import { getUserId } from "@/utils/auth";
 import {
   selectCollectionByCondition,
@@ -190,6 +195,7 @@ import {
   deleteCollection,
 } from "@/api/collection";
 import { getRates } from "@/api/comment";
+import { userCfRecommendBook } from "@/api/recommend";
 
 export default {
   name: "BookDetail",
@@ -199,9 +205,11 @@ export default {
     return {
       isFavorited: false,
       collectionLoading: false,
+      recommendBookLoading: false,
       bookInfo: {},
       relatedBooks: [],
       rateInfo: {},
+      popularBooks: [],
     };
   },
 
@@ -262,7 +270,6 @@ export default {
 
   methods: {
     handleFavorited() {
-      this.collectionLoading = true;
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -273,7 +280,15 @@ export default {
         this.insertCollection();
         this.isFavorited = true;
       }
-      this.collectionLoading = false;
+    },
+
+    toBookDetail(id) {
+      this.$router.push({
+        name: "BookDetail",
+        params: {
+          id,
+        },
+      });
     },
 
     // 根据id查询书籍信息
@@ -318,10 +333,13 @@ export default {
         type: 3,
       };
 
+      this.collectionLoading = true;
+
       insertCollection(data)
         .then((res) => {
           if (res.code === 1) {
             this.$message.success("收藏成功！");
+            this.collectionLoading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -342,6 +360,8 @@ export default {
         pageSize: 35,
       };
 
+      this.collectionLoading = true;
+
       selectCollectionByCondition(params)
         .then((res) => {
           if (res.code === 1) {
@@ -349,6 +369,7 @@ export default {
               .then((res) => {
                 if (res.code === 1) {
                   this.$message.success("取消收藏成功！");
+                  this.collectionLoading = false;
                 } else {
                   this.$message.error(res.msg);
                 }
@@ -382,16 +403,35 @@ export default {
     },
 
     // 根据id推荐相关书籍
-    getSimilarBooks(id){
-      getSimilarBooks(id).then(res=>{
-        if(res.code===1){
-          this.relatedBooks=res.data.rows;
-        }else{
-          this.$message.error(res.msg);
-        }
-      }).catch(err=>{
-        console.log(err);
-      })
+    getSimilarBooks(id) {
+      getSimilarBooks(id)
+        .then((res) => {
+          if (res.code === 1) {
+            this.relatedBooks = res.data.rows;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 根据用户id更新化推荐相似书籍
+    getPopularBooks(userId) {
+      this.recommendBookLoading = true;
+      userCfRecommendBook(userId)
+        .then((res) => {
+          if (res.code === 1) {
+            this.popularBooks = res.data;
+            this.recommendBookLoading = false;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
     page(id) {
@@ -407,10 +447,10 @@ export default {
         pageSize: 35,
       };
 
-      let params2={
-        itemId:bookId,
-        type:3
-      }
+      let params2 = {
+        itemId: bookId,
+        type: 3,
+      };
 
       // 查询判断当前书籍是否已经被收藏
       this.selectCollection(params);
@@ -423,6 +463,9 @@ export default {
 
       // 根据id推荐相关书籍
       this.getSimilarBooks(bookId);
+
+      // 根据用户id个性化推荐相关书籍
+      this.getPopularBooks(userId);
     },
   },
 
@@ -441,6 +484,10 @@ export default {
   margin-top: 20px;
   /* border:1px solid red; */
   /* height: 800px; */
+}
+
+.container >>> .el-loading-mask {
+  z-index: 900;
 }
 
 .left {
@@ -527,8 +574,8 @@ export default {
 
 .related .relatedBooks {
   /* border: 1px solid green; */
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(5, 20%);
   padding: 5px 0px;
 }
 

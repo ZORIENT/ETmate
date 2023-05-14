@@ -86,6 +86,7 @@
         :total="pagination.total"
         :page-size="35"
         @current-change="currentPageChanged"
+        :current-page.sync="pagination.currentPage"
       >
       </el-pagination>
     </div>
@@ -253,7 +254,7 @@ export default {
     },
 
     // 获取书籍
-    getBooks() {
+    getBooks(page) {
       let params = {
         author: "",
         releaseYear: "",
@@ -277,7 +278,7 @@ export default {
         params.publisher = this.checked.publisher;
       }
       params.sortId=this.checked.sort;
-      params.page=this.pagination.currentPage;
+      params.page=page;
 
       // console.log(params);
 
@@ -288,6 +289,7 @@ export default {
             // 书籍数据请求成功
             this.books=res.data.rows;
             this.pagination.total=res.data.total;
+            this.pagination.currentPage=page;
           }else{
             this.$message.error(res.msg);
           }
@@ -302,13 +304,13 @@ export default {
     checked: {
       deep: true,
       handler() {
-        this.getBooks();
+        this.getBooks(1);
       },
     },
     pagination: {
       deep: true,
       handler() {
-        this.getBooks();
+        this.getBooks(this.pagination.currentPage);
       },
     },
   },

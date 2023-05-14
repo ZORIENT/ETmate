@@ -27,7 +27,13 @@
       <!-- 搜索框 -->
       <div class="searchBox">
         <span class="el-icon-search"></span>
-        <input type="text" placeholder="电影/游戏/书籍" />
+        <input
+          type="text"
+          v-model="searchWord"
+          placeholder="电影/游戏/书籍"
+          @keyup.enter="search()"
+        />
+        <!-- <el-input type="text" v-model="searchWord" placeholder="电影/游戏/书籍" @keyup.enter.native="search()"></el-input> -->
       </div>
 
       <!-- 头像 -->
@@ -133,21 +139,40 @@ export default {
       ],
       // setting是否展开
       isSettingSpread: false,
+
+      // 输入框绑定
+      searchWord: "",
     };
   },
 
   methods: {
     handleCommand(command) {
       // this.$message('click on item ' + command);
-      if(command==="loginOut"){
+      if (command === "loginOut") {
         // console.log("Login Out");
-      removeToken();
-      this.$store.commit("RESET_STATE");
-      this.$message.success("退出登录成功！");
-      this.$router.push({ name: "LoginRegister" });
-      }else{
+        removeToken();
+        this.$store.commit("RESET_STATE");
+        this.$message.success("退出登录成功！");
+        this.$router.push({ name: "LoginRegister" });
+      } else {
         this.$router.push({ name: command });
       }
+    },
+
+    // 搜索
+    search() {
+      // 判断输入框是否存在关键词
+      if (this.searchWord.trim() !== "") {
+        // console.log(this.searchWord);
+        this.$router.push({
+          name: "SearchResults",
+          params: {
+            keyword: this.searchWord.trim(),
+          },
+        });
+      }
+
+      this.searchWord = "";
     },
   },
 

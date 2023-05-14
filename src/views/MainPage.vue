@@ -6,7 +6,9 @@
 
     <!-- 内容区 -->
     <div class="section">
+      <keep-alive :exclude="['SearchResults','FilmDetail','GameDetail','BookDetail','UserComments','UserFavorites','HomePage']">
         <router-view :key="$route.params.id"></router-view>
+      </keep-alive>
     </div>
 
     <!-- 底部footer -->

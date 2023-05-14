@@ -17,7 +17,9 @@
           v-model="comment"
         >
         </el-input>
-        <el-button @click="publishComment()">发表评论</el-button>
+        <el-button v-loading="publishCommentLoading" @click="publishComment()"
+          >发表评论</el-button
+        >
       </div>
     </div>
 
@@ -61,7 +63,7 @@
             v-model="reply"
           >
           </el-input>
-          <el-button @click="insertReply(comment.id)">回复</el-button>
+          <el-button v-loading="replyLoading" @click="insertReply(comment.id)">回复</el-button>
         </div>
 
         <div class="reply" v-for="reply in comment.children" :key="reply.id">
@@ -97,6 +99,9 @@ export default {
     return {
       // 回复表单是否展开
       commentList: [],
+      // 发布评论按钮是否加载
+      publishCommentLoading: false,
+      replyLoading:false,
       comment: "",
       reply: "",
       score: 5,
@@ -136,33 +141,42 @@ export default {
     },
     // 发布评论
     publishComment() {
-      let comment = {
-        userId: getUserId(),
-        itemId: this.params.itemId,
-        type: this.params.type,
-        parentId: 0,
-        comment: this.comment,
-        score: this.score,
-      };
+      if (this.comment.trim() == "") {
+        this.$message.info("请输入评论内容！");
+      } else {
+        let comment = {
+          userId: getUserId(),
+          itemId: this.params.itemId,
+          type: this.params.type,
+          parentId: 0,
+          comment: this.comment,
+          score: this.score,
+        };
 
-      insertComment(comment)
-        .then((res) => {
-          if (res.code === 1) {
-            this.comment = "";
-            // 更新评论区
-            this.getComment();
-            this.$message.success("评论添加成功");
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        this.publishCommentLoading = true;
+        insertComment(comment)
+          .then((res) => {
+            if (res.code === 1) {
+              this.comment = "";
+              // 更新评论区
+              this.getComment();
+              this.$message.success("评论添加成功");
+              this.publishCommentLoading = false;
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     },
     // 添加回复
     insertReply(parentId) {
-      let reply = {
+      if(this.reply.trim()==''){
+        this.$message.info("请输入回复内容！");
+      }else{
+        let reply = {
         userId: getUserId(),
         itemId: this.params.itemId,
         type: this.params.type,
@@ -171,6 +185,8 @@ export default {
         score: 5,
       };
 
+      this.replyLoading=true;
+
       insertComment(reply)
         .then((res) => {
           if (res.code === 1) {
@@ -178,6 +194,7 @@ export default {
             // 更新评论区
             this.getComment();
             this.$message.success("评论回复成功");
+            this.replyLoading=false;
           } else {
             this.$message.error(res.msg);
           }
@@ -185,6 +202,7 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+      }
     },
   },
 };
@@ -237,7 +255,7 @@ export default {
   border-radius: 4px;
 }
 
-.noComment{
+.noComment {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,7 +263,7 @@ export default {
   border-top: 1px solid var(--lightTheme);
 }
 
-.noComment span{
+.noComment span {
   padding: 8px;
 }
 

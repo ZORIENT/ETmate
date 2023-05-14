@@ -87,6 +87,7 @@
       :total="pagination.total"
       :page-size="35"
       @current-change="currentPageChanged"
+      :current-page.sync="pagination.currentPage"
       >
       </el-pagination>
     </div>
@@ -177,7 +178,7 @@ export default {
         this.pagination.currentPage=currentPage;
     },
 
-    getGames(){
+    getGames(page){
       let params={
         genres: "",
         platforms: "",
@@ -201,7 +202,7 @@ export default {
         params.tags=this.checked.tag;
       }
       params.sortId=this.checked.sort;
-      params.page=this.pagination.currentPage;
+      params.page=page;
 
       // console.log(params);
       selectByCondition(params).then(res=>{
@@ -209,6 +210,7 @@ export default {
           // 游戏数据请求成功
           this.games=res.data.rows;
           this.pagination.total=res.data.total;
+          this.pagination.currentPage=page;
         }else{
           this.$message.error(res.msg);
         }
@@ -223,13 +225,13 @@ export default {
     checked:{
       deep:true,
       handler(){
-        this.getGames();
+        this.getGames(1);
       }
     },
     pagination:{
       deep:true,
       handler(){
-        this.getGames();
+        this.getGames(this.pagination.currentPage);
       }
     }
   }

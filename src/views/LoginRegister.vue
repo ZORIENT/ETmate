@@ -40,7 +40,7 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button @click="submitForm('registerForm')">注 册</el-button>
+            <el-button v-loading="loading" @click="submitForm('registerForm')">注 册</el-button>
             <el-button @click="resetForm('registerForm')">重 置</el-button>
           </el-form-item>
         </el-form>
@@ -69,7 +69,7 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button @click="submitForm('loginForm')">登 录</el-button>
+            <el-button v-loading="loading" @click="submitForm('loginForm')">登 录</el-button>
             <el-button @click="resetForm('loginForm')">重 置</el-button>
           </el-form-item>
         </el-form>
@@ -147,6 +147,8 @@ export default {
       // 显示哪个表单(默认为登录)
       isLogin: true,
 
+      loading:false,
+
       nextPage: "MainPage",
 
       // 注册表单的数据
@@ -196,6 +198,7 @@ export default {
 
   methods: {
     submitForm(formName) {
+      this.loading=true;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (formName === "registerForm") {
@@ -214,6 +217,7 @@ export default {
                   this.loginForm.account = user.email;
 
                   this.$message.success("注册成功！");
+                  this.loading=false;
                 } else {
                   this.$message.error(res.msg);
                 }
@@ -226,8 +230,8 @@ export default {
               email: this.loginForm.account.trim(),
               password: md5(this.loginForm.password),
             };
-
             this.$store.dispatch("login", user);
+            this.loading=false;
           }
         } else {
           console.log("表单提交错误");

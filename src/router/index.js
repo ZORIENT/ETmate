@@ -27,6 +27,7 @@ import BookManage from "../views/Admin/Book/BookManage";
 import BookTags from "../views/Admin/Book/BookTags";
 import BulletinManage from "../views/Admin/System/BulletinManage";
 import OperateLog from "../views/Admin/System/OperateLog";
+import SearchResults from "../views/MainPage/SearchResults"
 
 const router = new VueRouter({
   routes: [
@@ -136,6 +137,14 @@ const router = new VueRouter({
             title: "我的评论",
           },
         },
+        {
+          name:"SearchResults",
+          path:"SearchResults/:keyword",
+          component:SearchResults,
+          meta:{
+            title:"搜索结果",
+          }
+        }
       ],
     },
     {

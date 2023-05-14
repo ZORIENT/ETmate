@@ -12,11 +12,16 @@
           <h1>{{ filmInfo.filmName }} ({{ filmInfo.releaseYear }})</h1>
           <p>
             <span>导演：</span
-            ><span class="inner">{{ filmInfo.director }}</span>
+            ><span class="inner">{{
+              filmInfo.director ? filmInfo.director : "N/A"
+            }}</span>
           </p>
 
           <p>
-            <span>主演：</span><span class="inner">{{ filmInfo.actors }}</span>
+            <span>主演：</span
+            ><span class="inner">{{
+              filmInfo.actors ? filmInfo.actors : "N/A"
+            }}</span>
           </p>
 
           <p>
@@ -36,7 +41,9 @@
 
           <p><span>片长：</span>{{ filmInfo.mins }}分钟</p>
 
-          <p><span>别名：</span>{{ filmInfo.alias }}</p>
+          <p>
+            <span>别名：</span>{{ filmInfo.alias ? filmInfo.alias : "N/A" }}
+          </p>
 
           <p>
             <span>评分：</span
@@ -54,7 +61,7 @@
       </div>
 
       <!-- 相关电影列表 -->
-      <div class="related">
+      <div class="related" v-show="relatedFilms.length">
         <h1 class="title">相关电影</h1>
         <div class="relatedFilms">
           <FilmCard
@@ -154,21 +161,24 @@
       </div>
 
       <!-- 电影推荐区域 -->
-      <div class="recommendList">
+      <div class="recommendList" v-loading="recommendFilmLoading">
         <div class="title">热门电影</div>
 
-        <div class="recommendFilm" v-for="film in 6" :key="film">
+        <div
+          class="recommendFilm"
+          v-for="(film, index) in popularFilms.slice(0, 6)"
+          :key="index"
+          @click="toFilmDetail(film.id)"
+        >
           <div class="left">
-            <img src="https://1b2a.net/img/mv/nKdd.webp" />
+            <img :src="film.cover" />
           </div>
 
           <div class="right">
-            <h1>流浪地球</h1>
-            <h2>类型：科幻/冒险/灾难</h2>
-            <h3>
-              主演：吴京/刘德华/李雪健/沙溢/宁理/王智/吴京/刘德华/李雪健/沙溢/宁理/王智
-            </h3>
-            <h4>评分：豆瓣 7.6</h4>
+            <h1>{{ film.filmName }}</h1>
+            <h2>类型：{{ film.tags }}</h2>
+            <h3>主演：{{ film.actors }}</h3>
+            <h4>评分：豆瓣 {{ film.doubanScore }}</h4>
           </div>
         </div>
       </div>
@@ -188,6 +198,7 @@ import {
 } from "@/api/collection";
 import { getRates } from "@/api/comment";
 import router from "@/router";
+import { userCfRecommendFilm } from "@/api/recommend";
 
 export default {
   name: "FilmDetail",
@@ -197,10 +208,12 @@ export default {
     return {
       isFavorited: false,
       collectionLoading: false,
+      recommendFilmLoading:false,
       filmInfo: {},
       relatedFilms: [],
       rateInfo: {},
-      film_id:router.history.current.params.id
+      film_id: router.history.current.params.id,
+      popularFilms: [],
     };
   },
 
@@ -256,12 +269,11 @@ export default {
       } else {
         return 0;
       }
-    }
+    },
   },
 
   methods: {
     handleFavorited() {
-      this.collectionLoading = true;
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -272,7 +284,15 @@ export default {
         this.insertCollection();
         this.isFavorited = true;
       }
-      this.collectionLoading = false;
+    },
+
+    toFilmDetail(id) {
+      this.$router.push({
+        name: "FilmDetail",
+        params: {
+          id,
+        },
+      });
     },
 
     // 根据id查询电影信息
@@ -317,10 +337,13 @@ export default {
         type: 1,
       };
 
+      this.collectionLoading = true;
+
       insertCollection(data)
         .then((res) => {
           if (res.code === 1) {
             this.$message.success("收藏成功！");
+            this.collectionLoading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -340,6 +363,7 @@ export default {
         page: 1,
         pageSize: 35,
       };
+      this.collectionLoading = true;
 
       selectCollectionByCondition(params)
         .then((res) => {
@@ -348,6 +372,7 @@ export default {
               .then((res) => {
                 if (res.code === 1) {
                   this.$message.success("取消收藏成功！");
+                  this.collectionLoading = false;
                 } else {
                   this.$message.error(res.msg);
                 }
@@ -385,7 +410,7 @@ export default {
         });
     },
 
-    // 根据id推荐相关电影
+    // 根据电影id推荐相关电影
     getSimilarFilms(id) {
       getSimilarFilms(id)
         .then((res) => {
@@ -401,9 +426,26 @@ export default {
         });
     },
 
+    // 根据用户id个性化推荐相关电影
+    getPopularFilms(userId) {
+      this.recommendFilmLoading=true;
+      userCfRecommendFilm(userId)
+        .then((res) => {
+          if (res.code === 1) {
+            this.popularFilms = res.data;
+            this.recommendFilmLoading=false;
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
     page(id) {
       // let filmId = this.$route.params.id;
-      let filmId=id;
+      let filmId = id;
       let userId = getUserId();
 
       // 判断当前电影是否已经被收藏
@@ -415,10 +457,10 @@ export default {
         pageSize: 35,
       };
 
-      let params2={
-        itemId:filmId,
-        type:1
-      }
+      let params2 = {
+        itemId: filmId,
+        type: 1,
+      };
 
       // 查询判断当前电影是否已经被收藏
       this.selectCollection(params);
@@ -431,6 +473,9 @@ export default {
 
       // 根据id推荐相关电影
       this.getSimilarFilms(filmId);
+
+      // 根据用户id个性化推荐电影
+      this.getPopularFilms(userId);
     },
   },
 
@@ -449,6 +494,10 @@ export default {
   margin-top: 20px;
   /* border:1px solid red; */
   /* height: 800px; */
+}
+
+.container >>> .el-loading-mask{
+  z-index: 900;
 }
 
 .left {
@@ -535,9 +584,15 @@ export default {
 
 .related .relatedFilms {
   /* border: 1px solid green; */
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
+  padding: 5px 0px; */
+
+  display: grid;
+  grid-template-columns: repeat(5, 20%);
   padding: 5px 0px;
+  /* ;
+  grid-auto-rows: minmax(100px, auto); */
 }
 
 /* ********************************************************** */

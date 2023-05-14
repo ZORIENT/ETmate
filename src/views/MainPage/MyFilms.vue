@@ -81,6 +81,7 @@
         :total="pagination.total"
         :page-size="35"
         @current-change="currentPageChanged"
+        :current-page.sync="pagination.currentPage"
       >
       </el-pagination>
     </div>
@@ -126,7 +127,7 @@ export default {
         "灾难",
         "西部",
         "传记",
-        "音乐",
+        "家庭",
       ],
       year: [
         { name: "全部" ,value:"全部"},
@@ -194,7 +195,7 @@ export default {
     },
 
     // 获取电影
-    getFilms() {
+    getFilms(page) {
       let params = {
         genres: "",
         languages: "",
@@ -218,7 +219,7 @@ export default {
         params.releaseYear=this.checked.year;
       }
       params.sortId=this.checked.sort;
-      params.page=this.pagination.currentPage;
+      params.page=page;
 
       // console.log(params);
 
@@ -229,6 +230,7 @@ export default {
             // 电影数据请求成功
             this.films=res.data.rows;
             this.pagination.total=res.data.total;
+            this.pagination.currentPage=page;
             // console.log(this.films);
           }else{
             this.$message.error(res.msg);
@@ -244,13 +246,13 @@ export default {
     checked:{
       deep:true,
       handler(){
-        this.getFilms();
+        this.getFilms(1);
       }
     },
     pagination:{
       deep:true,
       handler(){
-        this.getFilms();
+        this.getFilms(this.pagination.currentPage);
       }
     }
   }
