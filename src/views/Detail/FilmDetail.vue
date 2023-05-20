@@ -57,7 +57,8 @@
       <!-- 电影简介 -->
       <div class="intro">
         <h1 class="title">电影简介</h1>
-        <p>{{ filmInfo.storyline }}</p>
+        <p><span v-html="computedText(filmInfo.storyline)"></span></p>
+        <!-- <p>{{ filmInfo.storyline }}</p> -->
       </div>
 
       <!-- 相关电影列表 -->

@@ -16,8 +16,6 @@
           :key="index"
           :to="{
             name: `${navBtn.path}`,
-            // name: navBtn.pageName
-            //
           }"
         >
           <span>{{ navBtn.name }}</span>
@@ -38,37 +36,6 @@
 
       <!-- 头像 -->
       <div class="userInfo">
-        <!-- <div @click="isSettingSpread = !isSettingSpread" class="imgContent">
-          <el-image :src="profileImg" class="profile" lazy>
-            <div slot="error" class="image-slot">
-              <i class="el-icon-picture-outline"></i>
-            </div>
-          </el-image>
-
-          <transition name="settings"> -->
-        <!-- 头像下拉框 -->
-        <!-- <ul v-show="isSettingSpread" class="dropDown">
-              <router-link
-                tag="li"
-                v-for="setting in settingList"
-                :key="setting.iconClass"
-                :to="{
-                  name: `${setting.pageName}`,
-                  // name:'FilmDetail'
-                }"
-              >
-                <span :class="setting.iconClass"></span>
-                <span>{{ setting.settingName }}</span>
-              </router-link>
-
-              <li @click="loginOut">
-                <span class="el-icon-warning-outline"></span>
-                <span>登 出</span>
-              </li>
-            </ul>
-          </transition>
-        </div> -->
-
         <el-dropdown
           trigger="click"
           @command="handleCommand"
@@ -89,6 +56,7 @@
               v-for="setting in settingList"
               :key="setting.iconClass"
               :command="setting.pageName"
+              v-show="setting.show"
             >
               <span :class="setting.iconClass"></span>
               <span>{{ setting.settingName }}</span>
@@ -106,7 +74,7 @@
 </template>
 
 <script>
-import { removeToken } from "@/utils/auth";
+import { removeToken,getPrivilege } from "@/utils/auth";
 export default {
   name: "AppHeader",
 
@@ -115,19 +83,39 @@ export default {
       projectName: "ETmate",
       settingList: [
         {
+          id: 1,
           iconClass: "el-icon-user",
           settingName: "我的信息",
           pageName: "UserInfo",
+          show: true,
         },
         {
+          id: 2,
           iconClass: "el-icon-collection-tag",
           settingName: "我的收藏",
           pageName: "UserFavorites",
+          show: true,
         },
         {
+          id: 3,
           iconClass: "el-icon-document",
           settingName: "我的评论",
           pageName: "UserComments",
+          show: true,
+        },
+        {
+          id: 4,
+          iconClass: "el-icon-chat-line-round",
+          settingName: "我的回复",
+          pageName: "UserReplys",
+          show: true,
+        },
+        {
+          id: 5,
+          iconClass: "el-icon-setting",
+          settingName: "管理后台",
+          pageName: "AdminPage",
+          show: false,
         },
       ],
       navBtns: [
@@ -135,7 +123,7 @@ export default {
         { name: "电影", path: "MyFilms" },
         { name: "游戏", path: "MyGames" },
         { name: "书籍", path: "MyBooks" },
-        { name: "公告", path: "BulletinList" },
+        { name: "通知", path: "BulletinList" },
       ],
       // setting是否展开
       isSettingSpread: false,
@@ -159,6 +147,18 @@ export default {
       }
     },
 
+    isAdmin(){
+      let privilege=getPrivilege();
+      console.log(privilege);
+      if(privilege===1){
+        this.settingList.forEach(setting=>{
+          if(setting.id==5){
+            setting.show=true;
+          }
+        })
+      }
+    },
+
     // 搜索
     search() {
       // 判断输入框是否存在关键词
@@ -174,6 +174,10 @@ export default {
 
       this.searchWord = "";
     },
+  },
+
+  mounted(){
+    this.isAdmin();
   },
 
   computed: {

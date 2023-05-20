@@ -12,31 +12,26 @@
         <el-collapse accordion>
           <el-collapse-item>
             <template slot="title">
+              <i class="el-icon-house">管理后台首页</i>
+            </template>
+            <router-link :to="{ name: 'AdminMainPage' }">系统数据统计</router-link>
+          </el-collapse-item>
+
+          <el-collapse-item>
+            <template slot="title">
               <i class="el-icon-user">用户模块管理</i>
             </template>
             <router-link :to="{ name: 'UserManage' }">用户信息管理</router-link>
             <router-link :to="{ name: 'CommentManage' }">评论信息管理</router-link>
           </el-collapse-item>
+
           <el-collapse-item>
             <template slot="title">
-              <i class="el-icon-video-camera-solid">电影模块管理</i>
+              <i class="el-icon-coin">内容模块管理</i>
             </template>
-            <router-link :to="{ name: 'FilmManage' }">电影信息管理</router-link>
-            <router-link :to="{ name: 'FilmTags' }">电影标签管理</router-link>
-          </el-collapse-item>
-          <el-collapse-item>
-            <template slot="title">
-              <i class="el-icon-medal-1">游戏模块管理</i>
-            </template>
-            <router-link :to="{ name: 'GameManage' }">游戏信息管理</router-link>
-            <router-link :to="{ name: 'GameTags' }">游戏标签管理</router-link>
-          </el-collapse-item>
-          <el-collapse-item>
-            <template slot="title">
-              <i class="el-icon-notebook-1">书籍模块管理</i>
-            </template>
-            <router-link :to="{ name: 'BookManage' }">书籍信息管理</router-link>
-            <router-link :to="{ name: 'BookTags' }">书籍标签管理</router-link>
+              <router-link :to="{ name: 'FilmManage' }">电影信息管理</router-link>
+              <router-link :to="{ name: 'GameManage' }">游戏信息管理</router-link>
+              <router-link :to="{ name: 'BookManage' }">书籍信息管理</router-link>
           </el-collapse-item>
 
           <el-collapse-item>
@@ -66,11 +61,9 @@
 
         <div class="menu">
           <el-dropdown trigger="click" @command="handleCommand">
-            <img
-              src="https://c-ssl.dtstatic.com/uploads/blog/202208/01/20220801204303_cef03.thumb.1000_0.jpeg"
-            />
+            <img :src="profileImg"/>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="AdminPage">
+              <el-dropdown-item command="MainPage">
                 <span class="el-icon-house"></span>
                 <span>主 页</span>
               </el-dropdown-item>
@@ -85,8 +78,6 @@
 
       <!-- 数据管理与展示区 -->
       <div class="center">
-        <!-- 如果路由只有主页，就显示首页信息，否则显示views -->
-        <div class="mainPage" v-show="this.breadList.length === 1">首页</div>
         <router-view></router-view>
       </div>
     </div>
@@ -134,6 +125,13 @@ export default {
 
   created() {
     this.getBreadcrumb();
+  },
+
+  computed: {
+    //   头像的链接
+    profileImg() {
+      return this.$store.state.user.userInfo.avatar;
+    },
   },
 };
 </script>
@@ -266,8 +264,9 @@ export default {
 .bread {
   /* border: 1px solid green; */
   /* width: 100%; */
+  display: flex;
   height: 60px;
-  overflow: hidden;
+  margin-left: 10px;
 }
 
 .bread >>> .el-breadcrumb__item span,
@@ -276,8 +275,8 @@ export default {
   line-height: 60px;
   font-size: 16px;
   color: #fff !important;
-  margin-left: 10px;
-  /* font-weight: bold; */
+  /* margin-left: 10px; */
+  font-weight: normal;
 }
 
 .menu {

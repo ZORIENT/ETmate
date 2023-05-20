@@ -17,17 +17,19 @@ import UserInfo from "../views/User/UserInfo";
 import UserFavorites from "../views/User/UserFavorites";
 import UserComments from "../views/User/UserComments";
 import AdminPage from "../views/AdminPage.vue";
-import UserManage from "../views/Admin/User/UserManage";
-import CommentManage from "../views/Admin/User/CommentManage";
-import GameManage from "../views/Admin/Game/GameManage";
-import GameTags from "../views/Admin/Game/GameTags";
-import FilmManage from "../views/Admin/Film/FilmManage";
-import FilmTags from "../views/Admin/Film/FilmTags";
-import BookManage from "../views/Admin/Book/BookManage";
-import BookTags from "../views/Admin/Book/BookTags";
+import AdminMainPage from "../views/Admin/MainPage/AdminMainPage"
+import UserManage from "../views/Admin/User/UserManage"
+import CommentManage from "../views/Admin/User/CommentManage"
+import FilmManage from "../views/Admin/ModuleManage/FilmManage"
+import GameManage from "../views/Admin/ModuleManage/GameManage"
+import BookManage from "../views/Admin/ModuleManage/BookManage"
 import BulletinManage from "../views/Admin/System/BulletinManage";
 import OperateLog from "../views/Admin/System/OperateLog";
+
 import SearchResults from "../views/MainPage/SearchResults"
+import UserReplys from "../views/User/UserReplys"
+import ReplyInfo from "../components/BulletinList/ReplyInfo"
+import SystemBulletin from "../components/BulletinList/SystemBulletin"
 
 const router = new VueRouter({
   routes: [
@@ -85,9 +87,29 @@ const router = new VueRouter({
           name: "BulletinList",
           path: "BulletinList",
           component: BulletinList,
+          redirect: "/MainPage/BulletinList/SystemBulletin",
           meta: {
             title: "公告",
           },
+          children:[
+            {
+              name:"SystemBulletin",
+              path:"SystemBulletin",
+              component:SystemBulletin,
+              meta:{
+                title:"系统通知"
+              }
+            },
+            {
+              name:"ReplyInfo",
+              path:"ReplyInfo",
+              component:ReplyInfo,
+              meta:{
+                title:"回复我的"
+              }
+            }
+
+          ]
         },
         {
           name: "FilmDetail",
@@ -138,6 +160,14 @@ const router = new VueRouter({
           },
         },
         {
+          name: "UserReplys",
+          path: "UserReplys",
+          component: UserReplys,
+          meta: {
+            title: "我的回复",
+          },
+        },
+        {
           name:"SearchResults",
           path:"SearchResults/:keyword",
           component:SearchResults,
@@ -150,18 +180,28 @@ const router = new VueRouter({
     {
       name: "AdminPage",
       path: "/AdminPage",
+      redirect: "/AdminPage/AdminMainPage",
       component: AdminPage,
       meta: {
-        title: "首页",
+        title: "管理后台首页",
         requirePrivilege: true,
       },
       children: [
+        {
+          name: "AdminMainPage",
+          path: "AdminMainPage",
+          component: AdminMainPage,
+          meta: {
+            title: "系统数据统计",
+            requirePrivilege: true,
+          },
+        },
         {
           name: "UserManage",
           path: "UserManage",
           component: UserManage,
           meta: {
-            title: "用户信息管理",
+            title: "用户模块管理",
             requirePrivilege: true,
           },
         },
@@ -170,25 +210,7 @@ const router = new VueRouter({
           path: "CommentManage",
           component: CommentManage,
           meta: {
-            title: "评论信息管理",
-            requirePrivilege: true,
-          },
-        },
-        {
-          name: "GameManage",
-          path: "GameManage",
-          component: GameManage,
-          meta: {
-            title: "游戏信息管理",
-            requirePrivilege: true,
-          },
-        },
-        {
-          name: "GameTags",
-          path: "GameTags",
-          component: GameTags,
-          meta: {
-            title: "游戏标签管理",
+            title: "评分评论管理",
             requirePrivilege: true,
           },
         },
@@ -197,16 +219,16 @@ const router = new VueRouter({
           path: "FilmManage",
           component: FilmManage,
           meta: {
-            title: "电影信息管理",
+            title: "电影模块管理",
             requirePrivilege: true,
           },
         },
         {
-          name: "FilmTags",
-          path: "FilmTags",
-          component: FilmTags,
+          name: "GameManage",
+          path: "GameManage",
+          component: GameManage,
           meta: {
-            title: "电影标签管理",
+            title: "游戏模块管理",
             requirePrivilege: true,
           },
         },
@@ -215,16 +237,7 @@ const router = new VueRouter({
           path: "BookManage",
           component: BookManage,
           meta: {
-            title: "书籍信息管理",
-            requirePrivilege: true,
-          },
-        },
-        {
-          name: "BookTags",
-          path: "BookTags",
-          component: BookTags,
-          meta: {
-            title: "书籍标签管理",
+            title: "书籍模块管理",
             requirePrivilege: true,
           },
         },

@@ -6,7 +6,7 @@
 
     <!-- 内容区 -->
     <div class="section">
-      <keep-alive :exclude="['SearchResults','FilmDetail','GameDetail','BookDetail','UserComments','UserFavorites','HomePage']">
+      <keep-alive :exclude="['SearchResults','FilmDetail','GameDetail','BookDetail','UserComments','UserFavorites','HomePage','BulletinList']">
         <router-view :key="$route.params.id"></router-view>
       </keep-alive>
     </div>

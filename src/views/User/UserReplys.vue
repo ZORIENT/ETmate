@@ -1,80 +1,80 @@
 <template>
   <div class="container">
     <div class="title">
-      <h1>我的评论</h1>
+      <h1>我的回复</h1>
     </div>
 
     <div class="table">
-      <el-table border :height="height"  :data="commentData">
-          <el-table-column
-            prop="type"
-            label="类型"
-            width="80"
-            :filters="[
-              { text: '电影', value: '电影' },
-              { text: '游戏', value: '游戏' },
-              { text: '书籍', value: '书籍' },
-            ]"
-            :filter-method="filterTag"
-          >
-          </el-table-column>
+      <el-table border :height="hieght" :data="replyData">
+        <el-table-column
+          prop="type"
+          label="类型"
+          width="80"
+          :filters="[
+            { text: '电影', value: '电影' },
+            { text: '游戏', value: '游戏' },
+            { text: '书籍', value: '书籍' },
+          ]"
+          :filter-method="filterTag"
+        >
+        </el-table-column>
 
-          <el-table-column prop="film" label="来源" width="200">
-            <template slot-scope="scope">
-              <div v-show="scope.row.type === '电影'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.filmName }}》</span>
-              </div>
+        <el-table-column prop="film" label="来源" width="200">
+          <template slot-scope="scope">
+            <div v-show="scope.row.type === '电影'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+              <span>《{{ scope.row.film.filmName }}》</span>
+            </div>
 
-              <div v-show="scope.row.type === '游戏'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.gameName }}》</span>
-              </div>
+            <div v-show="scope.row.type === '游戏'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+              <span>《{{ scope.row.film.gameName }}》</span>
+            </div>
 
-              <div v-show="scope.row.type === '书籍'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.bookName }}》</span>
-              </div>
-            </template>
-          </el-table-column>
+            <div v-show="scope.row.type === '书籍'">
+              <img :src="scope.row.film.cover" style="width: 50px" />
+              <span>《{{ scope.row.film.bookName }}》</span>
+            </div>
+          </template>
+        </el-table-column>
 
-          <el-table-column prop="comment" label="评论内容">
-            <template slot-scope="scope">
-              <span v-html="computedText(scope.row.comment)"></span>
-            </template>
-          </el-table-column>
+        <el-table-column prop="comment" label="回复内容">
+          <template slot-scope="scope">
+            <span v-html="computedText(scope.row.comment) "></span>
+          </template>
+        </el-table-column>
 
-          <el-table-column
-            prop="score"
-            width="100"
-            label="评分"
-          ></el-table-column>
+        <el-table-column prop="releaseTime" label="发布时间" width="160">
+          <template slot-scope="scope">
+            {{
+              scope.row.createTime ? scope.row.createTime.replace("T", " ") : ""
+            }}
+          </template>
+        </el-table-column>
 
-          <el-table-column prop="releaseTime" label="发布时间" width="160">
-            <template slot-scope="scope">
-              {{
-                scope.row.createTime ? scope.row.createTime.replace("T", " ") : ""
-              }}
-            </template>
-          </el-table-column>
+        <el-table-column prop="updateTime" label="修改时间" width="160">
+          <template slot-scope="scope">
+            {{
+              scope.row.updateTime ? scope.row.updateTime.replace("T", " ") : ""
+            }}
+          </template>
+        </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="100">
-            <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text"
-                >编辑</el-button
-              >
-              <el-button type="text" @click="deleteComment(scope.row)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      <el-dialog title="修改评论" :visible.sync="dialogFormVisible">
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text"
+              >编辑</el-button
+            >
+            <el-button type="text" @click="deleteComment(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-dialog title="修改回复" :visible.sync="dialogFormVisible">
         <el-form :model="commentDialog" v-loading="loading">
-          <el-form-item label="评分" :label-width="formLabelWidth">
-            <el-rate v-model="commentDialog.score"></el-rate>
-          </el-form-item>
-          <el-form-item label="评论" :label-width="formLabelWidth">
+          <el-form-item label="回复" :label-width="formLabelWidth">
             <el-input
               v-model="commentDialog.comment"
               type="textarea"
@@ -91,43 +91,39 @@
     </div>
   </div>
 </template>
-
-<script>
-import {
-  selectCommentByCondition,
-  updateComment,
-  deleteById,
-} from "@/api/comment";
+  
+  <script>
+import { updateComment, deleteById } from "@/api/comment";
 import { getUserId } from "@/utils/auth";
+import { getReply } from "@/api/reply";
 
 export default {
-  name: "UserComments",
+  name: "UserReplys",
 
   data() {
     return {
       commentDialog: {
         id: "",
         comment: "",
-        score: 5,
       },
 
       // 电影评论信息
-      filmComments: [],
+      filmReplys: [],
       // 游戏评论信息
-      gameComments: [],
+      gameReplys: [],
       // 书籍评论信息
-      bookComments: [],
+      bookReplys: [],
 
       // 评论修改是否显示
       dialogFormVisible: false,
       formLabelWidth: "50px",
+      hieght: 0,
       loading: false,
-      height:0
     };
   },
 
   mounted() {
-    this.selectComment();
+    this.selectReply();
   },
 
   methods: {
@@ -137,12 +133,11 @@ export default {
       this.dialogFormVisible = !this.dialogFormVisible;
       this.commentDialog.id = row.id;
       this.commentDialog.comment = row.comment;
-      this.commentDialog.score = row.score;
     },
 
     // 删除评论
     deleteComment(row) {
-      this.$confirm("是否删除该评论？", "提示", {
+      this.$confirm("是否删除该回复？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -152,8 +147,8 @@ export default {
           deleteById(row.id)
             .then((res) => {
               if (res.code === 1) {
-                this.selectComment();
-                this.$message.success("评论删除成功！");
+                this.selectReply();
+                this.$message.success("评论回复删除成功！");
               } else {
                 this.$message.error(res.msg);
               }
@@ -171,13 +166,14 @@ export default {
     // 提交编辑评论
     updateComment() {
       this.loading = true;
+
       updateComment(this.commentDialog)
         .then((res) => {
           if (res.code === 1) {
             // console.log(res);
-            this.selectComment();
+            this.selectReply();
             this.loading = false;
-            this.$message.success("评论修改成功！");
+            this.$message.success("回复修改成功！");
             this.dialogFormVisible = false;
           } else {
             this.$message.error(res.msg);
@@ -193,66 +189,31 @@ export default {
     filterTag(value, row) {
       return row.type === value;
     },
+
     // 查询当前用户的所有评论信息
-    selectComment() {
-      let filmParams = {
-        userId: getUserId(),
-        type: 1,
-      };
-      let gameParams = {
-        userId: getUserId(),
-        type: 2,
-      };
-      let bookParams = {
-        userId: getUserId(),
-        type: 3,
-      };
-      selectCommentByCondition(filmParams)
+    selectReply() {
+      getReply(getUserId())
         .then((res) => {
           if (res.code === 1) {
-            // console.log(res);
-            this.filmComments = res.data.rows;
-            this.filmComments.forEach((film) => {
+            this.filmReplys = res.data.filmReply;
+            this.filmReplys.forEach((film) => {
               film.type = "电影";
             });
-            this.height=580;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      selectCommentByCondition(gameParams)
-        .then((res) => {
-          if (res.code === 1) {
-            // console.log(res);
-            this.gameComments = res.data.rows;
-            this.gameComments.forEach((game) => {
+            this.gameReplys = res.data.gameReply;
+            this.gameReplys.forEach((game) => {
               game.type = "游戏";
               game.film = game.game;
             });
-            this.height=580;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      selectCommentByCondition(bookParams)
-        .then((res) => {
-          if (res.code === 1) {
-            // console.log(res);
-            this.bookComments = res.data.rows;
-            this.bookComments.forEach((book) => {
+            this.bookReplys = res.data.bookReply;
+            this.bookReplys.forEach((book) => {
               book.type = "书籍";
               book.film = book.book;
             });
-            this.height=580;
+            this.hieght = 580;
           } else {
             this.$message.error(res.msg);
           }
+          //   console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -261,16 +222,15 @@ export default {
   },
 
   computed: {
-    commentData() {
-      return this.filmComments.concat(
-        this.gameComments.concat(this.bookComments)
-      );
+    replyData() {
+      // console.log(this.filmReplys.concat(this.gameReplys.concat(this.bookReplys)));
+      return this.filmReplys.concat(this.gameReplys.concat(this.bookReplys));
     },
   },
 };
 </script>
-
-<style scoped>
+  
+  <style scoped>
 .container {
   /* border: 1px solid red; */
   display: flex;

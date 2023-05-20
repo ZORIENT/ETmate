@@ -49,13 +49,15 @@
       <!-- 作者简介 -->
       <div class="intro">
         <h1 class="title">作者简介</h1>
-        <p>{{ bookInfo.authorIntro }}</p>
+        <p><span v-html="computedText(bookInfo.authorIntro)"></span></p>
+        <!-- <p>{{ bookInfo.authorIntro }}</p> -->
       </div>
 
       <!-- 书籍简介 -->
       <div class="intro">
         <h1 class="title">书籍简介</h1>
-        <p>{{ bookInfo.introduction }}</p>
+        <p><span v-html="computedText(bookInfo.introduction)"></span></p>
+        <!-- <p>{{ bookInfo.introduction }}</p> -->
       </div>
 
       <!-- 相关书籍列表 -->

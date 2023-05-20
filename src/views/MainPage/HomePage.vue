@@ -22,7 +22,7 @@
 
           <div class="cardContainer">
             <FilmCard
-              v-for="film in popularFilms"
+              v-for="film in popularFilms.slice(0,14)"
               :key="film.filmName"
               :item="film"
             ></FilmCard>
@@ -43,7 +43,7 @@
 
           <div class="cardContainer">
             <GameCard
-              v-for="game in popularGames"
+              v-for="game in popularGames.slice(0,14)"
               :key="game.gameName"
               :item="game"
             ></GameCard>
@@ -64,7 +64,7 @@
 
           <div class="cardContainer">
             <BookCard
-              v-for="book in popularBooks"
+              v-for="book in popularBooks.slice(0,14)"
               :key="book.bookName"
               :item="book"
             ></BookCard>

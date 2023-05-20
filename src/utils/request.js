@@ -4,6 +4,10 @@ import { removeToken,getToken } from "@/utils/auth";
 import router from "@/router";
 import ElementUI from "element-ui";
 
+// 导入NProgress进度条
+import NProgress from "nprogress";
+import "nprogress/nprogress.css"
+
 let request = axios.create({
   //基础配置
   baseURL: "http://localhost:8083/",
@@ -15,6 +19,9 @@ let request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
+    // 请求时开启进度条
+    NProgress.start();
+
     // token，密钥的设置
     let token = getToken();
     if (token) {
@@ -25,6 +32,8 @@ request.interceptors.request.use(
     return config;
   },
   (error) => {
+    // 请求时开启进度条
+    NProgress.start();
     console.log(error);
     return Promise.reject(error);
   }
@@ -33,6 +42,9 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   (res) => {
+    // 响应时进度条结束
+    NProgress.done();
+
     if (res.data.code === 0 && res.data.msg === "NOT_LOGIN") {
       ElementUI.Message.error("尚未登录，请登录");
 
@@ -44,6 +56,8 @@ request.interceptors.response.use(
     }
   },
   (error) => {
+    // 响应时进度条结束
+    NProgress.done();
     console.log("err" + error);
     let { message } = error;
     if (message == "Network Error") {

@@ -14,7 +14,7 @@
           @click="changeNav(nav.id)"
         >
           <span :class="activedNav === nav.id ? 'activedNav' : ''">
-            {{ nav.name }}
+            {{ nav.name }}({{ nav.total }})
           </span>
         </li>
       </ul>
@@ -58,18 +58,22 @@ export default {
         {
           id:0,
           name:"全部",
+          total:0
         },
         {
           id:1,
           name:"电影",
+          total:0
         },
         {
           id:2,
           name:"游戏",
+          total:0
         },
         {
           id:3,
           name:"书籍",
+          total:0
         },
       ],
       results: [],
@@ -115,6 +119,8 @@ export default {
         if(res.code===1){
           // console.log(res.data);
           this.filmCollections=res.data;
+          this.navs[1].total=res.data.total;
+          this.navs[0].total+=res.data.total;
         }else{
           this.$message.error(res.msg);
         }
@@ -127,6 +133,8 @@ export default {
         if(res.code===1){
           // console.log(res);
           this.gameCollections=res.data;
+          this.navs[2].total=res.data.total;
+          this.navs[0].total+=res.data.total;
         }else{
           this.$message.error(res.msg);
         }
@@ -139,6 +147,8 @@ export default {
         if(res.code===1){
           // console.log(res);
           this.bookCollections=res.data;
+          this.navs[3].total=res.data.total;
+          this.navs[0].total+=res.data.total;
         }else{
           this.$message.error(res.msg);
         }

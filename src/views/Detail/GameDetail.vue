@@ -149,13 +149,15 @@
       <!-- 游戏简介 -->
       <div class="intro">
         <h1 class="title">游戏简介</h1>
-        <p>{{ gameInfo.introduce }}</p>
+        <P><span v-html="computedText(gameInfo.introduce)"></span></P>
+        <!-- <p>{{ gameInfo.introduce }}</p> -->
       </div>
 
       <!-- 游戏测评 -->
       <div class="intro" v-show="gameInfo.evalute">
         <h1 class="title">游戏测评</h1>
-        <p>{{ gameInfo.evalute }}</p>
+        <p><span v-html="computedText(gameInfo.evalute)"></span></p>
+        <!-- <p>{{ gameInfo.evalute }}</p> -->
       </div>
 
       <!-- 相关电影列表 -->
@@ -600,7 +602,7 @@ export default {
 
 .intro p {
   /* 首行缩进2字符 */
-  text-indent: 2em;
+text-indent: 2em;
   font-size: 13px;
   line-height: 23px;
 }

@@ -188,7 +188,7 @@ export default {
           {
             min: 6,
             max: 16,
-            message: "密码长度应为6-10个字符",
+            message: "密码长度应为6-16个字符",
             trigger: "blur",
           },
         ],

@@ -12,21 +12,38 @@ import router from "./router";
 import store from "./store/index";
 
 // 引入element-ui
-import ElementUI from "element-ui"
+import ElementUI from "element-ui";
 // import 'element-ui/lib/theme-chalk/index.css';
-import "../theme/index.css"
+import "../theme/index.css";
 
+// 滚动阻塞'鼠标滚轮'事件
+import "default-passive-events";
 
 /**************************************************************/
 
 //关闭开发提示
 Vue.config.productionTip = false;
 
-
 // 使用路由插件
 Vue.use(VueRouter);
 // 使用elementui
-Vue.use(ElementUI)
+Vue.use(ElementUI);
+
+// 自定义全局函数
+Vue.prototype.computedText = function (text) {
+  // 处理文本信息，处理换行
+
+  if(text!=null){
+    let arr = text.split("");
+    return arr
+      .map((item) => {
+        return item === "\n" ? "<br/>&emsp;&emsp;" : item;
+      })
+      .join("");
+  }else{
+    return "";
+  }
+};
 
 /***************************************************************/
 

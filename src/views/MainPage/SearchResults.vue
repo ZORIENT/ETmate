@@ -115,22 +115,22 @@ export default {
         {
           id: 0,
           name: "全部",
-          total: "",
+          total: 0,
         },
         {
           id: 1,
           name: "电影",
-          total: "",
+          total: 0,
         },
         {
           id: 2,
           name: "游戏",
-          total: "",
+          total: 0,
         },
         {
           id: 3,
           name: "书籍",
-          total: "",
+          total: 0,
         },
       ],
       results: {
@@ -201,13 +201,10 @@ export default {
           if (res.code === 1) {
             // console.log(res.data);
             this.results = res.data;
-            this.navs[1].total = res.data.filmResults.total;
-            this.navs[2].total = res.data.gameResults.total;
-            this.navs[3].total = res.data.bookResults.total;
-            this.navs[0].total =
-              res.data.filmResults.total +
-              res.data.gameResults.total +
-              res.data.bookResults.total;
+            this.navs[1].total = this.filmTotal;
+            this.navs[2].total = this.gameTotal;
+            this.navs[3].total = this.bookTotal;
+            this.navs[0].total =this.filmTotal+this.gameTotal+this.bookTotal;
           } else {
             this.$message.error(res.msg);
           }

@@ -18,3 +18,8 @@ export function getUserId(){
   let token=getToken();
   return jwtDecode(token).id;
 }
+
+export function getPrivilege(){
+  let token=getToken();
+  return jwtDecode(token).privilege;
+}

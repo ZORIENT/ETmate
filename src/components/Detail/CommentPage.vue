@@ -48,7 +48,9 @@
         </div>
         <!-- 评论具体内容 -->
         <div class="center">
-          {{ comment.comment }}
+          <!-- <span v-html="commendContent(comment.comment)"></span> -->
+          <span v-html="computedText(comment.comment)"></span>
+          <!-- {{comment.comment}} -->
         </div>
         <!-- 评论点赞数+回复 -->
         <div class="bottom" @click="changeUnfold(comment.id)">
@@ -63,7 +65,9 @@
             v-model="reply"
           >
           </el-input>
-          <el-button v-loading="replyLoading" @click="insertReply(comment.id)">回复</el-button>
+          <el-button v-loading="replyLoading" @click="insertReply(comment.id)"
+            >回复</el-button
+          >
         </div>
 
         <div class="reply" v-for="reply in comment.children" :key="reply.id">
@@ -97,11 +101,10 @@ export default {
 
   data() {
     return {
-      // 回复表单是否展开
       commentList: [],
       // 发布评论按钮是否加载
       publishCommentLoading: false,
-      replyLoading:false,
+      replyLoading: false,
       comment: "",
       reply: "",
       score: 5,
@@ -173,35 +176,35 @@ export default {
     },
     // 添加回复
     insertReply(parentId) {
-      if(this.reply.trim()==''){
+      if (this.reply.trim() == "") {
         this.$message.info("请输入回复内容！");
-      }else{
+      } else {
         let reply = {
-        userId: getUserId(),
-        itemId: this.params.itemId,
-        type: this.params.type,
-        parentId: parentId,
-        comment: this.reply,
-        score: 5,
-      };
+          userId: getUserId(),
+          itemId: this.params.itemId,
+          type: this.params.type,
+          parentId: parentId,
+          comment: this.reply,
+          score: 5,
+        };
 
-      this.replyLoading=true;
+        this.replyLoading = true;
 
-      insertComment(reply)
-        .then((res) => {
-          if (res.code === 1) {
-            this.reply = "";
-            // 更新评论区
-            this.getComment();
-            this.$message.success("评论回复成功");
-            this.replyLoading=false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        insertComment(reply)
+          .then((res) => {
+            if (res.code === 1) {
+              this.reply = "";
+              // 更新评论区
+              this.getComment();
+              this.$message.success("评论回复成功");
+              this.replyLoading = false;
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
   },
