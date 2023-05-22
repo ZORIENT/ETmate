@@ -9,55 +9,58 @@
 
       <!-- header导航栏，主页，电影，游戏，公告，个人中心 -->
       <div class="navBtns">
-        <router-link
-          active-class="navBtnActive"
-          class="navBtn"
-          v-for="(navBtn, index) in navBtns"
-          :key="index"
-          :to="{
+        <router-link active-class="navBtnActive"
+                     class="navBtn"
+                     v-for="(navBtn, index) in navBtns"
+                     :key="index"
+                     :to="{
             name: `${navBtn.path}`,
-          }"
-        >
+          }">
           <span>{{ navBtn.name }}</span>
         </router-link>
       </div>
 
       <!-- 搜索框 -->
       <div class="searchBox">
-        <span class="el-icon-search"></span>
-        <input
-          type="text"
-          v-model="searchWord"
-          placeholder="电影/游戏/书籍"
-          @keyup.enter="search()"
-        />
+        <!-- <span class="el-icon-search"></span>
+        <input type="text"
+               v-model="searchWord"
+               placeholder="电影/游戏/书籍"
+               @keyup.enter="search()" /> -->
+
+        <el-input v-model="searchWord"
+                  prefix-icon="el-icon-search"
+                  placeholder="电影/游戏/书籍"
+                  @keyup.enter.native="search()">
+        </el-input>
+
         <!-- <el-input type="text" v-model="searchWord" placeholder="电影/游戏/书籍" @keyup.enter.native="search()"></el-input> -->
       </div>
 
       <!-- 头像 -->
       <div class="userInfo">
-        <el-dropdown
-          trigger="click"
-          @command="handleCommand"
-          class="imgContent"
-        >
+        <el-dropdown trigger="click"
+                     @command="handleCommand"
+                     class="imgContent">
           <!-- <span class="el-dropdown-link">
             下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
           </span> -->
 
-          <el-image :src="profileImg" class="profile" lazy>
-            <div slot="error" class="image-slot">
+          <el-image :src="profileImg"
+                    class="profile"
+                    lazy>
+            <div slot="error"
+                 class="image-slot">
               <i class="el-icon-picture-outline"></i>
             </div>
           </el-image>
 
-          <el-dropdown-menu slot="dropdown" class="dropDown">
-            <el-dropdown-item
-              v-for="setting in settingList"
-              :key="setting.iconClass"
-              :command="setting.pageName"
-              v-show="setting.show"
-            >
+          <el-dropdown-menu slot="dropdown"
+                            class="dropDown">
+            <el-dropdown-item v-for="setting in settingList"
+                              :key="setting.iconClass"
+                              :command="setting.pageName"
+                              v-show="setting.show">
               <span :class="setting.iconClass"></span>
               <span>{{ setting.settingName }}</span>
             </el-dropdown-item>
@@ -74,11 +77,11 @@
 </template>
 
 <script>
-import { removeToken,getPrivilege } from "@/utils/auth";
+import { removeToken, getPrivilege } from "@/utils/auth";
 export default {
   name: "AppHeader",
 
-  data() {
+  data () {
     return {
       projectName: "ETmate",
       settingList: [
@@ -134,7 +137,7 @@ export default {
   },
 
   methods: {
-    handleCommand(command) {
+    handleCommand (command) {
       // this.$message('click on item ' + command);
       if (command === "loginOut") {
         // console.log("Login Out");
@@ -147,20 +150,20 @@ export default {
       }
     },
 
-    isAdmin(){
-      let privilege=getPrivilege();
+    isAdmin () {
+      let privilege = getPrivilege();
       console.log(privilege);
-      if(privilege===1){
-        this.settingList.forEach(setting=>{
-          if(setting.id==5){
-            setting.show=true;
+      if (privilege === 1) {
+        this.settingList.forEach(setting => {
+          if (setting.id == 5) {
+            setting.show = true;
           }
         })
       }
     },
 
     // 搜索
-    search() {
+    search () {
       // 判断输入框是否存在关键词
       if (this.searchWord.trim() !== "") {
         // console.log(this.searchWord);
@@ -176,13 +179,13 @@ export default {
     },
   },
 
-  mounted(){
+  mounted () {
     this.isAdmin();
   },
 
   computed: {
     //   头像的链接
-    profileImg() {
+    profileImg () {
       return this.$store.state.user.userInfo.avatar;
     },
   },
@@ -211,7 +214,7 @@ export default {
 }
 
 .appHeader::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0px;
   left: 0px;
@@ -238,8 +241,8 @@ export default {
   font-size: 24px;
   color: var(--lightTheme);
   font-weight: bold;
-  font-family: Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "WenQuanYi Micro Hei", sans-serif;
+  font-family: Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'WenQuanYi Micro Hei', sans-serif;
 }
 
 .navBtns {
@@ -293,25 +296,36 @@ export default {
   display: flex;
   align-content: center;
   justify-content: center;
-  background: var(--lightTheme);
+  /* background: var(--lightTheme); */
 }
 
-.searchBox span {
+/* .searchBox span {
   color: var(--primaryThemeWhite);
   font-size: 20px;
   color: var(--primaryColor);
   font-weight: bold;
   margin: 4px;
-}
+} */
 
-.searchBox input {
-  flex-grow: 1;
+.searchBox >>> .el-input__inner,
+.searchBox >>> .el-input__icon{
+  height: 30px;
+  line-height: 30px;
   background-color: transparent;
   color: var(--primaryColor);
-  cursor: pointer;
+  /* border: 1px solid red; */
+  /* height: 20px;
+  flex-grow: 1;
+  ;
+  color: var(--primaryColor);
+  cursor: pointer; */
 }
 
-.searchBox input::placeholder {
+.searchBox >>> .el-input__inner{
+  background: var(--lightTheme);
+}
+
+.searchBox >>> .el-input__inner::placeholder{
   color: var(--primaryColor);
   font-size: 14px;
   opacity: 0.8;

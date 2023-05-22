@@ -7,25 +7,25 @@
 </template>
 
 <script>
-import {selectById} from "@/api/film"
+import { selectById } from "@/api/film"
 
 export default {
   name: "UserManage",
 
-  data() {
+  data () {
     return {};
   },
 
-  mounted() {},
+  mounted () { },
 
   methods: {
-    login() {
-      this.$store.dispatch("login",{email:"1957193956@qq.com",password:"123456789"});
+    login () {
+      this.$store.dispatch("login", { email: "1957193956@qq.com", password: "123456789" });
     },
 
-    test(){
-      selectById(1).then(res=>{
-        console.log("film:",res);
+    test () {
+      selectById(1).then(res => {
+        console.log("film:", res);
       })
     }
 

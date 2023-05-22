@@ -6,7 +6,7 @@ import ElementUI from "element-ui";
 import router from "@/router";
 
 const userInfo = {
-  id:"",
+  id: "",
   token: "",
   username: "",
   avatar: "",
@@ -24,12 +24,12 @@ export default {
             if (res.code == 1) {
               let token = res.data;
               let id = jwtDecode(token).id;
-              let username=jwtDecode(token).username;
+              let username = jwtDecode(token).username;
               let privilege = jwtDecode(token).privilege;
               setToken(token);
 
               context.dispatch("getUserInfo", id);
-              ElementUI.Message.success("登陆成功！欢迎"+username);
+              ElementUI.Message.success("登陆成功！欢迎" + username);
 
               if (privilege === 1) {
                 router.push("AdminPage");
@@ -54,9 +54,9 @@ export default {
             // console.log(res.data);
             let username = res.data.username;
             let avatar = res.data.avatar;
-            let token=getToken();
+            let token = getToken();
 
-            context.commit("SET_USERID",id);
+            context.commit("SET_USERID", id);
             context.commit("SET_TOKEN", token);
             context.commit("SET_USERNAME", username);
             context.commit("SET_AVATAR", avatar);
@@ -76,8 +76,8 @@ export default {
     SET_TOKEN(state, token) {
       state.userInfo.token = token;
     },
-    SET_USERID(state,userId){
-      state.userInfo.id=userId;
+    SET_USERID(state, userId) {
+      state.userInfo.id = userId;
     },
 
     SET_USERNAME(state, username) {

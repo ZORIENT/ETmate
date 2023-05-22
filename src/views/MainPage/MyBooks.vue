@@ -4,11 +4,9 @@
     <div class="category">
       <div class="left">作者：</div>
       <ul class="right">
-        <li
-          v-for="(option, index) in author"
-          :key="index"
-          @click="changeAuthor(option)"
-        >
+        <li v-for="(option, index) in author"
+            :key="index"
+            @click="changeAuthor(option)">
           <span :class="checked.author === option ? 'active1' : ''">
             {{ option }}
           </span>
@@ -20,11 +18,9 @@
     <div class="year">
       <div class="left">发售：</div>
       <ul class="right">
-        <li
-          v-for="(option, index) in year"
-          :key="index"
-          @click="changeYear(option.value)"
-        >
+        <li v-for="(option, index) in year"
+            :key="index"
+            @click="changeYear(option.value)">
           <span :class="checked.year === option.value ? 'active2' : ''">
             {{ option.name }}
           </span>
@@ -36,11 +32,9 @@
     <div class="tag">
       <div class="left">标签：</div>
       <ul class="right">
-        <li
-          v-for="(option, index) in tag"
-          :key="index"
-          @click="changeTag(option)"
-        >
+        <li v-for="(option, index) in tag"
+            :key="index"
+            @click="changeTag(option)">
           <span :class="checked.tag === option ? 'active3' : ''">
             {{ option }}
           </span>
@@ -52,11 +46,9 @@
     <div class="publisher">
       <div class="left">出版：</div>
       <ul class="right">
-        <li
-          v-for="(option, index) in publisher"
-          :key="index"
-          @click="changePublisher(option)"
-        >
+        <li v-for="(option, index) in publisher"
+            :key="index"
+            @click="changePublisher(option)">
           <span :class="checked.publisher === option ? 'active4' : ''">
             {{ option }}
           </span>
@@ -67,27 +59,30 @@
     <!-- 排序方式 -->
     <div class="sort">
       <template>
-        <el-radio v-model="checked.sort" :label="1">豆瓣评分</el-radio>
-        <el-radio v-model="checked.sort" :label="2">出版时间</el-radio>
-        <el-radio v-model="checked.sort" :label="3">价格正序</el-radio>
+        <el-radio v-model="checked.sort"
+                  :label="1">豆瓣评分</el-radio>
+        <el-radio v-model="checked.sort"
+                  :label="2">出版时间</el-radio>
+        <el-radio v-model="checked.sort"
+                  :label="3">价格正序</el-radio>
       </template>
     </div>
 
     <!-- 书籍列表 -->
     <div class="gameList">
-      <BookCard v-for="(book,index) in books" :key="index" :item="book"/>
+      <BookCard v-for="(book,index) in books"
+                :key="index"
+                :item="book" />
     </div>
 
     <!-- 底部页码选择器 -->
     <div class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next,jumper"
-        :total="pagination.total"
-        :page-size="35"
-        @current-change="currentPageChanged"
-        :current-page.sync="pagination.currentPage"
-      >
+      <el-pagination background
+                     layout="prev, pager, next,jumper"
+                     :total="pagination.total"
+                     :page-size="35"
+                     @current-change="currentPageChanged"
+                     :current-page.sync="pagination.currentPage">
       </el-pagination>
     </div>
   </div>
@@ -101,11 +96,11 @@ export default {
   name: "MyBooks",
   components: { BookCard },
 
-  mounted(){
+  mounted () {
     this.getBooks();
   },
 
-  data() {
+  data () {
     return {
       author: [
         "全部",
@@ -233,28 +228,28 @@ export default {
 
   methods: {
     // 切换作者
-    changeAuthor(option) {
+    changeAuthor (option) {
       this.checked.author = option;
     },
     // 切换年份
-    changeYear(value) {
+    changeYear (value) {
       this.checked.year = value;
     },
     // 切换标签
-    changeTag(option) {
+    changeTag (option) {
       this.checked.tag = option;
     },
     // 切换出版社
-    changePublisher(option) {
+    changePublisher (option) {
       this.checked.publisher = option;
     },
     // 切换页码
-    currentPageChanged(currentPage) {
+    currentPageChanged (currentPage) {
       this.pagination.currentPage = currentPage;
     },
 
     // 获取书籍
-    getBooks(page) {
+    getBooks (page) {
       let params = {
         author: "",
         releaseYear: "",
@@ -268,8 +263,8 @@ export default {
       if (this.checked.author !== "全部") {
         params.author = this.checked.author;
       }
-      if(this.checked.year!=="全部"){
-        params.releaseYear=this.checked.year;
+      if (this.checked.year !== "全部") {
+        params.releaseYear = this.checked.year;
       }
       if (this.checked.tag !== "全部") {
         params.tags = this.checked.tag;
@@ -277,20 +272,20 @@ export default {
       if (this.checked.publisher !== "全部") {
         params.publisher = this.checked.publisher;
       }
-      params.sortId=this.checked.sort;
-      params.page=page;
+      params.sortId = this.checked.sort;
+      params.page = page;
 
       // console.log(params);
 
       selectByCondition(params)
         .then((res) => {
           // console.log(res);
-          if(res.code===1){
+          if (res.code === 1) {
             // 书籍数据请求成功
-            this.books=res.data.rows;
-            this.pagination.total=res.data.total;
-            this.pagination.currentPage=page;
-          }else{
+            this.books = res.data.rows;
+            this.pagination.total = res.data.total;
+            this.pagination.currentPage = page;
+          } else {
             this.$message.error(res.msg);
           }
         })
@@ -303,13 +298,13 @@ export default {
   watch: {
     checked: {
       deep: true,
-      handler() {
+      handler () {
         this.getBooks(1);
       },
     },
     pagination: {
       deep: true,
-      handler() {
+      handler () {
         this.getBooks(this.pagination.currentPage);
       },
     },

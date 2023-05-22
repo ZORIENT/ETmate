@@ -10,26 +10,21 @@
 
       <!-- 输入评论部分 -->
       <div class="comment">
-        <el-input
-          type="textarea"
-          :rows="2"
-          placeholder="请输入评论"
-          v-model="comment"
-        >
+        <el-input type="textarea"
+                  :rows="2"
+                  placeholder="请输入评论"
+                  v-model="comment">
         </el-input>
-        <el-button v-loading="publishCommentLoading" @click="publishComment()"
-          >发表评论</el-button
-        >
+        <el-button v-loading="publishCommentLoading"
+                   @click="publishComment()">发表评论</el-button>
       </div>
     </div>
 
     <!-- 评论展示部分 -->
-    <div
-      class="commentList"
-      v-for="comment in commentList"
-      :key="comment.id"
-      v-show="commentList.length"
-    >
+    <div class="commentList"
+         v-for="comment in commentList"
+         :key="comment.id"
+         v-show="commentList.length">
       <!-- 左侧头像 -->
       <div class="left">
         <img :src="comment.user.avatar" />
@@ -41,7 +36,8 @@
         <div class="top">
           <div>
             <h1>{{ comment.user.username }}</h1>
-            <el-rate disabled v-model="comment.score"></el-rate>
+            <el-rate disabled
+                     v-model="comment.score"></el-rate>
           </div>
 
           <span>{{ comment.createTime.replace("T", " ") }}</span>
@@ -53,24 +49,25 @@
           <!-- {{comment.comment}} -->
         </div>
         <!-- 评论点赞数+回复 -->
-        <div class="bottom" @click="changeUnfold(comment.id)">
+        <div class="bottom"
+             @click="changeUnfold(comment.id)">
           <span>回复</span>
         </div>
 
-        <div class="replyInput" v-show="comment.user.password">
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入回复"
-            v-model="reply"
-          >
+        <div class="replyInput"
+             v-show="comment.user.password">
+          <el-input type="textarea"
+                    :rows="2"
+                    placeholder="请输入回复"
+                    v-model="reply">
           </el-input>
-          <el-button v-loading="replyLoading" @click="insertReply(comment.id)"
-            >回复</el-button
-          >
+          <el-button v-loading="replyLoading"
+                     @click="insertReply(comment.id)">回复</el-button>
         </div>
 
-        <div class="reply" v-for="reply in comment.children" :key="reply.id">
+        <div class="reply"
+             v-for="reply in comment.children"
+             :key="reply.id">
           <!-- 回复者id+回复时间 -->
           <div class="replyTop">
             <h1>{{ reply.user.username }}：</h1>
@@ -84,7 +81,8 @@
       </div>
     </div>
 
-    <div class="noComment" v-show="!commentList.length">
+    <div class="noComment"
+         v-show="!commentList.length">
       <span>暂无更多评论</span>
     </div>
   </div>
@@ -99,7 +97,7 @@ export default {
 
   props: ["params"],
 
-  data() {
+  data () {
     return {
       commentList: [],
       // 发布评论按钮是否加载
@@ -111,14 +109,14 @@ export default {
     };
   },
 
-  mounted() {
+  mounted () {
     // console.log(this.params);
     this.getComment();
   },
 
   methods: {
     // 打开折叠回复区域
-    changeUnfold(id) {
+    changeUnfold (id) {
       this.commentList.forEach((comment) => {
         if (comment.id === id) {
           comment.user.password = !comment.user.password;
@@ -128,7 +126,7 @@ export default {
       });
     },
     // 获取评论信息
-    getComment() {
+    getComment () {
       selectCommentByCondition(this.params)
         .then((res) => {
           if (res.code === 1) {
@@ -143,7 +141,7 @@ export default {
         });
     },
     // 发布评论
-    publishComment() {
+    publishComment () {
       if (this.comment.trim() == "") {
         this.$message.info("请输入评论内容！");
       } else {
@@ -175,7 +173,7 @@ export default {
       }
     },
     // 添加回复
-    insertReply(parentId) {
+    insertReply (parentId) {
       if (this.reply.trim() == "") {
         this.$message.info("请输入回复内容！");
       } else {
@@ -287,7 +285,7 @@ export default {
 
 .publishComment .comment >>> .el-button:before,
 .commentList .right .replyInput >>> .el-button:before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

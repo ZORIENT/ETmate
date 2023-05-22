@@ -1,6 +1,8 @@
 <template>
   <div class="systemBulletin">
-    <div class="bulletin" v-for="(bulletin, index) in bulletinList" :key="index">
+    <div class="bulletin"
+         v-for="(bulletin, index) in bulletinList"
+         :key="index">
       <!-- 公告标题 -->
       <div class="title">
         <h1>{{ bulletin.title }}</h1>
@@ -9,7 +11,7 @@
       <!-- 发布公告的管理员信息 -->
       <div class="headline">
         <div class="avatar">
-          <img :src="bulletin.avatar"/>
+          <img :src="bulletin.avatar" />
         </div>
 
         <div class="author">
@@ -22,8 +24,9 @@
 
       <div class="content">
         <p><span v-html="computedText(bulletin.content)"></span></p>
-        <div class="image" v-show="bulletin.image">
-          <img :src="bulletin.image"/>
+        <div class="image"
+             v-show="bulletin.image">
+          <img :src="bulletin.image" />
         </div>
       </div>
     </div>
@@ -36,19 +39,19 @@ import { selectAllBulletin } from "@/api/bulletin";
 export default {
   name: "SystemBulletin",
 
-  data() {
+  data () {
     return {
-      bulletinList:[],
+      bulletinList: [],
     };
   },
 
   methods: {
-    selectAllBulletin() {
+    selectAllBulletin () {
       selectAllBulletin({ page: 1, pageSize: 10 })
         .then((res) => {
           if (res.code === 1) {
-            console.log(res.data);
-            this.bulletinList=res.data.rows;
+            // console.log(res.data);
+            this.bulletinList = res.data.rows;
 
           } else {
             this.$message.error(res.msg);
@@ -60,7 +63,7 @@ export default {
     },
   },
 
-  mounted() {
+  mounted () {
     this.selectAllBulletin();
   },
 };
@@ -153,9 +156,8 @@ export default {
   margin-top: 20px;
   /* display: none; */
 }
-.content .image img{
+.content .image img {
   width: 500px;
   border-radius: 4px;
 }
-
 </style>

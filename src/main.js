@@ -19,6 +19,14 @@ import "../theme/index.css";
 // 滚动阻塞'鼠标滚轮'事件
 import "default-passive-events";
 
+/*************************************************************/
+// 全局禁止dialog点击空白关闭
+ElementUI.Dialog.props.closeOnClickModal.default = false;
+// 全局禁止messageBox点击空白关闭
+ElementUI.MessageBox.setDefaults({
+  closeOnClickModal: false,
+});
+
 /**************************************************************/
 
 //关闭开发提示
@@ -32,15 +40,14 @@ Vue.use(ElementUI);
 // 自定义全局函数
 Vue.prototype.computedText = function (text) {
   // 处理文本信息，处理换行
-
-  if(text!=null){
+  if (text != null) {
     let arr = text.split("");
     return arr
       .map((item) => {
         return item === "\n" ? "<br/>&emsp;&emsp;" : item;
       })
       .join("");
-  }else{
+  } else {
     return "";
   }
 };

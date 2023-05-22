@@ -1,9 +1,9 @@
-import request from "@/utils/request"
+import request from "@/utils/request";
 
-export function upload(image){
-    return request({
-        url:'/upload',
-        method:'post',
-        data:image
-    })
+export function upload(image) {
+  return request({
+    url: "/upload",
+    method: "post",
+    data: image,
+  });
 }

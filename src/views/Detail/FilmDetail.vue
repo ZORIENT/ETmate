@@ -11,15 +11,13 @@
         <div class="info">
           <h1>{{ filmInfo.filmName }} ({{ filmInfo.releaseYear }})</h1>
           <p>
-            <span>导演：</span
-            ><span class="inner">{{
+            <span>导演：</span><span class="inner">{{
               filmInfo.director ? filmInfo.director : "N/A"
             }}</span>
           </p>
 
           <p>
-            <span>主演：</span
-            ><span class="inner">{{
+            <span>主演：</span><span class="inner">{{
               filmInfo.actors ? filmInfo.actors : "N/A"
             }}</span>
           </p>
@@ -33,8 +31,7 @@
           </p>
 
           <p>
-            <span>语言：</span
-            ><span class="inner">{{ filmInfo.languages }}</span>
+            <span>语言：</span><span class="inner">{{ filmInfo.languages }}</span>
           </p>
 
           <p><span>上映：</span>{{ filmInfo.releaseDate }}</p>
@@ -46,8 +43,7 @@
           </p>
 
           <p>
-            <span>评分：</span
-            ><span class="rate">豆瓣 {{ filmInfo.doubanScore }}</span>
+            <span>评分：</span><span class="rate">豆瓣 {{ filmInfo.doubanScore }}</span>
           </p>
 
           <p><span>IMDB：</span>{{ filmInfo.imdbId }}</p>
@@ -62,23 +58,20 @@
       </div>
 
       <!-- 相关电影列表 -->
-      <div class="related" v-show="relatedFilms.length">
+      <div class="related"
+           v-show="relatedFilms.length">
         <h1 class="title">相关电影</h1>
         <div class="relatedFilms">
-          <FilmCard
-            v-for="(film, index) in relatedFilms"
-            :key="index"
-            :item="film"
-          ></FilmCard>
+          <FilmCard v-for="(film, index) in relatedFilms"
+                    :key="index"
+                    :item="film"></FilmCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage
-          :params="{ itemId: this.$route.params.id, type: 1 }"
-        ></CommentPage>
+        <CommentPage :params="{ itemId: this.$route.params.id, type: 1 }"></CommentPage>
       </div>
     </div>
 
@@ -92,85 +85,62 @@
           <div class="rate">
             <h1>{{ starAvg }}</h1>
             <div class="stars">
-              <el-rate
-                v-model="rateInfo.rateAvg"
-                disabled
-                text-color="#ff9900"
-              ></el-rate>
+              <el-rate v-model="rateInfo.rateAvg"
+                       disabled
+                       text-color="#ff9900"></el-rate>
               <h2>{{ rateInfo.rateNum }}人已评价</h2>
             </div>
           </div>
 
           <div class="process">
             <div>
-              <span>5星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star5"
-              ></el-progress>
+              <span>5星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star5"></el-progress>
             </div>
             <div>
-              <span>4星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star4"
-              ></el-progress>
+              <span>4星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star4"></el-progress>
             </div>
             <div>
-              <span>3星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star3"
-              ></el-progress>
+              <span>3星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star3"></el-progress>
             </div>
             <div>
-              <span>2星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star2"
-              ></el-progress>
+              <span>2星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star2"></el-progress>
             </div>
             <div>
-              <span>1星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star1"
-              ></el-progress>
+              <span>1星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star1"></el-progress>
             </div>
           </div>
 
-          <div class="favoriteBtn" v-loading="collectionLoading">
-            <el-button
-              class="notFavorited"
-              v-show="!isFavorited"
-              @click="handleFavorited"
-              >添加至收藏</el-button
-            >
-            <el-button
-              class="favorited"
-              v-show="isFavorited"
-              @click="handleFavorited"
-              >从收藏移出</el-button
-            >
+          <div class="favoriteBtn"
+               v-loading="collectionLoading">
+            <el-button class="notFavorited"
+                       v-show="!isFavorited"
+                       @click="handleFavorited">添加至收藏</el-button>
+            <el-button class="favorited"
+                       v-show="isFavorited"
+                       @click="handleFavorited">从收藏移出</el-button>
           </div>
         </div>
       </div>
 
       <!-- 电影推荐区域 -->
-      <div class="recommendList" v-loading="recommendFilmLoading">
+      <div class="recommendList"
+           v-loading="recommendFilmLoading">
         <div class="title">热门电影</div>
 
-        <div
-          class="recommendFilm"
-          v-for="(film, index) in popularFilms.slice(0, 6)"
-          :key="index"
-          @click="toFilmDetail(film.id)"
-        >
+        <div class="recommendFilm"
+             v-for="(film, index) in popularFilms.slice(0, 6)"
+             :key="index"
+             @click="toFilmDetail(film.id)">
           <div class="left">
             <img :src="film.cover" />
           </div>
@@ -205,11 +175,11 @@ export default {
   name: "FilmDetail",
   components: { FilmCard, CommentPage },
 
-  data() {
+  data () {
     return {
       isFavorited: false,
       collectionLoading: false,
-      recommendFilmLoading:false,
+      recommendFilmLoading: false,
       filmInfo: {},
       relatedFilms: [],
       rateInfo: {},
@@ -219,7 +189,7 @@ export default {
   },
 
   computed: {
-    star5() {
+    star5 () {
       if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -228,7 +198,7 @@ export default {
         return 0;
       }
     },
-    star4() {
+    star4 () {
       if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -237,7 +207,7 @@ export default {
         return 0;
       }
     },
-    star3() {
+    star3 () {
       if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -246,7 +216,7 @@ export default {
         return 0;
       }
     },
-    star2() {
+    star2 () {
       if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -255,7 +225,7 @@ export default {
         return 0;
       }
     },
-    star1() {
+    star1 () {
       if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -264,7 +234,7 @@ export default {
         return 0;
       }
     },
-    starAvg() {
+    starAvg () {
       if (this.rateInfo.rateAvg) {
         return parseFloat(this.rateInfo.rateAvg.toFixed(1));
       } else {
@@ -274,7 +244,7 @@ export default {
   },
 
   methods: {
-    handleFavorited() {
+    handleFavorited () {
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -287,7 +257,7 @@ export default {
       }
     },
 
-    toFilmDetail(id) {
+    toFilmDetail (id) {
       this.$router.push({
         name: "FilmDetail",
         params: {
@@ -297,7 +267,7 @@ export default {
     },
 
     // 根据id查询电影信息
-    selectById(id) {
+    selectById (id) {
       selectById(id)
         .then((res) => {
           if (res.code === 1) {
@@ -313,7 +283,7 @@ export default {
     },
 
     // 条件查询电影收藏，是否已经收藏
-    selectCollection(params) {
+    selectCollection (params) {
       selectCollectionByCondition(params)
         .then((res) => {
           // console.log(res.data.total);
@@ -331,7 +301,7 @@ export default {
     },
 
     // 添加收藏
-    insertCollection() {
+    insertCollection () {
       let data = {
         userId: getUserId(),
         collectionId: this.$route.params.id,
@@ -355,7 +325,7 @@ export default {
     },
 
     // 取消收藏
-    deleteCollection() {
+    deleteCollection () {
       // 判断当前电影是否已经被收藏
       let params = {
         userId: getUserId(),
@@ -391,7 +361,7 @@ export default {
     },
 
     // 获取电影的详细评分信息
-    getRates(params) {
+    getRates (params) {
       // let params = {
       //   itemId: this.$route.params.id,
       //   type: 1,
@@ -412,7 +382,7 @@ export default {
     },
 
     // 根据电影id推荐相关电影
-    getSimilarFilms(id) {
+    getSimilarFilms (id) {
       getSimilarFilms(id)
         .then((res) => {
           if (res.code === 1) {
@@ -428,13 +398,13 @@ export default {
     },
 
     // 根据用户id个性化推荐相关电影
-    getPopularFilms(userId) {
-      this.recommendFilmLoading=true;
+    getPopularFilms (userId) {
+      this.recommendFilmLoading = true;
       userCfRecommendFilm(userId)
         .then((res) => {
           if (res.code === 1) {
             this.popularFilms = res.data;
-            this.recommendFilmLoading=false;
+            this.recommendFilmLoading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -444,7 +414,7 @@ export default {
         });
     },
 
-    page(id) {
+    page (id) {
       // let filmId = this.$route.params.id;
       let filmId = id;
       let userId = getUserId();
@@ -480,7 +450,7 @@ export default {
     },
   },
 
-  mounted() {
+  mounted () {
     this.page(this.$route.params.id);
   },
 };
@@ -497,7 +467,7 @@ export default {
   /* height: 800px; */
 }
 
-.container >>> .el-loading-mask{
+.container >>> .el-loading-mask {
   z-index: 900;
 }
 
@@ -785,7 +755,7 @@ h4 {
 
 .favoriteBtn .notFavorited::before,
 .favoriteBtn .favorited::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

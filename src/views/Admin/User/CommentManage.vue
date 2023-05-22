@@ -2,122 +2,124 @@
   <div class="CommentManage">
     <!-- 条件筛选区域 -->
     <div class="filters">
-      <el-form label-position="left" :model="searchComment">
+      <el-form label-position="left"
+               :model="searchComment">
         <el-form-item label="用户名">
-          <el-input
-            v-model="searchComment.username"
-            placeholder="请输入用户名"
-          ></el-input>
+          <el-input v-model="searchComment.username"
+                    placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="类别">
-          <el-select v-model="searchComment.type" placeholder="请选择">
-            <el-option label="电影" value="1"></el-option>
-            <el-option label="游戏" value="2"></el-option>
-            <el-option label="书籍" value="3"></el-option>
+          <el-select v-model="searchComment.type"
+                     placeholder="请选择">
+            <el-option label="电影"
+                       value="1"></el-option>
+            <el-option label="游戏"
+                       value="2"></el-option>
+            <el-option label="书籍"
+                       value="3"></el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item label="来源">
-          <el-input
-            v-model="searchComment.name"
-            placeholder="电影/游戏/书籍名"
-          ></el-input>
+          <el-input v-model="searchComment.name"
+                    placeholder="电影/游戏/书籍名"></el-input>
         </el-form-item>
 
         <el-form-item label="评论时间">
-          <el-date-picker
-            v-model="commentDate"
-            clearable
-            value-format="yyyy-MM-dd"
-            type="daterange"
-            placeholder="选择日期"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
+          <el-date-picker v-model="commentDate"
+                          clearable
+                          value-format="yyyy-MM-dd"
+                          type="daterange"
+                          placeholder="选择日期"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button type="info" @click="clear">清空</el-button>
-          <el-button type="danger" :disabled="!multipleSelection.length">批量删除</el-button>
+          <el-button type="primary"
+                     @click="onSubmit">查询</el-button>
+          <el-button type="info"
+                     @click="clear">清空</el-button>
+          <el-button type="danger"
+                     :disabled="!multipleSelection.length">批量删除</el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 内容展示区域 -->
     <div class="table">
-      <el-table
-        border
-        height="500"
-        :data="commentData"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="40"></el-table-column>
+      <el-table border
+                height="500"
+                :data="commentData"
+                @selection-change="handleSelectionChange">
+        <el-table-column type="selection"
+                         width="40"></el-table-column>
 
-        <el-table-column prop="type" label="类型" width="80"></el-table-column>
+        <el-table-column prop="type"
+                         label="类型"
+                         width="80"></el-table-column>
 
-        <el-table-column prop="name" label="来源" width="200">
+        <el-table-column prop="name"
+                         label="来源"
+                         width="200">
           <template slot-scope="scope">
-            <img :src="scope.row.img" style="width: 50px" />
+            <img :src="scope.row.img"
+                 style="width: 50px" />
             <span>《{{ scope.row.name }}》</span>
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="username"
-          label="用户"
-          width="150"
-        ></el-table-column>
+        <el-table-column prop="username"
+                         label="用户"
+                         width="150"></el-table-column>
 
-        <el-table-column prop="comment" label="评论内容"> </el-table-column>
+        <el-table-column prop="comment"
+                         label="评论内容"> </el-table-column>
 
-        <el-table-column
-          prop="releaseTime"
-          label="发布时间"
-          width="160"
-        ></el-table-column>
+        <el-table-column prop="releaseTime"
+                         label="发布时间"
+                         width="160"></el-table-column>
 
-        <el-table-column fixed="right" label="操作" width="100">
+        <el-table-column fixed="right"
+                         label="操作"
+                         width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text"
-              >编辑</el-button
-            >
-            <el-button type="text" @click="deleteComment(scope.row)"
-              >删除</el-button
-            >
+            <el-button @click="handleClick(scope.row)"
+                       type="text">编辑</el-button>
+            <el-button type="text"
+                       @click="deleteComment(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <el-dialog title="修改评论" :visible.sync="dialogFormVisible">
+      <el-dialog title="修改评论"
+      :close-on-click-modal = "false"
+                 :visible.sync="dialogFormVisible">
         <el-form :model="commentDialog">
-          <el-form-item label="评论" :label-width="formLabelWidth">
-            <el-input
-              v-model="commentDialog.comment"
-              type="textarea"
-              autosize
-              auto-complete="off"
-            ></el-input>
+          <el-form-item label="评论"
+                        :label-width="formLabelWidth">
+            <el-input v-model="commentDialog.comment"
+                      type="textarea"
+                      autosize
+                      auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer"
+             class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary"
+                     @click="dialogFormVisible = false">确 定</el-button>
         </div>
       </el-dialog>
     </div>
 
     <!-- 底部分页 -->
     <div class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="pagination.total"
-        @current-change="currentPageChanged"
-      >
+      <el-pagination background
+                     layout="prev, pager, next"
+                     :total="pagination.total"
+                     @current-change="currentPageChanged">
       </el-pagination>
     </div>
   </div>
@@ -127,7 +129,7 @@
 export default {
   name: "CommentManage",
 
-  data() {
+  data () {
     return {
       // 分页条相关数据
       pagination: {
@@ -203,7 +205,7 @@ export default {
       searchComment: {
         username: "",
         type: "",
-        name:"",
+        name: "",
       },
 
       beginTime: "",
@@ -212,26 +214,26 @@ export default {
     };
   },
 
-  mounted() {},
+  mounted () { },
 
   methods: {
-    handleClick(row) {
+    handleClick (row) {
       // row是一个对象
       this.dialogFormVisible = !this.dialogFormVisible;
       this.commentDialog = row;
       console.log(row);
     },
-    deleteComment(row) {
+    deleteComment (row) {
       this.commentData.splice(this.commentData.indexOf(row), 1);
       // console.log("删除成功",obj);
     },
 
-    currentPageChanged(currentPage) {
+    currentPageChanged (currentPage) {
       this.pagination.currentPage = currentPage;
       // console.log(this.pagination.currentPage);
     },
     // 复选框被选中之后执行的方法
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       // console.log("选中了：",val);
       // val是一个对象数组，对象是每一条评论的具体信息
       this.multipleSelection = val;
@@ -239,13 +241,13 @@ export default {
     },
 
     // 查询方法
-    onSubmit() {
+    onSubmit () {
       this.currentPage = 1;
       //   this.page();
-      console.log(this.beginTime,this.endTime);
+      console.log(this.beginTime, this.endTime);
     },
     // 清除
-    clear() {
+    clear () {
       this.searchComment = {
         username: "",
         type: "",
@@ -259,7 +261,7 @@ export default {
   },
 
   watch: {
-    commentDate(val) {
+    commentDate (val) {
       console.log("@", val);
       if (val && val.length >= 2) {
         this.beginTime = val[0];
@@ -280,7 +282,7 @@ export default {
   /* height: 100%; */
   display: flex;
   flex-direction: column;
-  margin: 0px 20px;
+  /* margin: 0px 20px; */
 }
 
 /* ************************************************************************ */
@@ -289,37 +291,36 @@ export default {
   margin: 10px 0px;
 }
 
-.filters .el-form{
-    /* border: 1px solid green; */
-    display: grid;
-    grid-template-columns:repeat(4,25%);
-    border-bottom: 1px solid var(--lightTheme);
+.filters .el-form {
+  /* border: 1px solid green; */
+  display: grid;
+  grid-template-columns: repeat(4, 25%);
+  border-bottom: 1px solid var(--lightTheme);
 }
 
-.filters >>> .el-form .el-form-item__label{
-    font-size: 14px;
+.filters >>> .el-form .el-form-item__label {
+  font-size: 14px;
 }
 
-.filters >>> .el-form .el-form-item{
-    display: flex;
-    margin:10px 0px;
+.filters >>> .el-form .el-form-item {
+  display: flex;
+  margin: 10px 0px;
 }
 
-.filters >>> .el-form .el-input__inner{
-    width: 250px;
-    /* height: 30px; */
-    border-radius: 4px;
+.filters >>> .el-form .el-input__inner {
+  width: 250px;
+  /* height: 30px; */
+  border-radius: 4px;
 }
 
-.filters >>> .el-form .el-range-separator{
+.filters >>> .el-form .el-range-separator {
   margin-right: 15px;
 }
 
-.filters >>> .el-form .el-form-item:last-child .el-form-item__content{
+.filters >>> .el-form .el-form-item:last-child .el-form-item__content {
   display: flex;
   width: 100%;
 }
-
 
 /* ************************************************************************* */
 .table {
@@ -403,7 +404,7 @@ export default {
 }
 
 .CommentManage >>> .el-dialog__footer div button::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

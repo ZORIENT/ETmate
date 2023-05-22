@@ -5,46 +5,54 @@
     </div>
 
     <div class="table">
-      <el-table border :height="hieght" :data="replyData">
-        <el-table-column
-          prop="type"
-          label="类型"
-          width="80"
-          :filters="[
+      <el-table border
+                :height="hieght"
+                :data="replyData">
+        <el-table-column prop="type"
+                         label="类型"
+                         width="80"
+                         :filters="[
             { text: '电影', value: '电影' },
             { text: '游戏', value: '游戏' },
             { text: '书籍', value: '书籍' },
           ]"
-          :filter-method="filterTag"
-        >
+                         :filter-method="filterTag">
         </el-table-column>
 
-        <el-table-column prop="film" label="来源" width="200">
+        <el-table-column prop="film"
+                         label="来源"
+                         width="200">
           <template slot-scope="scope">
             <div v-show="scope.row.type === '电影'">
-              <img :src="scope.row.film.cover" style="width: 50px" />
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
               <span>《{{ scope.row.film.filmName }}》</span>
             </div>
 
             <div v-show="scope.row.type === '游戏'">
-              <img :src="scope.row.film.cover" style="width: 50px" />
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
               <span>《{{ scope.row.film.gameName }}》</span>
             </div>
 
             <div v-show="scope.row.type === '书籍'">
-              <img :src="scope.row.film.cover" style="width: 50px" />
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
               <span>《{{ scope.row.film.bookName }}》</span>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="comment" label="回复内容">
+        <el-table-column prop="comment"
+                         label="回复内容">
           <template slot-scope="scope">
             <span v-html="computedText(scope.row.comment) "></span>
           </template>
         </el-table-column>
 
-        <el-table-column prop="releaseTime" label="发布时间" width="160">
+        <el-table-column prop="releaseTime"
+                         label="发布时间"
+                         width="160">
           <template slot-scope="scope">
             {{
               scope.row.createTime ? scope.row.createTime.replace("T", " ") : ""
@@ -52,7 +60,9 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="updateTime" label="修改时间" width="160">
+        <el-table-column prop="updateTime"
+                         label="修改时间"
+                         width="160">
           <template slot-scope="scope">
             {{
               scope.row.updateTime ? scope.row.updateTime.replace("T", " ") : ""
@@ -60,32 +70,37 @@
           </template>
         </el-table-column>
 
-        <el-table-column fixed="right" label="操作" width="100">
+        <el-table-column fixed="right"
+                         label="操作"
+                         width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text"
-              >编辑</el-button
-            >
-            <el-button type="text" @click="deleteComment(scope.row)"
-              >删除</el-button
-            >
+            <el-button @click="handleClick(scope.row)"
+                       type="text">编辑</el-button>
+            <el-button type="text"
+                       @click="deleteComment(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <el-dialog title="修改回复" :visible.sync="dialogFormVisible">
-        <el-form :model="commentDialog" v-loading="loading">
-          <el-form-item label="回复" :label-width="formLabelWidth">
-            <el-input
-              v-model="commentDialog.comment"
-              type="textarea"
-              autosize
-              auto-complete="off"
-            ></el-input>
+      <el-dialog title="修改回复"
+                 width="500px"
+                 :close-on-click-modal="false"
+                 :visible.sync="dialogFormVisible">
+        <el-form :model="commentDialog"
+                 v-loading="loading">
+          <el-form-item label="回复"
+                        :label-width="formLabelWidth">
+            <el-input v-model="commentDialog.comment"
+                      type="textarea"
+                      :autosize="{ minRows: 2, maxRows: 3}">
+            </el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer"
+             class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateComment()">确 定</el-button>
+          <el-button type="primary"
+                     @click="updateComment()">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -100,7 +115,7 @@ import { getReply } from "@/api/reply";
 export default {
   name: "UserReplys",
 
-  data() {
+  data () {
     return {
       commentDialog: {
         id: "",
@@ -122,13 +137,13 @@ export default {
     };
   },
 
-  mounted() {
+  mounted () {
     this.selectReply();
   },
 
   methods: {
     // 打开评论编辑框
-    handleClick(row) {
+    handleClick (row) {
       // row是一个对象
       this.dialogFormVisible = !this.dialogFormVisible;
       this.commentDialog.id = row.id;
@@ -136,7 +151,7 @@ export default {
     },
 
     // 删除评论
-    deleteComment(row) {
+    deleteComment (row) {
       this.$confirm("是否删除该回复？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -164,7 +179,7 @@ export default {
     },
 
     // 提交编辑评论
-    updateComment() {
+    updateComment () {
       this.loading = true;
 
       updateComment(this.commentDialog)
@@ -186,12 +201,12 @@ export default {
     },
 
     // 筛选电影，游戏，书籍
-    filterTag(value, row) {
+    filterTag (value, row) {
       return row.type === value;
     },
 
     // 查询当前用户的所有评论信息
-    selectReply() {
+    selectReply () {
       getReply(getUserId())
         .then((res) => {
           if (res.code === 1) {
@@ -222,7 +237,7 @@ export default {
   },
 
   computed: {
-    replyData() {
+    replyData () {
       // console.log(this.filmReplys.concat(this.gameReplys.concat(this.bookReplys)));
       return this.filmReplys.concat(this.gameReplys.concat(this.bookReplys));
     },
@@ -322,7 +337,7 @@ export default {
   color: var(--primaryColor);
 }
 
-.container >>> .el-textarea__inner {
+.container >>> .el-textarea__inner:active {
   border-color: var(--primaryColor);
 }
 
@@ -341,7 +356,7 @@ export default {
 }
 
 .container >>> .el-dialog__footer div button::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

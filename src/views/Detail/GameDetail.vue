@@ -15,35 +15,30 @@
 
           <h1>{{ gameInfo.gameNameEn }} ({{ gameInfo.timePlatform }})</h1>
           <p>
-            <span>制作发行：</span
-            ><span class="inner">{{ gameInfo.publisher }}</span>
+            <span>制作发行：</span><span class="inner">{{ gameInfo.publisher }}</span>
           </p>
 
           <p>
-            <span>游戏类型：</span
-            ><span class="inner">{{ gameInfo.genres }}</span>
+            <span>游戏类型：</span><span class="inner">{{ gameInfo.genres }}</span>
           </p>
 
           <p>
-            <span>平台支持：</span
-            ><span class="inner">{{ gameInfo.platforms }}</span>
+            <span>平台支持：</span><span class="inner">{{ gameInfo.platforms }}</span>
           </p>
 
           <p>
-            <span>发行时间：</span
-            ><span class="inner">{{ gameInfo.timePlatform }}</span>
+            <span>发行时间：</span><span class="inner">{{ gameInfo.timePlatform }}</span>
           </p>
 
           <p>
-            <span>游戏标签：</span
-            ><span class="inner">{{ gameInfo.tags }}</span>
+            <span>游戏标签：</span><span class="inner">{{ gameInfo.tags }}</span>
           </p>
 
           <p><span>游戏别名：</span>{{ gameInfo.gameNameEn }}</p>
 
           <p>
-            <span>游戏地址：</span
-            ><a :href="gameInfo.gameUrl" target="_blank">点击此处</a>
+            <span>游戏地址：</span><a :href="gameInfo.gameUrl"
+               target="_blank">点击此处</a>
           </p>
         </div>
       </div>
@@ -52,18 +47,19 @@
       <div class="video">
         <h1 class="title">游戏视频</h1>
         <div class="videoRate">
-          <video
-            width="530px"
-            height="298px"
-            :src="gameInfo.video"
-            muted
-            controls
-            autoplay
-            loop
-          >
-            <source src="" type="video/mp4" />
-            <source src="" type="video/webm" />
-            <source src="" type="video/ogg" />
+          <video width="530px"
+                 height="298px"
+                 :src="gameInfo.video"
+                 muted
+                 controls
+                 autoplay
+                 loop>
+            <source src=""
+                    type="video/mp4" />
+            <source src=""
+                    type="video/webm" />
+            <source src=""
+                    type="video/ogg" />
             暂时无法播放
           </video>
 
@@ -75,71 +71,48 @@
               <div class="rate">
                 <h1>{{ starAvg }}</h1>
                 <div class="stars">
-                  <el-rate
-                    v-model="rateInfo.rate"
-                    disabled
-                    text-color="#ff9900"
-                  ></el-rate>
+                  <el-rate v-model="rateInfo.rate"
+                           disabled
+                           text-color="#ff9900"></el-rate>
                   <h2>{{ rateInfo.rateNum }}人已评价</h2>
                 </div>
               </div>
 
               <div class="process">
                 <div>
-                  <span>5星</span
-                  ><el-progress
-                    :text-inside="true"
-                    :stroke-width="18"
-                    :percentage="star5"
-                  ></el-progress>
+                  <span>5星</span><el-progress :text-inside="true"
+                               :stroke-width="18"
+                               :percentage="star5"></el-progress>
                 </div>
                 <div>
-                  <span>4星</span
-                  ><el-progress
-                    :text-inside="true"
-                    :stroke-width="18"
-                    :percentage="star4"
-                  ></el-progress>
+                  <span>4星</span><el-progress :text-inside="true"
+                               :stroke-width="18"
+                               :percentage="star4"></el-progress>
                 </div>
                 <div>
-                  <span>3星</span
-                  ><el-progress
-                    :text-inside="true"
-                    :stroke-width="18"
-                    :percentage="star3"
-                  ></el-progress>
+                  <span>3星</span><el-progress :text-inside="true"
+                               :stroke-width="18"
+                               :percentage="star3"></el-progress>
                 </div>
                 <div>
-                  <span>2星</span
-                  ><el-progress
-                    :text-inside="true"
-                    :stroke-width="18"
-                    :percentage="star2"
-                  ></el-progress>
+                  <span>2星</span><el-progress :text-inside="true"
+                               :stroke-width="18"
+                               :percentage="star2"></el-progress>
                 </div>
                 <div>
-                  <span>1星</span
-                  ><el-progress
-                    :text-inside="true"
-                    :stroke-width="18"
-                    :percentage="star1"
-                  ></el-progress>
+                  <span>1星</span><el-progress :text-inside="true"
+                               :stroke-width="18"
+                               :percentage="star1"></el-progress>
                 </div>
               </div>
 
               <div class="favoriteBtn">
-                <el-button
-                  class="notFavorited"
-                  v-show="!isFavorited"
-                  @click="handleFavorited"
-                  >添加至收藏</el-button
-                >
-                <el-button
-                  class="favorited"
-                  v-show="isFavorited"
-                  @click="handleFavorited"
-                  >从收藏移出</el-button
-                >
+                <el-button class="notFavorited"
+                           v-show="!isFavorited"
+                           @click="handleFavorited">添加至收藏</el-button>
+                <el-button class="favorited"
+                           v-show="isFavorited"
+                           @click="handleFavorited">从收藏移出</el-button>
               </div>
             </div>
           </div>
@@ -154,45 +127,42 @@
       </div>
 
       <!-- 游戏测评 -->
-      <div class="intro" v-show="gameInfo.evalute">
+      <div class="intro"
+           v-show="gameInfo.evalute">
         <h1 class="title">游戏测评</h1>
         <p><span v-html="computedText(gameInfo.evalute)"></span></p>
         <!-- <p>{{ gameInfo.evalute }}</p> -->
       </div>
 
       <!-- 相关电影列表 -->
-      <div class="related" v-show="relatedGames.length">
+      <div class="related"
+           v-show="relatedGames.length">
         <h1 class="title">相关游戏</h1>
         <div class="relatedGames">
-          <GameCard
-            v-for="(game, index) in relatedGames"
-            :key="index"
-            :item="game"
-          ></GameCard>
+          <GameCard v-for="(game, index) in relatedGames"
+                    :key="index"
+                    :item="game"></GameCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage
-          :params="{ itemId: $route.params.id, type: 2 }"
-        ></CommentPage>
+        <CommentPage :params="{ itemId: $route.params.id, type: 2 }"></CommentPage>
       </div>
     </div>
 
     <!-- 右侧游戏推荐的容器 -->
     <div class="right">
       <!-- 游戏推荐区域 -->
-      <div class="recommendList" v-loading="recommendGameLoading">
+      <div class="recommendList"
+           v-loading="recommendGameLoading">
         <div class="title">热门游戏</div>
 
-        <div
-          class="recommendGame"
-          v-for="(game, index) in popularGames.slice(0, 10)"
-          :key="index"
-          @click="toGameDetail(game.id)"
-        >
+        <div class="recommendGame"
+             v-for="(game, index) in popularGames.slice(0, 10)"
+             :key="index"
+             @click="toGameDetail(game.id)">
           <div class="left">
             <img :src="game.cover" />
           </div>
@@ -226,7 +196,7 @@ export default {
   name: "GameDetail",
   components: { GameCard, CommentPage },
 
-  data() {
+  data () {
     return {
       isFavorited: false,
       collectionLoading: false,
@@ -239,7 +209,7 @@ export default {
   },
 
   computed: {
-    star5() {
+    star5 () {
       if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -248,7 +218,7 @@ export default {
         return 0;
       }
     },
-    star4() {
+    star4 () {
       if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -257,7 +227,7 @@ export default {
         return 0;
       }
     },
-    star3() {
+    star3 () {
       if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -266,7 +236,7 @@ export default {
         return 0;
       }
     },
-    star2() {
+    star2 () {
       if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -275,7 +245,7 @@ export default {
         return 0;
       }
     },
-    star1() {
+    star1 () {
       if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -284,7 +254,7 @@ export default {
         return 0;
       }
     },
-    starAvg() {
+    starAvg () {
       if (this.rateInfo.rateAvg) {
         return parseFloat(this.rateInfo.rateAvg.toFixed(1));
       } else {
@@ -294,7 +264,7 @@ export default {
   },
 
   methods: {
-    handleFavorited() {
+    handleFavorited () {
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -307,7 +277,7 @@ export default {
       }
     },
 
-    toGameDetail(id){
+    toGameDetail (id) {
       this.$router.push({
         name: "GameDetail",
         params: {
@@ -317,7 +287,7 @@ export default {
     },
 
     // 根据id查询游戏信息
-    selectById(id) {
+    selectById (id) {
       selectById(id)
         .then((res) => {
           if (res.code === 1) {
@@ -333,7 +303,7 @@ export default {
     },
 
     // 条件查询游戏收藏，是否已经收藏
-    selectCollection(params) {
+    selectCollection (params) {
       selectCollectionByCondition(params)
         .then((res) => {
           // console.log(res.data.total);
@@ -351,7 +321,7 @@ export default {
     },
 
     // 添加收藏
-    insertCollection() {
+    insertCollection () {
       let data = {
         userId: getUserId(),
         collectionId: this.$route.params.id,
@@ -375,7 +345,7 @@ export default {
     },
 
     // 取消收藏
-    deleteCollection() {
+    deleteCollection () {
       // 判断当前电影是否已经被收藏
       let params = {
         userId: getUserId(),
@@ -412,7 +382,7 @@ export default {
     },
 
     // 获取游戏的详细评分信息
-    getRates(params) {
+    getRates (params) {
       getRates(params)
         .then((res) => {
           if (res.code === 1) {
@@ -428,7 +398,7 @@ export default {
     },
 
     // 根据游戏id获取相似游戏信息
-    getSimilarGames(id) {
+    getSimilarGames (id) {
       getSimilarGames(id)
         .then((res) => {
           if (res.code === 1) {
@@ -443,7 +413,7 @@ export default {
     },
 
     // 根据用户id更新化推荐相似游戏
-    getPopularGames(userId) {
+    getPopularGames (userId) {
       this.recommendGameLoading = true;
       userCfRecommendGame(userId)
         .then((res) => {
@@ -459,7 +429,7 @@ export default {
         });
     },
 
-    page(id) {
+    page (id) {
       let gameId = id;
       let userId = getUserId();
 
@@ -494,7 +464,7 @@ export default {
     },
   },
 
-  mounted() {
+  mounted () {
     this.page(this.$route.params.id);
   },
 };
@@ -602,7 +572,7 @@ export default {
 
 .intro p {
   /* 首行缩进2字符 */
-text-indent: 2em;
+  text-indent: 2em;
   font-size: 13px;
   line-height: 23px;
 }
@@ -809,7 +779,7 @@ h4 {
 
 .favoriteBtn .notFavorited::before,
 .favoriteBtn .favorited::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

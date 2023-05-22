@@ -8,7 +8,9 @@
     <!-- 分类导航按钮 -->
     <div class="navs">
       <ul>
-        <li v-for="nav in navs" :key="nav.id" @click="changeNav(nav.id)">
+        <li v-for="nav in navs"
+            :key="nav.id"
+            @click="changeNav(nav.id)">
           <span :class="activedNav === nav.id ? 'activedNav' : ''">
             {{ nav.name }}
           </span>
@@ -26,7 +28,7 @@
 export default {
   name: "BulletinList",
 
-  data() {
+  data () {
     return {
       navs: [
         { id: 0, name: "系统通知", path: "SystemBulletin" },
@@ -38,11 +40,11 @@ export default {
     };
   },
 
-  mounted() {},
+  mounted () { },
 
   methods: {
     // 切换活动按钮
-    changeNav(id) {
+    changeNav (id) {
       this.activedNav = id;
 
       this.$router.push({ name: this.navs[id].path });

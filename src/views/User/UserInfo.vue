@@ -6,34 +6,34 @@
 
     <div class="userInfo">
       <div class="left">
-        <el-upload
-          class="avatar-uploader"
-          action=""
-          :http-request="uploadAvatar"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-          v-loading="uploadLoading"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <el-upload class="avatar-uploader"
+                   action=""
+                   :http-request="uploadAvatar"
+                   :show-file-list="false"
+                   :before-upload="beforeAvatarUpload"
+                   v-loading="uploadLoading">
+          <img v-if="imageUrl"
+               :src="imageUrl"
+               class="avatar" />
+          <i v-else
+             class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
 
         <h1>点击上传头像</h1>
       </div>
 
       <div class="right">
-        <el-form
-          label-position="right"
-          label-width="100px"
-          ref="userInfo"
-          :model="userInfo"
-          :rules="userInfoRules"
-          v-loading="formLoading"
-        >
+        <el-form label-position="right"
+                 label-width="100px"
+                 ref="userInfo"
+                 :model="userInfo"
+                 :rules="userInfoRules"
+                 v-loading="formLoading">
           <!-- 邮箱 -->
           <el-form-item label="邮箱">
-            <el-input disabled v-model="userInfo.email" type="email"></el-input>
+            <el-input disabled
+                      v-model="userInfo.email"
+                      type="email"></el-input>
           </el-form-item>
 
           <!-- 昵称 -->
@@ -43,39 +43,38 @@
 
           <!-- 性别 -->
           <el-form-item label="性别">
-            <el-select
-              v-model="userInfo.gender"
-              placeholder="性别"
-              popper-class="select"
-            >
-              <el-option label="男" :value="1"></el-option>
-              <el-option label="女" :value="2"></el-option>
+            <el-select v-model="userInfo.gender"
+                       placeholder="性别"
+                       popper-class="select">
+              <el-option label="男"
+                         :value="1"></el-option>
+              <el-option label="女"
+                         :value="2"></el-option>
             </el-select>
           </el-form-item>
 
           <!-- 原密码 -->
           <el-form-item label="原密码">
-            <el-input v-model="userInfo.password" type="password"></el-input>
+            <el-input v-model="userInfo.password"
+                      type="password"></el-input>
           </el-form-item>
 
           <!-- 新密码 -->
-          <el-form-item label="新密码" prop="newPassword">
-            <el-input
-              v-model="userInfo.newPassword"
-              type="password"
-              show-password
-              autocomplete="off"
-            ></el-input>
+          <el-form-item label="新密码"
+                        prop="newPassword">
+            <el-input v-model="userInfo.newPassword"
+                      type="password"
+                      show-password
+                      autocomplete="off"></el-input>
           </el-form-item>
 
           <!-- 重复新密码 -->
-          <el-form-item label="重复新密码" prop="newPassword2">
-            <el-input
-              v-model="userInfo.newPassword2"
-              type="password"
-              show-password
-              autocomplete="off"
-            ></el-input>
+          <el-form-item label="重复新密码"
+                        prop="newPassword2">
+            <el-input v-model="userInfo.newPassword2"
+                      type="password"
+                      show-password
+                      autocomplete="off"></el-input>
           </el-form-item>
 
           <el-form-item>
@@ -96,7 +95,7 @@ import md5 from "js-md5"
 export default {
   name: "UserInfo",
 
-  data() {
+  data () {
     var validatePassword = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
@@ -141,11 +140,11 @@ export default {
       },
       imageUrl: "",
       uploadLoading: false,
-      formLoading:false
+      formLoading: false
     };
   },
 
-  mounted() {
+  mounted () {
     let id = getUserId();
     selectById(id)
       .then((res) => {
@@ -166,12 +165,8 @@ export default {
   },
 
   methods: {
-    handleAvatarSuccess() {
-      // console.log(file);
-      // this.imageUrl = res.data;
-      // console.log(res);
-    },
-    beforeAvatarUpload(file) {
+    
+    beforeAvatarUpload (file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
@@ -184,7 +179,7 @@ export default {
       return isJPG && isLt2M;
     },
     // 上传头像
-    uploadAvatar(params) {
+    uploadAvatar (params) {
       const { file } = params;
       const formData = new FormData();
       // 加载中
@@ -212,14 +207,14 @@ export default {
         });
     },
 
-    updateUserMethod(user) {
+    updateUserMethod (user) {
       updateUser(user)
         .then((res) => {
           // console.log(res);
           if (res.code === 1) {
             this.$message.success("更新成功！");
-            this.formLoading=false;
-            
+            this.formLoading = false;
+
             this.$store.dispatch(
               "getUserInfo",
               this.$store.state.user.userInfo.id
@@ -233,18 +228,18 @@ export default {
         });
     },
 
-    submitForm(formName){
-      this.$refs[formName].validate((valid)=>{
-        if(valid){
-          let user={
-            id:getUserId(),
-            gender:this.userInfo.gender,
-            username:this.userInfo.username,
-            password:md5(this.userInfo.newPassword)
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let user = {
+            id: getUserId(),
+            gender: this.userInfo.gender,
+            username: this.userInfo.username,
+            password: md5(this.userInfo.newPassword)
           };
-          this.formLoading=true;
+          this.formLoading = true;
           this.updateUserMethod(user);
-        }else{
+        } else {
           console.log("表单提交错误");
           return false;
         }
@@ -404,7 +399,7 @@ export default {
 }
 
 .container >>> .el-button:before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

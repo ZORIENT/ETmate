@@ -17,8 +17,7 @@
           </p>
 
           <p>
-            <span>译者：</span
-            ><span class="inner">{{
+            <span>译者：</span><span class="inner">{{
               bookInfo.translator ? bookInfo.translator : "N/A"
             }}</span>
           </p>
@@ -27,8 +26,7 @@
           </p>
 
           <p>
-            <span>出版商：</span
-            ><span class="inner">{{ bookInfo.publisher }}</span>
+            <span>出版商：</span><span class="inner">{{ bookInfo.publisher }}</span>
           </p>
 
           <p><span>页数：</span>{{ bookInfo.pages }}页</p>
@@ -38,8 +36,7 @@
           <p><span>出版时间：</span>{{ bookInfo.publicationTime }}</p>
 
           <p>
-            <span>评分：</span
-            ><span class="rate">豆瓣 {{ bookInfo.doubanScore }}</span>
+            <span>评分：</span><span class="rate">豆瓣 {{ bookInfo.doubanScore }}</span>
           </p>
 
           <p><span>ISBN：</span>{{ bookInfo.ibsn }}</p>
@@ -61,23 +58,20 @@
       </div>
 
       <!-- 相关书籍列表 -->
-      <div class="related" v-show="relatedBooks.length">
+      <div class="related"
+           v-show="relatedBooks.length">
         <h1 class="title">相关书籍</h1>
         <div class="relatedBooks">
-          <BookCard
-            v-for="(book, index) in relatedBooks"
-            :key="index"
-            :item="book"
-          ></BookCard>
+          <BookCard v-for="(book, index) in relatedBooks"
+                    :key="index"
+                    :item="book"></BookCard>
         </div>
       </div>
 
       <!-- 评论区 -->
       <div class="comments">
         <div class="title">网友评论</div>
-        <CommentPage
-          :params="{ itemId: $route.params.id, type: 3 }"
-        ></CommentPage>
+        <CommentPage :params="{ itemId: $route.params.id, type: 3 }"></CommentPage>
       </div>
     </div>
 
@@ -91,85 +85,61 @@
           <div class="rate">
             <h1>{{ starAvg }}</h1>
             <div class="stars">
-              <el-rate
-                v-model="rateInfo.rateAvg"
-                disabled
-                text-color="#ff9900"
-              ></el-rate>
+              <el-rate v-model="rateInfo.rateAvg"
+                       disabled
+                       text-color="#ff9900"></el-rate>
               <h2>{{ rateInfo.rateNum }}人已评价</h2>
             </div>
           </div>
 
           <div class="process">
             <div>
-              <span>5星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star5"
-              ></el-progress>
+              <span>5星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star5"></el-progress>
             </div>
             <div>
-              <span>4星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star4"
-              ></el-progress>
+              <span>4星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star4"></el-progress>
             </div>
             <div>
-              <span>3星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star3"
-              ></el-progress>
+              <span>3星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star3"></el-progress>
             </div>
             <div>
-              <span>2星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star2"
-              ></el-progress>
+              <span>2星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star2"></el-progress>
             </div>
             <div>
-              <span>1星</span
-              ><el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="star1"
-              ></el-progress>
+              <span>1星</span><el-progress :text-inside="true"
+                           :stroke-width="18"
+                           :percentage="star1"></el-progress>
             </div>
           </div>
 
           <div class="favoriteBtn">
-            <el-button
-              class="notFavorited"
-              v-show="!isFavorited"
-              @click="handleFavorited"
-              >添加至收藏</el-button
-            >
-            <el-button
-              class="favorited"
-              v-show="isFavorited"
-              @click="handleFavorited"
-              >从收藏移出</el-button
-            >
+            <el-button class="notFavorited"
+                       v-show="!isFavorited"
+                       @click="handleFavorited">添加至收藏</el-button>
+            <el-button class="favorited"
+                       v-show="isFavorited"
+                       @click="handleFavorited">从收藏移出</el-button>
           </div>
         </div>
       </div>
 
       <!-- 书籍推荐区域 -->
-      <div class="recommendList" v-loading="recommendBookLoading">
+      <div class="recommendList"
+           v-loading="recommendBookLoading">
         <div class="title">热门书籍</div>
 
-        <div
-          class="recommendbook"
-          v-for="(book, index) in popularBooks.slice(0, 6)"
-          :key="index"
-          @click="toBookDetail(book.id)"
-        >
+        <div class="recommendbook"
+             v-for="(book, index) in popularBooks.slice(0, 6)"
+             :key="index"
+             @click="toBookDetail(book.id)">
           <div class="left">
             <img :src="book.cover" />
           </div>
@@ -203,7 +173,7 @@ export default {
   name: "BookDetail",
   components: { BookCard, CommentPage },
 
-  data() {
+  data () {
     return {
       isFavorited: false,
       collectionLoading: false,
@@ -216,7 +186,7 @@ export default {
   },
 
   computed: {
-    star5() {
+    star5 () {
       if ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate5 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -225,7 +195,7 @@ export default {
         return 0;
       }
     },
-    star4() {
+    star4 () {
       if ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate4 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -234,7 +204,7 @@ export default {
         return 0;
       }
     },
-    star3() {
+    star3 () {
       if ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate3 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -243,7 +213,7 @@ export default {
         return 0;
       }
     },
-    star2() {
+    star2 () {
       if ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate2 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -252,7 +222,7 @@ export default {
         return 0;
       }
     },
-    star1() {
+    star1 () {
       if ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100) {
         return parseFloat(
           ((this.rateInfo.rate1 / this.rateInfo.rateNum) * 100).toFixed(2)
@@ -261,7 +231,7 @@ export default {
         return 0;
       }
     },
-    starAvg() {
+    starAvg () {
       if (this.rateInfo.rateAvg) {
         return parseFloat(this.rateInfo.rateAvg.toFixed(1));
       } else {
@@ -271,7 +241,7 @@ export default {
   },
 
   methods: {
-    handleFavorited() {
+    handleFavorited () {
       // 已经收藏过了
       if (this.isFavorited) {
         // 只能取消收藏
@@ -284,7 +254,7 @@ export default {
       }
     },
 
-    toBookDetail(id) {
+    toBookDetail (id) {
       this.$router.push({
         name: "BookDetail",
         params: {
@@ -294,7 +264,7 @@ export default {
     },
 
     // 根据id查询书籍信息
-    selectById(id) {
+    selectById (id) {
       selectById(id)
         .then((res) => {
           if (res.code === 1) {
@@ -310,7 +280,7 @@ export default {
     },
 
     // 条件查询书籍收藏，是否已经收藏
-    selectCollection(params) {
+    selectCollection (params) {
       selectCollectionByCondition(params)
         .then((res) => {
           // console.log(res.data.total);
@@ -328,7 +298,7 @@ export default {
     },
 
     // 添加收藏
-    insertCollection() {
+    insertCollection () {
       let data = {
         userId: getUserId(),
         collectionId: this.$route.params.id,
@@ -352,7 +322,7 @@ export default {
     },
 
     // 取消收藏
-    deleteCollection() {
+    deleteCollection () {
       // 判断当前电影是否已经被收藏
       let params = {
         userId: getUserId(),
@@ -389,7 +359,7 @@ export default {
     },
 
     // 获取书籍的详细评分信息
-    getRates(params) {
+    getRates (params) {
       getRates(params)
         .then((res) => {
           if (res.code === 1) {
@@ -405,7 +375,7 @@ export default {
     },
 
     // 根据id推荐相关书籍
-    getSimilarBooks(id) {
+    getSimilarBooks (id) {
       getSimilarBooks(id)
         .then((res) => {
           if (res.code === 1) {
@@ -420,7 +390,7 @@ export default {
     },
 
     // 根据用户id更新化推荐相似书籍
-    getPopularBooks(userId) {
+    getPopularBooks (userId) {
       this.recommendBookLoading = true;
       userCfRecommendBook(userId)
         .then((res) => {
@@ -436,7 +406,7 @@ export default {
         });
     },
 
-    page(id) {
+    page (id) {
       let bookId = id;
       let userId = getUserId();
 
@@ -471,7 +441,7 @@ export default {
     },
   },
 
-  mounted() {
+  mounted () {
     this.page(this.$route.params.id);
   },
 };
@@ -770,7 +740,7 @@ h4 {
 
 .favoriteBtn .notFavorited::before,
 .favoriteBtn .favorited::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

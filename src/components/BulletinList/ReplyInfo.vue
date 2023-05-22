@@ -1,10 +1,10 @@
 <template>
   <div class="replyInfo">
-    <div class="replys" v-for="(reply, index) in replyList.slice(0,20)" :key="index">
+    <div class="replys"
+         v-for="(reply, index) in replyList.slice(0,20)"
+         :key="index">
       <div class="header">
-        <img
-          :src="reply.avatar"
-        />
+        <img :src="reply.avatar" />
         <div class="username">
           <p>{{reply.username}}</p>
           回复了你在<span>《{{reply.itemName}}》</span>中的评论
@@ -22,33 +22,33 @@
 </template>
 
 <script>
-import {replyToMine} from "@/api/reply"
-import {getUserId} from "@/utils/auth"
+import { replyToMine } from "@/api/reply"
+import { getUserId } from "@/utils/auth"
 
 export default {
   name: "ReplyInfo",
 
-  data() {
+  data () {
     return {
       // 评论回复的数据
-      replyList:[],
+      replyList: [],
     };
   },
 
-  mounted() {
+  mounted () {
     this.replyToMine();
   },
 
   methods: {
-    replyToMine(){
-      replyToMine(getUserId()).then(res=>{
-        if(res.code===1){
+    replyToMine () {
+      replyToMine(getUserId()).then(res => {
+        if (res.code === 1) {
           // console.log(res.data);
-          this.replyList=res.data;
-        }else{
+          this.replyList = res.data;
+        } else {
           this.$message.error(res.msg);
         }
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err);
       })
 

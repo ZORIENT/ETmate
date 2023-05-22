@@ -17,19 +17,18 @@ import UserInfo from "../views/User/UserInfo";
 import UserFavorites from "../views/User/UserFavorites";
 import UserComments from "../views/User/UserComments";
 import AdminPage from "../views/AdminPage.vue";
-import AdminMainPage from "../views/Admin/MainPage/AdminMainPage"
-import UserManage from "../views/Admin/User/UserManage"
-import CommentManage from "../views/Admin/User/CommentManage"
-import FilmManage from "../views/Admin/ModuleManage/FilmManage"
-import GameManage from "../views/Admin/ModuleManage/GameManage"
-import BookManage from "../views/Admin/ModuleManage/BookManage"
+import AdminMainPage from "../views/Admin/MainPage/AdminMainPage";
+import UserManage from "../views/Admin/User/UserManage";
+import CommentManage from "../views/Admin/User/CommentManage";
+import FilmManage from "../views/Admin/ModuleManage/FilmManage";
+import GameManage from "../views/Admin/ModuleManage/GameManage";
+import BookManage from "../views/Admin/ModuleManage/BookManage";
 import BulletinManage from "../views/Admin/System/BulletinManage";
 import OperateLog from "../views/Admin/System/OperateLog";
-
-import SearchResults from "../views/MainPage/SearchResults"
-import UserReplys from "../views/User/UserReplys"
-import ReplyInfo from "../components/BulletinList/ReplyInfo"
-import SystemBulletin from "../components/BulletinList/SystemBulletin"
+import SearchResults from "../views/MainPage/SearchResults";
+import UserReplys from "../views/User/UserReplys";
+import ReplyInfo from "../components/BulletinList/ReplyInfo";
+import SystemBulletin from "../components/BulletinList/SystemBulletin";
 
 const router = new VueRouter({
   routes: [
@@ -91,25 +90,24 @@ const router = new VueRouter({
           meta: {
             title: "公告",
           },
-          children:[
+          children: [
             {
-              name:"SystemBulletin",
-              path:"SystemBulletin",
-              component:SystemBulletin,
-              meta:{
-                title:"系统通知"
-              }
+              name: "SystemBulletin",
+              path: "SystemBulletin",
+              component: SystemBulletin,
+              meta: {
+                title: "系统通知",
+              },
             },
             {
-              name:"ReplyInfo",
-              path:"ReplyInfo",
-              component:ReplyInfo,
-              meta:{
-                title:"回复我的"
-              }
-            }
-
-          ]
+              name: "ReplyInfo",
+              path: "ReplyInfo",
+              component: ReplyInfo,
+              meta: {
+                title: "回复我的",
+              },
+            },
+          ],
         },
         {
           name: "FilmDetail",
@@ -168,13 +166,13 @@ const router = new VueRouter({
           },
         },
         {
-          name:"SearchResults",
-          path:"SearchResults/:keyword",
-          component:SearchResults,
-          meta:{
-            title:"搜索结果",
-          }
-        }
+          name: "SearchResults",
+          path: "SearchResults/:keyword",
+          component: SearchResults,
+          meta: {
+            title: "搜索结果",
+          },
+        },
       ],
     },
     {
@@ -270,17 +268,16 @@ const router = new VueRouter({
 });
 
 //获取原型对象上的push函数
-const originalPush = VueRouter.prototype.push
+const originalPush = VueRouter.prototype.push;
 //修改原型对象中的push方法
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
-}
-
+  return originalPush.call(this, location).catch((err) => err);
+};
 
 // 前置路由守卫，将不存在的路由地址重定向至主页
 router.beforeEach(async (to, from, next) => {
   let token = getToken();
-  const whiteList = ['/LoginRegister']
+  const whiteList = ["/LoginRegister"];
 
   // 有token，表示已登录
   if (token) {
@@ -290,7 +287,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === "/LoginRegister") {
       ElementUI.Message.warning("请不要重复登录！");
       return next({
-        path:"/"
+        path: "/",
       });
     } else if (to.meta.requirePrivilege) {
       if (privilege === 1) {
@@ -302,18 +299,17 @@ router.beforeEach(async (to, from, next) => {
     } else if (to.matched.length === 0) {
       // 如果未匹配到路由
       from.name ? next({ name: from.name }) : next("/");
-    }else{
+    } else {
       next();
     }
-  }else{
+  } else {
     // 未登录
     if (whiteList.indexOf(to.path) !== -1) {
-      next()
+      next();
     } else {
       next(`/LoginRegister?redirect=${to.path}`);
     }
   }
-
 });
 
 // 后置路由守卫

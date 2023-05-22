@@ -5,87 +5,99 @@
     </div>
 
     <div class="table">
-      <el-table border :height="height"  :data="commentData">
-          <el-table-column
-            prop="type"
-            label="类型"
-            width="80"
-            :filters="[
+      <el-table border
+                :height="height"
+                :data="commentData">
+        <el-table-column prop="type"
+                         label="类型"
+                         width="80"
+                         :filters="[
               { text: '电影', value: '电影' },
               { text: '游戏', value: '游戏' },
               { text: '书籍', value: '书籍' },
             ]"
-            :filter-method="filterTag"
-          >
-          </el-table-column>
+                         :filter-method="filterTag">
+        </el-table-column>
 
-          <el-table-column prop="film" label="来源" width="200">
-            <template slot-scope="scope">
-              <div v-show="scope.row.type === '电影'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.filmName }}》</span>
-              </div>
+        <el-table-column prop="film"
+                         label="来源"
+                         width="200">
+          <template slot-scope="scope">
+            <div v-show="scope.row.type === '电影'">
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
+              <span>《{{ scope.row.film.filmName }}》</span>
+            </div>
 
-              <div v-show="scope.row.type === '游戏'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.gameName }}》</span>
-              </div>
+            <div v-show="scope.row.type === '游戏'">
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
+              <span>《{{ scope.row.film.gameName }}》</span>
+            </div>
 
-              <div v-show="scope.row.type === '书籍'">
-                <img :src="scope.row.film.cover" style="width: 50px" />
-                <span>《{{ scope.row.film.bookName }}》</span>
-              </div>
-            </template>
-          </el-table-column>
+            <div v-show="scope.row.type === '书籍'">
+              <img :src="scope.row.film.cover"
+                   style="width: 50px" />
+              <span>《{{ scope.row.film.bookName }}》</span>
+            </div>
+          </template>
+        </el-table-column>
 
-          <el-table-column prop="comment" label="评论内容">
-            <template slot-scope="scope">
-              <span v-html="computedText(scope.row.comment)"></span>
-            </template>
-          </el-table-column>
+        <el-table-column prop="comment"
+                         label="评论内容">
+          <template slot-scope="scope">
+            <span v-html="computedText(scope.row.comment)"></span>
+          </template>
+        </el-table-column>
 
-          <el-table-column
-            prop="score"
-            width="100"
-            label="评分"
-          ></el-table-column>
+        <el-table-column prop="score"
+                         width="100"
+                         label="评分"></el-table-column>
 
-          <el-table-column prop="releaseTime" label="发布时间" width="160">
-            <template slot-scope="scope">
-              {{
+        <el-table-column prop="releaseTime"
+                         label="发布时间"
+                         width="160">
+          <template slot-scope="scope">
+            {{
                 scope.row.createTime ? scope.row.createTime.replace("T", " ") : ""
               }}
-            </template>
-          </el-table-column>
+          </template>
+        </el-table-column>
 
-          <el-table-column fixed="right" label="操作" width="100">
-            <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text"
-                >编辑</el-button
-              >
-              <el-button type="text" @click="deleteComment(scope.row)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      <el-dialog title="修改评论" :visible.sync="dialogFormVisible">
-        <el-form :model="commentDialog" v-loading="loading">
-          <el-form-item label="评分" :label-width="formLabelWidth">
+        <el-table-column fixed="right"
+                         label="操作"
+                         width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)"
+                       type="text">编辑</el-button>
+            <el-button type="text"
+                       @click="deleteComment(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-dialog title="修改评论"
+                 width="500px"
+                 :close-on-click-modal="false"
+                 :visible.sync="dialogFormVisible">
+        <el-form :model="commentDialog"
+                 v-loading="loading">
+          <el-form-item label="评分"
+                        :label-width="formLabelWidth">
             <el-rate v-model="commentDialog.score"></el-rate>
           </el-form-item>
-          <el-form-item label="评论" :label-width="formLabelWidth">
-            <el-input
-              v-model="commentDialog.comment"
-              type="textarea"
-              autosize
-              auto-complete="off"
-            ></el-input>
+          <el-form-item label="评论"
+                        :label-width="formLabelWidth">
+            <el-input v-model="commentDialog.comment"
+                      type="textarea"
+                      :autosize="{ minRows: 2, maxRows: 3}">
+            </el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer"
+             class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateComment()">确 定</el-button>
+          <el-button type="primary"
+                     @click="updateComment()">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -103,7 +115,7 @@ import { getUserId } from "@/utils/auth";
 export default {
   name: "UserComments",
 
-  data() {
+  data () {
     return {
       commentDialog: {
         id: "",
@@ -122,17 +134,17 @@ export default {
       dialogFormVisible: false,
       formLabelWidth: "50px",
       loading: false,
-      height:0
+      height: 0
     };
   },
 
-  mounted() {
+  mounted () {
     this.selectComment();
   },
 
   methods: {
     // 打开评论编辑框
-    handleClick(row) {
+    handleClick (row) {
       // row是一个对象
       this.dialogFormVisible = !this.dialogFormVisible;
       this.commentDialog.id = row.id;
@@ -141,13 +153,12 @@ export default {
     },
 
     // 删除评论
-    deleteComment(row) {
+    deleteComment (row) {
       this.$confirm("是否删除该评论？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
+      }).then(() => {
           // 确定的回调
           deleteById(row.id)
             .then((res) => {
@@ -169,7 +180,7 @@ export default {
     },
 
     // 提交编辑评论
-    updateComment() {
+    updateComment () {
       this.loading = true;
       updateComment(this.commentDialog)
         .then((res) => {
@@ -190,11 +201,11 @@ export default {
     },
 
     // 筛选电影，游戏，书籍
-    filterTag(value, row) {
+    filterTag (value, row) {
       return row.type === value;
     },
     // 查询当前用户的所有评论信息
-    selectComment() {
+    selectComment () {
       let filmParams = {
         userId: getUserId(),
         type: 1,
@@ -215,7 +226,7 @@ export default {
             this.filmComments.forEach((film) => {
               film.type = "电影";
             });
-            this.height=580;
+            this.height = 580;
           } else {
             this.$message.error(res.msg);
           }
@@ -232,7 +243,7 @@ export default {
               game.type = "游戏";
               game.film = game.game;
             });
-            this.height=580;
+            this.height = 580;
           } else {
             this.$message.error(res.msg);
           }
@@ -249,7 +260,7 @@ export default {
               book.type = "书籍";
               book.film = book.book;
             });
-            this.height=580;
+            this.height = 580;
           } else {
             this.$message.error(res.msg);
           }
@@ -261,7 +272,7 @@ export default {
   },
 
   computed: {
-    commentData() {
+    commentData () {
       return this.filmComments.concat(
         this.gameComments.concat(this.bookComments)
       );
@@ -362,7 +373,7 @@ export default {
   color: var(--primaryColor);
 }
 
-.container >>> .el-textarea__inner {
+.container >>> .el-textarea__inner:active {
   border-color: var(--primaryColor);
 }
 
@@ -381,7 +392,7 @@ export default {
 }
 
 .container >>> .el-dialog__footer div button::before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

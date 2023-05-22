@@ -11,7 +11,9 @@
     <!-- 分类导航按钮 -->
     <div class="navs">
       <ul>
-        <li v-for="nav in navs" :key="nav.id" @click="changeNav(nav.id)">
+        <li v-for="nav in navs"
+            :key="nav.id"
+            @click="changeNav(nav.id)">
           <span :class="activedNav === nav.id ? 'activedNav' : ''">
             {{ nav.name }}({{ nav.total }})
           </span>
@@ -22,13 +24,11 @@
     <!-- 搜索结果展示 -->
     <div class="resultList">
       <!-- 展示电影 -->
-      <div
-        class="result"
-        v-for="film in results.filmResults.rows"
-        :key="film.cover"
-        v-show="activedNav === 0 || activedNav === 1"
-        @click="$router.push({ name: 'FilmDetail', params: { id: film.id } })"
-      >
+      <div class="result"
+           v-for="film in results.filmResults.rows"
+           :key="film.cover"
+           v-show="activedNav === 0 || activedNav === 1"
+           @click="$router.push({ name: 'FilmDetail', params: { id: film.id } })">
         <div class="left">
           <img :src="film.cover" />
         </div>
@@ -43,13 +43,11 @@
       </div>
 
       <!-- 展示游戏 -->
-      <div
-        class="result"
-        v-for="game in results.gameResults.rows"
-        :key="game.cover"
-        v-show="activedNav === 0 || activedNav === 2"
-        @click="$router.push({ name: 'GameDetail', params: { id: game.id } })"
-      >
+      <div class="result"
+           v-for="game in results.gameResults.rows"
+           :key="game.cover"
+           v-show="activedNav === 0 || activedNav === 2"
+           @click="$router.push({ name: 'GameDetail', params: { id: game.id } })">
         <div class="left">
           <img :src="game.cover" />
         </div>
@@ -64,13 +62,11 @@
       </div>
 
       <!-- 展示书籍 -->
-      <div
-        class="result"
-        v-for="book in results.bookResults.rows"
-        :key="book.cover"
-        v-show="activedNav === 0 || activedNav === 3"
-        @click="$router.push({ name: 'BookDetail', params: { id: book.id } })"
-      >
+      <div class="result"
+           v-for="book in results.bookResults.rows"
+           :key="book.cover"
+           v-show="activedNav === 0 || activedNav === 3"
+           @click="$router.push({ name: 'BookDetail', params: { id: book.id } })">
         <div class="left">
           <img :src="book.cover" />
         </div>
@@ -84,20 +80,20 @@
         </div>
       </div>
 
-      <div class="noData" v-show="!pagination.total">
+      <div class="noData"
+           v-show="!pagination.total">
         <span>暂无数据</span>
       </div>
     </div>
 
     <!-- 页码选择器 -->
-    <div class="pagination" v-show="activedNav !== 0">
-      <el-pagination
-        background
-        layout="prev, pager, next,jumper"
-        :total="pagination.total"
-        :page-size="10"
-        @current-change="currentPageChanged"
-      >
+    <div class="pagination"
+         v-show="activedNav !== 0">
+      <el-pagination background
+                     layout="prev, pager, next,jumper"
+                     :total="pagination.total"
+                     :page-size="10"
+                     @current-change="currentPageChanged">
       </el-pagination>
     </div>
   </div>
@@ -109,7 +105,7 @@ import { search } from "@/api/search";
 export default {
   name: "SearchResults",
 
-  data() {
+  data () {
     return {
       navs: [
         {
@@ -149,53 +145,53 @@ export default {
     };
   },
 
-  mounted() {
+  mounted () {
     this.page();
   },
 
   watch: {
-    $route() {
+    $route () {
       this.activedNav = 0;
-      this.pagination.total=1;
+      this.pagination.total = 1;
       this.page();
     },
-    activedNav(value) {
+    activedNav (value) {
       this.pagination.total = this.navs[value].total;
     },
     pagination: {
       deep: true,
-      handler() {
+      handler () {
         this.page();
       },
     },
   },
 
   computed: {
-    filmTotal() {
+    filmTotal () {
       return this.results.filmResults.total;
     },
-    gameTotal() {
+    gameTotal () {
       return this.results.gameResults.total;
     },
-    bookTotal() {
+    bookTotal () {
       return this.results.bookResults.total;
     },
   },
 
   methods: {
     // 切换活动按钮
-    changeNav(id) {
+    changeNav (id) {
       this.activedNav = id;
       // console.log(this.activedNav);
     },
 
     // 切换页码
-    currentPageChanged(currentPage) {
+    currentPageChanged (currentPage) {
       this.pagination.currentPage = currentPage;
     },
 
     // 查询
-    search(params) {
+    search (params) {
       search(params)
         .then((res) => {
           if (res.code === 1) {
@@ -204,7 +200,7 @@ export default {
             this.navs[1].total = this.filmTotal;
             this.navs[2].total = this.gameTotal;
             this.navs[3].total = this.bookTotal;
-            this.navs[0].total =this.filmTotal+this.gameTotal+this.bookTotal;
+            this.navs[0].total = this.filmTotal + this.gameTotal + this.bookTotal;
           } else {
             this.$message.error(res.msg);
           }
@@ -214,7 +210,7 @@ export default {
         });
     },
 
-    page() {
+    page () {
       let params = {
         keyword: this.$route.params.keyword,
         page: this.pagination.currentPage,

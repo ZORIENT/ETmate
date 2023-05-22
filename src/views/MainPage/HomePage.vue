@@ -9,7 +9,8 @@
 
       <div class="centerPart">
         <!-- 热门电影 -->
-        <div class="popularFilms" v-loading="filmLoading">
+        <div class="popularFilms"
+             v-loading="filmLoading">
           <div class="category">
             <h1>电影推荐</h1>
             <div class="btns">
@@ -21,16 +22,15 @@
           </div>
 
           <div class="cardContainer">
-            <FilmCard
-              v-for="film in popularFilms.slice(0,14)"
-              :key="film.filmName"
-              :item="film"
-            ></FilmCard>
+            <FilmCard v-for="film in popularFilms.slice(0,14)"
+                      :key="film.filmName"
+                      :item="film"></FilmCard>
           </div>
         </div>
 
         <!-- 热门游戏 -->
-        <div class="popularGames" v-loading="gameLoading">
+        <div class="popularGames"
+             v-loading="gameLoading">
           <div class="category">
             <h1>游戏推荐</h1>
             <div class="btns">
@@ -42,16 +42,15 @@
           </div>
 
           <div class="cardContainer">
-            <GameCard
-              v-for="game in popularGames.slice(0,14)"
-              :key="game.gameName"
-              :item="game"
-            ></GameCard>
+            <GameCard v-for="game in popularGames.slice(0,14)"
+                      :key="game.gameName"
+                      :item="game"></GameCard>
           </div>
         </div>
 
         <!-- 热门书籍 -->
-        <div class="popularBooks" v-loading="bookLoading">
+        <div class="popularBooks"
+             v-loading="bookLoading">
           <div class="category">
             <h1>书籍推荐</h1>
             <div class="btns">
@@ -63,11 +62,9 @@
           </div>
 
           <div class="cardContainer">
-            <BookCard
-              v-for="book in popularBooks.slice(0,14)"
-              :key="book.bookName"
-              :item="book"
-            ></BookCard>
+            <BookCard v-for="book in popularBooks.slice(0,14)"
+                      :key="book.bookName"
+                      :item="book"></BookCard>
           </div>
         </div>
       </div>
@@ -80,78 +77,78 @@ import MarqueePage from "@/components/HomePage/MarqueePage.vue";
 import FilmCard from "@/components/FilmCard.vue";
 import GameCard from "@/components/GameCard.vue";
 import BookCard from "@/components/BookCard.vue";
-import {getUserId} from "@/utils/auth";
-import {userCfRecommendFilm,userCfRecommendGame,userCfRecommendBook} from "@/api/recommend"
+import { getUserId } from "@/utils/auth";
+import { userCfRecommendFilm, userCfRecommendGame, userCfRecommendBook } from "@/api/recommend"
 
 export default {
   name: "HomePage",
   components: { MarqueePage, FilmCard, GameCard, BookCard },
 
-  data() {
+  data () {
     return {
       popularFilms: [],
       popularGames: [],
       popularBooks: [],
-      filmLoading:false,
-      gameLoading:false,
-      bookLoading:false,
+      filmLoading: false,
+      gameLoading: false,
+      bookLoading: false,
     };
   },
 
-  methods:{
-    getPopularFilms(){
-      this.filmLoading=true;
-      userCfRecommendFilm(getUserId()).then(res=>{
-        if(res.code===1){
+  methods: {
+    getPopularFilms () {
+      this.filmLoading = true;
+      userCfRecommendFilm(getUserId()).then(res => {
+        if (res.code === 1) {
           // console.log(res.data);
-          this.popularFilms=res.data;
-          this.filmLoading=false;
-        }else{
+          this.popularFilms = res.data;
+          this.filmLoading = false;
+        } else {
           this.$message.error(res.msg);
         }
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err);
       })
     },
 
-    getPopularGames(){
-      this.gameLoading=true;
-      userCfRecommendGame(getUserId()).then(res=>{
-        if(res.code===1){
+    getPopularGames () {
+      this.gameLoading = true;
+      userCfRecommendGame(getUserId()).then(res => {
+        if (res.code === 1) {
           // console.log(res.data);
-          this.popularGames=res.data;
-          this.gameLoading=false;
-        }else{
+          this.popularGames = res.data;
+          this.gameLoading = false;
+        } else {
           this.$message.error(res.msg);
         }
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err);
       })
     },
 
-    getPopularBooks(){
-      this.bookLoading=true;
-      userCfRecommendBook(getUserId()).then(res=>{
-        if(res.code===1){
+    getPopularBooks () {
+      this.bookLoading = true;
+      userCfRecommendBook(getUserId()).then(res => {
+        if (res.code === 1) {
           // console.log(res.data);
-          this.popularBooks=res.data;
-          this.bookLoading=false;
-        }else{
+          this.popularBooks = res.data;
+          this.bookLoading = false;
+        } else {
           this.$message.error(res.msg);
         }
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err);
       })
     },
 
-    page(){
+    page () {
       this.getPopularFilms();
       this.getPopularGames();
       this.getPopularBooks();
     }
   },
 
-  mounted() {
+  mounted () {
     this.page();
   },
 
@@ -171,7 +168,7 @@ export default {
   grid-template-rows: auto; */
 }
 
-.container >>> .el-loading-mask{
+.container >>> .el-loading-mask {
   z-index: 900;
 }
 

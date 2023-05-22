@@ -4,12 +4,12 @@
       <!-- 顶部标题 -->
       <div class="title">
         <img src="favicon.ico" />
-        <span>娱乐活动推荐系统</span>
+        <span>娱乐方式推荐系统</span>
       </div>
 
       <!-- 中间导航按钮区 -->
       <div class="navs">
-        <el-collapse accordion>
+        <el-collapse>
           <el-collapse-item>
             <template slot="title">
               <i class="el-icon-house">管理后台首页</i>
@@ -29,9 +29,9 @@
             <template slot="title">
               <i class="el-icon-coin">内容模块管理</i>
             </template>
-              <router-link :to="{ name: 'FilmManage' }">电影信息管理</router-link>
-              <router-link :to="{ name: 'GameManage' }">游戏信息管理</router-link>
-              <router-link :to="{ name: 'BookManage' }">书籍信息管理</router-link>
+            <router-link :to="{ name: 'FilmManage' }">电影信息管理</router-link>
+            <router-link :to="{ name: 'GameManage' }">游戏信息管理</router-link>
+            <router-link :to="{ name: 'BookManage' }">书籍信息管理</router-link>
           </el-collapse-item>
 
           <el-collapse-item>
@@ -50,24 +50,22 @@
       <div class="top">
         <div class="bread">
           <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item
-              v-for="(item, index) in breadList"
-              :key="index"
-              :to="{ path: item.path }"
-              >{{ item.meta.title }}</el-breadcrumb-item
-            >
+            <el-breadcrumb-item v-for="(item, index) in breadList"
+                                :key="index"
+                                :to="{ path: item.path }">{{ item.meta.title }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
 
         <div class="menu">
-          <el-dropdown trigger="click" @command="handleCommand">
-            <img :src="profileImg"/>
+          <el-dropdown trigger="click"
+                       @command="handleCommand">
+            <img :src="profileImg" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="MainPage">
                 <span class="el-icon-house"></span>
                 <span>主 页</span>
               </el-dropdown-item>
-              <el-dropdown-item command="LoginRegister">
+              <el-dropdown-item command="loginOut">
                 <span class="el-icon-warning-outline"></span>
                 <span class="loginOut">登 出</span>
               </el-dropdown-item>
@@ -85,33 +83,43 @@
 </template>
 
 <script>
+import { removeToken } from "@/utils/auth"
+
 export default {
   name: "AdminPage",
 
-  data() {
+  data () {
     return {
       breadList: [],
     };
   },
 
-  mounted() {},
+  mounted () { },
 
   watch: {
     // 路由发生变化时，触发getBreadcrumb()
-    $route() {
+    $route () {
       this.getBreadcrumb();
     },
   },
 
   methods: {
-    handleCommand(command) {
+    handleCommand (command) {
       // this.$message('click on item ' + command);
-      this.$router.push({ name: command });
+      if (command === "loginOut") {
+        // console.log("Login Out");
+        removeToken();
+        this.$store.commit("RESET_STATE");
+        this.$message.success("退出登录成功！");
+        this.$router.push({ name: "LoginRegister" });
+      } else {
+        this.$router.push({ name: command });
+      }
     },
-    isAdminPage(route) {
+    isAdminPage (route) {
       return route.name === "AdminPage";
     },
-    getBreadcrumb() {
+    getBreadcrumb () {
       let matched = this.$route.matched;
       // 如果不是首页
       if (!this.isAdminPage(matched[0])) {
@@ -123,13 +131,13 @@ export default {
     },
   },
 
-  created() {
+  created () {
     this.getBreadcrumb();
   },
 
   computed: {
     //   头像的链接
-    profileImg() {
+    profileImg () {
       return this.$store.state.user.userInfo.avatar;
     },
   },
@@ -141,8 +149,7 @@ export default {
   /* border: 1px solid red; */
   display: flex;
   position: relative;
-  width: 100%;
-  height: 100%;
+  margin: 0px 20px;
 }
 
 .left {

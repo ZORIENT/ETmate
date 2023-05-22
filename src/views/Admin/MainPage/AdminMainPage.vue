@@ -1,39 +1,52 @@
 <template>
-    <div class="AdminMainPage">
-        <EChart></EChart>
+  <div class="AdminMainPage">
+    <div class="pie">
+      <PieChart></PieChart>
     </div>
+
+    <div class="bar">
+      <BarChart></BarChart>
+    </div>
+  </div>
 </template>
 
 <script>
-import EChart from '@/components/Admin/EChart.vue';
+import PieChart from "@/components/Admin/PieChart.vue";
+import BarChart from "@/components/Admin/BarChart.vue";
 
 export default {
-    name: 'AdminMainPage',
+  name: "AdminMainPage",
 
-    components:{EChart},
+  components: { PieChart, BarChart },
 
-    data() {
-        return {
-            
-        };
-    },
+  data() {
+    return {};
+  },
 
-    mounted() {
-        
-    },
+  mounted() {},
 
-    methods: {
-        
-    },
+  methods: {},
 };
 </script>
 
 <style scoped>
-.AdminMainPage{
-    display: flex;
-    width: 500px;
-    border: 1px solid red;
+.AdminMainPage {
+  display: flex;
+  /* width: 700px; */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid red;
+}
 
+.AdminMainPage .pie{
+    width: 600px;
+    height: 300px;
+}
+
+
+.AdminMainPage .bar{
+    width: 600px;
+    height: 300px;
 }
 
 </style>

@@ -5,71 +5,65 @@
   <div class="LoginRegister">
     <div class="container">
       <!-- 左侧的注册盒子 -->
-      <div class="registerBox" v-show="!isLogin">
+      <div class="registerBox"
+           v-show="!isLogin">
         <h1>注 册</h1>
 
-        <el-form
-          :model="registerForm"
-          :rules="registerRules"
-          ref="registerForm"
-        >
+        <el-form :model="registerForm"
+                 :rules="registerRules"
+                 ref="registerForm">
           <el-form-item prop="email">
-            <el-input
-              placeholder="邮箱"
-              type="email"
-              v-model="registerForm.email"
-            ></el-input>
+            <el-input placeholder="邮箱"
+                      type="email"
+                      v-model="registerForm.email"></el-input>
           </el-form-item>
 
           <el-form-item prop="password">
-            <el-input
-              placeholder="输入密码"
-              show-password
-              v-model="registerForm.password"
-              autocomplete="off"
-            ></el-input>
+            <el-input placeholder="输入密码"
+                      show-password
+                      v-model="registerForm.password"
+                      autocomplete="off"></el-input>
           </el-form-item>
 
           <el-form-item prop="checkPassword">
-            <el-input
-              placeholder="确认密码"
-              show-password
-              v-model="registerForm.checkPassword"
-              autocomplete="off"
-            ></el-input>
+            <el-input placeholder="确认密码"
+                      show-password
+                      v-model="registerForm.checkPassword"
+                      autocomplete="off"></el-input>
           </el-form-item>
 
           <el-form-item>
-            <el-button v-loading="loading" @click="submitForm('registerForm')">注 册</el-button>
+            <el-button v-loading="loading"
+                       @click="submitForm('registerForm')">注 册</el-button>
             <el-button @click="resetForm('registerForm')">重 置</el-button>
           </el-form-item>
         </el-form>
       </div>
 
       <!-- 右侧的登录盒子 -->
-      <div class="loginBox" v-show="isLogin">
+      <div class="loginBox"
+           v-show="isLogin">
         <h1>登 录</h1>
-        <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
+        <el-form :model="loginForm"
+                 :rules="loginRules"
+                 ref="loginForm">
           <el-form-item prop="account">
-            <el-input
-              placeholder="邮箱"
-              type="email"
-              v-model="loginForm.account"
-            ></el-input>
+            <el-input placeholder="邮箱"
+                      type="email"
+                      v-model="loginForm.account"></el-input>
           </el-form-item>
 
           <el-form-item prop="password">
-            <el-input
-              placeholder="密码"
-              type="password"
-              show-password
-              autocomplete="off"
-              v-model="loginForm.password"
-            ></el-input>
+            <el-input placeholder="密码"
+                      type="password"
+                      show-password
+                      autocomplete="off"
+                      v-model="loginForm.password"></el-input>
           </el-form-item>
 
           <el-form-item>
-            <el-button v-loading="loading" @click="submitForm('loginForm')">登 录</el-button>
+            <el-button v-loading="loading"
+                       @click="submitForm('loginForm')">登 录</el-button>
             <el-button @click="resetForm('loginForm')">重 置</el-button>
           </el-form-item>
         </el-form>
@@ -78,12 +72,14 @@
       <!-- 移动遮罩 -->
       <div :class="isLogin ? 'cover loginAni' : 'cover registerAni'">
         <!-- 登陆时的提示信息 -->
-        <div v-show="isLogin" class="loginInfo">
+        <div v-show="isLogin"
+             class="loginInfo">
           <button @click="signUp">立即注册</button>
         </div>
 
         <!-- 注册时的提示信息 -->
-        <div v-show="!isLogin" class="registerInfo">
+        <div v-show="!isLogin"
+             class="registerInfo">
           <button @click="signIn">立即登录</button>
         </div>
       </div>
@@ -98,7 +94,7 @@ import { register } from "@/api/user";
 export default {
   name: "LoginRegister",
 
-  data() {
+  data () {
     // 注册表单的密码验证
     var validatePassRegister = (rule, value, callback) => {
       if (value === "") {
@@ -147,7 +143,7 @@ export default {
       // 显示哪个表单(默认为登录)
       isLogin: true,
 
-      loading:false,
+      loading: false,
 
       nextPage: "MainPage",
 
@@ -197,8 +193,8 @@ export default {
   },
 
   methods: {
-    submitForm(formName) {
-      this.loading=true;
+    submitForm (formName) {
+      this.loading = true;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (formName === "registerForm") {
@@ -217,7 +213,7 @@ export default {
                   this.loginForm.account = user.email;
 
                   this.$message.success("注册成功！");
-                  this.loading=false;
+                  this.loading = false;
                 } else {
                   this.$message.error(res.msg);
                 }
@@ -231,7 +227,7 @@ export default {
               password: md5(this.loginForm.password),
             };
             this.$store.dispatch("login", user);
-            this.loading=false;
+            this.loading = false;
           }
         } else {
           console.log("表单提交错误");
@@ -240,24 +236,24 @@ export default {
       });
     },
 
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].resetFields();
     },
 
-    isEmail(email) {
+    isEmail (email) {
       return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(
         email
       );
     },
 
     // 切换到登录
-    signIn() {
+    signIn () {
       if (this.isLogin !== true) {
         this.isLogin = true;
       }
     },
     // 切换到注册
-    signUp() {
+    signUp () {
       if (this.isLogin === true) {
         this.isLogin = false;
       }
@@ -275,7 +271,7 @@ export default {
   height: 100%;
   /* border: 1px solid red; */
 
-  background: url("../assets/img/bg.jpg");
+  background: url('../assets/img/bg.jpg');
   background-size: cover;
 }
 
@@ -349,7 +345,7 @@ export default {
 }
 
 .container >>> .el-button:before {
-  content: "";
+  content: '';
   position: absolute;
   background: linear-gradient(
     to left,

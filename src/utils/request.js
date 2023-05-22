@@ -1,12 +1,12 @@
 //配置全局的基础配置
 import axios from "axios";
-import { removeToken,getToken } from "@/utils/auth";
+import { removeToken, getToken } from "@/utils/auth";
 import router from "@/router";
 import ElementUI from "element-ui";
 
 // 导入NProgress进度条
 import NProgress from "nprogress";
-import "nprogress/nprogress.css"
+import "nprogress/nprogress.css";
 
 let request = axios.create({
   //基础配置
@@ -26,7 +26,7 @@ request.interceptors.request.use(
     let token = getToken();
     if (token) {
       // 设置请求头中的token
-      config.headers['token'] = token;
+      config.headers["token"] = token;
     }
 
     return config;
@@ -46,12 +46,12 @@ request.interceptors.response.use(
     NProgress.done();
 
     if (res.data.code === 0 && res.data.msg === "NOT_LOGIN") {
+      ElementUI.Message.closeAll();
       ElementUI.Message.error("尚未登录，请登录");
-
       removeToken();
       router.push("/LoginRegister");
       return res.data;
-    } else{
+    } else {
       return res.data;
     }
   },

@@ -4,11 +4,9 @@
       <div class="category">
         <div class="left">类型：</div>
         <ul class="right">
-          <li
-            v-for="(option, index) in category"
-            :key="index"
-            @click="changeCategory(option)"
-          >
+          <li v-for="(option, index) in category"
+              :key="index"
+              @click="changeCategory(option)">
             <span :class="checked.category === option ? 'active1' : ''">
               {{ option }}
             </span>
@@ -19,11 +17,9 @@
       <div class="year">
         <div class="left">年代：</div>
         <ul class="right">
-          <li
-            v-for="(option,index) in year"
-            :key="index"
-            @click="changeYear(option.value)"
-          >
+          <li v-for="(option,index) in year"
+              :key="index"
+              @click="changeYear(option.value)">
             <span :class="checked.year === option.value ? 'active2' : ''">
               {{ option.name }}
             </span>
@@ -34,11 +30,9 @@
       <div class="region">
         <div class="left">地区：</div>
         <ul class="right">
-          <li
-            v-for="(option,index) in region"
-            :key="index"
-            @click="changeRegion(option)"
-          >
+          <li v-for="(option,index) in region"
+              :key="index"
+              @click="changeRegion(option)">
             <span :class="checked.region === option ? 'active3' : ''">
               {{ option }}
             </span>
@@ -49,11 +43,9 @@
       <div class="language">
         <div class="left">语言：</div>
         <ul class="right">
-          <li
-            v-for="(option,index) in language"
-            :key="index"
-            @click="changeLanguage(option)"
-          >
+          <li v-for="(option,index) in language"
+              :key="index"
+              @click="changeLanguage(option)">
             <span :class="checked.language === option ? 'active4' : ''">
               {{ option }}
             </span>
@@ -63,26 +55,29 @@
 
       <div class="sort">
         <template>
-          <el-radio v-model="checked.sort" :label="1">评分最高</el-radio>
-          <el-radio v-model="checked.sort" :label="2">时长最长</el-radio>
-          <el-radio v-model="checked.sort" :label="3">上映时间</el-radio>
+          <el-radio v-model="checked.sort"
+                    :label="1">评分最高</el-radio>
+          <el-radio v-model="checked.sort"
+                    :label="2">时长最长</el-radio>
+          <el-radio v-model="checked.sort"
+                    :label="3">上映时间</el-radio>
         </template>
       </div>
     </div>
 
     <div class="filmList">
-      <FilmCard v-for="(film,index) in films" :key="index" :item="film"/>
+      <FilmCard v-for="(film,index) in films"
+                :key="index"
+                :item="film" />
     </div>
 
     <div class="pagination">
-      <el-pagination
-        background
-        layout="prev, pager, next,jumper"
-        :total="pagination.total"
-        :page-size="35"
-        @current-change="currentPageChanged"
-        :current-page.sync="pagination.currentPage"
-      >
+      <el-pagination background
+                     layout="prev, pager, next,jumper"
+                     :total="pagination.total"
+                     :page-size="35"
+                     @current-change="currentPageChanged"
+                     :current-page.sync="pagination.currentPage">
       </el-pagination>
     </div>
   </div>
@@ -97,12 +92,12 @@ export default {
 
   components: { FilmCard },
 
-  mounted() {
+  mounted () {
     // 获取电影数据
     this.getFilms();
   },
 
-  data() {
+  data () {
     return {
       category: [
         "全部",
@@ -130,29 +125,29 @@ export default {
         "家庭",
       ],
       year: [
-        { name: "全部" ,value:"全部"},
-        { name: "2023" ,value:"2023"},
-        { name: "2022" ,value:"2022"},
-        { name: "2021" ,value:"2021"},
-        { name: "2020" ,value:"2020"},
-        { name: "2019" ,value:"2019"},
-        { name: "2018" ,value:"2018"},
-        { name: "2017" ,value:"2017"},
-        { name: "2016" ,value:"2016"},
-        { name: "2015" ,value:"2015"},
-        { name: "2014" ,value:"2014"},
-        { name: "2013" ,value:"2013"},
-        { name: "2012" ,value:"2012"},
-        { name: "2011" ,value:"2011"},
-        { name: "2010" ,value:"2010"},
-        { name: "00年代" ,value:"200"},
-        { name: "90年代" ,value:"199"},
-        { name: "80年代" ,value:"198"},
-        { name: "70年代" ,value:"197"},
-        { name: "60年代" ,value:"196"}
+        { name: "全部", value: "全部" },
+        { name: "2023", value: "2023" },
+        { name: "2022", value: "2022" },
+        { name: "2021", value: "2021" },
+        { name: "2020", value: "2020" },
+        { name: "2019", value: "2019" },
+        { name: "2018", value: "2018" },
+        { name: "2017", value: "2017" },
+        { name: "2016", value: "2016" },
+        { name: "2015", value: "2015" },
+        { name: "2014", value: "2014" },
+        { name: "2013", value: "2013" },
+        { name: "2012", value: "2012" },
+        { name: "2011", value: "2011" },
+        { name: "2010", value: "2010" },
+        { name: "00年代", value: "200" },
+        { name: "90年代", value: "199" },
+        { name: "80年代", value: "198" },
+        { name: "70年代", value: "197" },
+        { name: "60年代", value: "196" }
       ],
-      region: ["全部","中国大陆","中国香港","美国","韩国","日本","法国","中国台湾","英国","澳大利亚","德国","意大利","西班牙","印度","泰国","俄罗斯","加拿大","丹麦","爱尔兰","瑞典","巴西","瑞士"],
-      language: ["全部","国语","粤语","英语","法语","日语","韩语","泰语","德语","俄语","闽南语","丹麦语","波兰语","瑞典语","印地语","挪威语","意大利语","西班牙语"],
+      region: ["全部","中国大陆", "中国香港", "美国", "韩国", "日本", "法国", "中国台湾", "英国", "澳大利亚", "德国", "意大利", "西班牙", "印度", "泰国", "俄罗斯", "加拿大", "丹麦", "爱尔兰", "瑞典", "巴西", "瑞士"],
+      language: ["全部", "国语", "粤语", "英语", "法语", "日语", "韩语", "泰语", "德语", "俄语", "闽南语", "丹麦语", "波兰语", "瑞典语", "印地语", "挪威语", "意大利语", "西班牙语"],
       //   被选中的id
       checked: {
         category: "全部",
@@ -163,7 +158,7 @@ export default {
       },
 
       //   电影列表数据
-      films:[],
+      films: [],
 
       pagination: {
         total: 1,
@@ -174,28 +169,28 @@ export default {
 
   methods: {
     // 切换类型
-    changeCategory(option) {
+    changeCategory (option) {
       this.checked.category = option;
     },
     // 切换年份
-    changeYear(value) {
+    changeYear (value) {
       this.checked.year = value;
     },
     // 切换地区
-    changeRegion(option) {
+    changeRegion (option) {
       this.checked.region = option;
     },
     // 切换语言
-    changeLanguage(option) {
+    changeLanguage (option) {
       this.checked.language = option;
     },
     // 切换页码
-    currentPageChanged(currentPage) {
+    currentPageChanged (currentPage) {
       this.pagination.currentPage = currentPage;
     },
 
     // 获取电影
-    getFilms(page) {
+    getFilms (page) {
       let params = {
         genres: "",
         languages: "",
@@ -203,7 +198,7 @@ export default {
         releaseYear: "",
         sortId: 1,
         page: 1,
-        pageSize:35,
+        pageSize: 35,
       };
 
       if (this.checked.category !== "全部") {
@@ -215,24 +210,24 @@ export default {
       if (this.checked.region !== "全部") {
         params.regions = this.checked.region;
       }
-      if(this.checked.year!=="全部"){
-        params.releaseYear=this.checked.year;
+      if (this.checked.year !== "全部") {
+        params.releaseYear = this.checked.year;
       }
-      params.sortId=this.checked.sort;
-      params.page=page;
+      params.sortId = this.checked.sort;
+      params.page = page;
 
       // console.log(params);
 
       selectByCondition(params)
         .then((res) => {
           // console.log(res);
-          if(res.code===1){
+          if (res.code === 1) {
             // 电影数据请求成功
-            this.films=res.data.rows;
-            this.pagination.total=res.data.total;
-            this.pagination.currentPage=page;
+            this.films = res.data.rows;
+            this.pagination.total = res.data.total;
+            this.pagination.currentPage = page;
             // console.log(this.films);
-          }else{
+          } else {
             this.$message.error(res.msg);
           }
         })
@@ -242,16 +237,16 @@ export default {
     },
   },
 
-  watch:{
-    checked:{
-      deep:true,
-      handler(){
+  watch: {
+    checked: {
+      deep: true,
+      handler () {
         this.getFilms(1);
       }
     },
-    pagination:{
-      deep:true,
-      handler(){
+    pagination: {
+      deep: true,
+      handler () {
         this.getFilms(this.pagination.currentPage);
       }
     }
