@@ -17,6 +17,32 @@ export function selectByCondition(params) {
   });
 }
 
+// 根据ids批量删除书籍信息
+export function deleteByIds(ids){
+  return request({
+    url:"/book/"+ids,
+    method:"delete"
+  })
+}
+
+// 添加书籍信息
+export function insertBook(data){
+  return request({
+    url:"/book",
+    method:"post",
+    data
+  })
+}
+
+// 更新书籍信息
+export function updateBook(data){
+  return request({
+    url:"/book",
+    method:"put",
+    data
+  })
+}
+
 // 根据id推荐相关电影信息
 export function getSimilarBooks(id) {
   return request({

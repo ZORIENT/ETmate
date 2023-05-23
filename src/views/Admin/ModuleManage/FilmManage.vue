@@ -13,25 +13,25 @@
           <p>电影类型：</p>
           <el-input v-model="conditionList.genres"
                     prefix-icon="el-icon-tickets"
-                    placeholder="电影类型，以 / 分隔"></el-input>
+                    placeholder="类型以 / 分隔"></el-input>
         </div>
         <div class="item">
           <p>电影语言：</p>
           <el-input v-model="conditionList.languages"
                     prefix-icon="el-icon-mobile"
-                    placeholder="电影语言，以 / 分隔"></el-input>
+                    placeholder="语言以 / 分隔"></el-input>
         </div>
         <div class="item">
           <p>电影标签：</p>
           <el-input v-model="conditionList.tags"
                     prefix-icon="el-icon-price-tag"
-                    placeholder="电影标签，以 / 分隔"></el-input>
+                    placeholder="标签以 / 分隔"></el-input>
         </div>
         <div class="item">
           <p>上映地区：</p>
           <el-input v-model="conditionList.regions"
                     prefix-icon="el-icon-location-information"
-                    placeholder="上映地区，以 / 分隔"></el-input>
+                    placeholder="地区以 / 分隔"></el-input>
         </div>
         <div class="item">
           <p>上映年份：</p>
@@ -42,64 +42,50 @@
                           placeholder="电影上映年份">
           </el-date-picker>
         </div>
-
         <div class="item">
           <p>排序方式：</p>
           <el-select v-model="conditionList.sortId"
                      placeholder="请选择排序方式">
-            <el-option label="按豆瓣评分降序排列"
+            <el-option label="按豆瓣评分排列"
                        :value="1"></el-option>
-            <el-option label="按电影时长降序排列"
+            <el-option label="按电影时长排列"
                        :value="2"></el-option>
-            <el-option label="按上映时间降序排列"
+            <el-option label="按上映时间排列"
                        :value="3"></el-option>
           </el-select>
         </div>
-      </div>
+        <div class="item button">
+          <el-button type="primary"
+                     @click="query(1)">查询</el-button>
+          <el-button type="info"
+                     @click="clear()">清空</el-button>
+          <el-button type="danger"
+                     :disabled="!multipleSelection.length"
+                     @click="deleteByIds()">批量删除</el-button>
+          <el-upload class="importExcel"
+                     ref="importExcel"
+                     action=""
+                     accept=".xls,.xlsx"
+                     :http-request="importExcel"
+                     :on-preview="handlePreview"
+                     :on-remove="handleRemove"
+                     :before-remove="beforeRemove"
+                     :on-change="handleChange"
+                     :on-exceed="handleExceed"
+                     :limit="1"
+                     :file-list="excelList"
+                     :auto-upload="false">
 
-      <div class="button">
-        <el-button type="primary"
-                   @click="query(1)">查询</el-button>
-        <el-button type="info"
-                   @click="clear()">清空</el-button>
-        <el-button type="danger"
-                   :disabled="!multipleSelection.length"
-                   @click="deleteByIds()">批量删除</el-button>
+            <el-button style="margin-left: 10px;"
+                       type="primary"
+                       v-loading="excelLoading"
+                       @click="handleInsert()">添加电影</el-button>
+            <el-button slot="trigger"
+                       type="success"
+                       :disabled="excelList.length!=0">选取xls文件</el-button>
 
-        <!-- <el-button type="primary"
-                   @click="handleInsert()">添加</el-button>
-        <el-upload class="importExcel"
-                   action=""
-                   :http-request="importExcel"
-                   :auto-upload="false">批量导入</el-upload>
-
-                   <el-button type="primary"
-                   @click="importExcel">测试</el-button> -->
-
-        <el-upload class="importExcel"
-                   ref="importExcel"
-                   action=""
-                   accept=".xls,.xlsx"
-                   :http-request="importExcel"
-                   :on-preview="handlePreview"
-                   :on-remove="handleRemove"
-                   :before-remove="beforeRemove"
-                   :on-change="handleChange"
-                   :on-exceed="handleExceed"
-                   :limit="1"
-                   :file-list="excelList"
-                   :auto-upload="false">
-
-          <el-button style="margin-left: 10px;"
-                     type="primary"
-                     v-loading="excelLoading"
-                     @click="handleInsert()">添加电影</el-button>
-          <el-button slot="trigger"
-                     type="success"
-                     :disabled="excelList.length!=0">选取xls文件</el-button>
-
-        </el-upload>
-
+          </el-upload>
+        </div>
       </div>
     </div>
 
@@ -124,7 +110,11 @@
 
         <el-table-column prop="director"
                          label="导演"
-                         width="100"></el-table-column>
+                         width="100">
+          <template slot-scope="scope">
+            {{ scope.row.director?scope.row.director:'N/A' }}
+          </template>
+        </el-table-column>
 
         <el-table-column prop="languages"
                          label="语言"
@@ -132,7 +122,8 @@
           <template slot-scope="scope">
             <el-tag type="danger"
                     v-for="(language,index) in splitTags(scope.row.languages)"
-                    :key="index">
+                    :key="index"
+                    size="small">
               {{ language }}
             </el-tag>
           </template>
@@ -149,7 +140,8 @@
           <template slot-scope="scope">
             <el-tag type="info"
                     v-for="(region,index) in splitTags(scope.row.regions)"
-                    :key="index">
+                    :key="index"
+                    size="small">
               {{ region }}
             </el-tag>
           </template>
@@ -163,6 +155,13 @@
         <el-table-column prop="actors"
                          label="演员列表"
                          width="250">
+          <template slot-scope="scope">
+            <el-tag v-for="(actor,index) in splitTags(scope.row.actors)"
+                    :key="index"
+                    size="small">
+              {{ actor }}
+            </el-tag>
+          </template>
         </el-table-column>
 
         <el-table-column prop="tags"
@@ -170,7 +169,8 @@
                          width="200">
           <template slot-scope="scope">
             <el-tag v-for="(tag,index) in splitTags(scope.row.tags)"
-                    :key="index">
+                    :key="index"
+                    size="small">
               {{ tag }}
             </el-tag>
           </template>
@@ -189,7 +189,7 @@
       </el-table>
 
       <!-- 编辑区域 -->
-      <el-dialog title="电影信息修改"
+      <el-dialog :title="type===1?'电影信息修改':'电影信息添加'"
                  width="500px"
                  :close-on-click-modal="false"
                  :visible.sync="dialogFormVisible">
@@ -201,7 +201,7 @@
 
           <el-form-item label="电影封面"
                         prop="cover"
-                        :rules="[{required: true, message: '请上传封面！', trigger: 'blur'}]">
+                        :rules="[{required: true, message: '请上传电影封面！', trigger: 'blur'}]">
             <el-upload class="cover-uploader"
                        action=""
                        :http-request="uploadCover"
@@ -215,6 +215,14 @@
                  class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
+
+          <!-- <el-form-item label="封面地址"
+                        prop="cover">
+            <el-input v-model="dialogData.cover"
+                      prefix-icon="el-icon-video-camera"
+                      placeholder="封面地址">
+            </el-input>
+          </el-form-item> -->
 
           <el-form-item label="电影名称"
                         prop="filmName"
@@ -342,7 +350,6 @@
                      @click="submit(type)">确 定</el-button>
         </div>
       </el-dialog>
-
     </div>
 
     <!-- 页码选择区 -->
@@ -369,7 +376,7 @@ export default {
   data () {
     return {
       // 表单的高度
-      tableHeight: 0,
+      tableHeight: 560,
 
       // 分页条相关数据
       pagination: {
@@ -476,6 +483,7 @@ export default {
 
     // 点击编辑
     handleEdit (row) {
+      this.type = 1;
       this.dialogFormVisible = !this.dialogFormVisible;
       this.dialogData.id = row.id;
       this.dialogData.imdbId = row.imdbId;
@@ -500,6 +508,25 @@ export default {
     handleInsert () {
       // 正常添加一条数据
       if (this.excelList.length === 0) {
+        this.dialogData = {
+          id: "",
+          imdbId: "",
+          filmName: "",
+          cover: "",
+          alias: "",
+          director: "",
+          actors: "",
+          doubanScore: "",
+          genres: "",
+          languages: "",
+          mins: "",
+          regions: "",
+          releaseDate: "",
+          storyline: "",
+          releaseYear: "",
+          tags: ""
+        }
+
         this.dialogFormVisible = !this.dialogFormVisible;
         this.type = 2;
       } else {
@@ -511,15 +538,15 @@ export default {
     // 点击删除
     handlerDelete (row) {
       this.$confirm("是否删除所选信息？", "提示", {
-        confirmButtonText: "确定",
+        confirmButtonText: "删除",
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
         // 成功的回调
         deleteByIds(row.id).then(res => {
           if (res.code === 1) {
+            this.query(this.pagination.currentPage);
             this.$message.success("电影信息删除成功！");
-            this.query(1);
           } else {
             this.$message.error(res.msg);
           }
@@ -572,7 +599,7 @@ export default {
           this.tableData = res.data.rows;
           this.pagination.total = res.data.total;
           this.pagination.currentPage = page;
-          this.tableHeight = 510;
+          this.tableHeight = 560;
         } else {
           this.$message.error(res.msg);
         }
@@ -599,7 +626,27 @@ export default {
 
     // 批量删除电影
     deleteByIds () {
-      console.log("批量删除");
+      this.$confirm("是否删除所选信息？", "提示", {
+        confirmButtonText: "删除",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        // 成功的回调
+        deleteByIds(this.multipleSelection).then(res => {
+          if (res.code === 1) {
+            this.$message.success("所选电影批量删除成功！");
+            this.query(1);
+          } else {
+            this.$message.error(res.msg);
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+
+      }).catch(() => {
+        // 取消的回调
+        this.$message.info("已取消批量删除");
+      });
     },
 
     // 更新电影信息
@@ -611,7 +658,7 @@ export default {
 
       updateFilm(this.dialogData).then(res => {
         if (res.code === 1) {
-          this.query(1);
+          this.query(this.pagination.currentPage);
           this.dialogLoading = false;
           this.$message.success("电影信息更新成功！");
           this.dialogFormVisible = false;
@@ -648,11 +695,11 @@ export default {
 
     // 上传前
     beforeCoverUpload (file) {
-      const isJPG = file.type === "image/jpeg";
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
       const isLt5M = file.size / 1024 / 1024 < 5;
 
       if (!isJPG) {
-        this.$message.error("封面只能是 JPG 格式!");
+        this.$message.error("封面只能是 JPG/PNG 格式!");
       }
       if (!isLt5M) {
         this.$message.error("封面大小不能超过 5MB!");
@@ -670,7 +717,7 @@ export default {
       const { file } = params;
       // const excelFile = new FormData();
       // excelFile.append("file", file);
-      console.log(file.name);
+      // console.log(file.name);
 
       // 读取file中的数据
       // 把文件解析成二进制数据，把二级制数据变成excel表格式的数据
@@ -685,6 +732,8 @@ export default {
           const ws = XLSX.utils.sheet_to_json(workbook.Sheets[wsname]);// 生成json数据
 
           let count = 0;
+          let successCount = 0;
+          let failCount = 0;
 
           ws.forEach(item => {
             let excelData = {
@@ -706,13 +755,18 @@ export default {
             }
             // 添加电影信息
             insertFilm(excelData).then(res => {
+
               if (res.code === 1) {
                 count++;
-                if (count === 6) {
-                  this.$message.success("文件批量上传成功！");
+                successCount++;
+                if (count === ws.length) {
+                  this.query(1);
+                  this.$message.success("成功上传" + successCount + "条数据，上传失败" + failCount + "条数据！");
                   this.excelLoading = false;
                 }
               } else {
+                count++;
+                failCount++;
                 this.$message.error(res.msg);
                 this.excelLoading = false;
               }
@@ -767,8 +821,6 @@ export default {
     },
   },
 
-
-
   watch: {
     pagination: {
       deep: true,
@@ -798,22 +850,23 @@ export default {
 .filters .input {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(4, 25%);
+  grid-template-columns: repeat(5, 20%);
   grid-gap: 10px 0px;
+  margin-bottom: 10px;
 }
 
 .filters .input .item {
   display: flex;
 }
 
-.filters .input .item:not(:nth-child(4)) {
+.filters .input .item:not(:nth-child(5)) {
   /* border: 1px solid red; */
   margin-right: 20px;
 }
 
 .filters .input .item .el-input,
 .filters .input .item .el-select {
-  width: 320px;
+  width: 280px;
 }
 
 .filters .input .item p {
@@ -830,39 +883,20 @@ export default {
 
 /* *************************************************** */
 .filters .button {
-  /* border: 1px solid red; */
-  margin: 10px 0px;
   display: flex;
-}
-
-.filters .button .el-button:nth-child(3) {
-  margin-right: 65px;
+  /* justify-content: space-between; */
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  height: 40px;
 }
 
 .importExcel {
   display: flex;
-  /* height: 40px; */
   align-items: center;
-
-  /* border: 1px solid green; */
-  /* margin-left: 10px; */
+  margin-left: 10px;
 }
-
-.importExcel >>> .el-upload {
-  /* border: 1px solid red; */
-  /* height: 100%;
-  line-height: 40px;
-  width: 100px;
-  color: #fff;
-  font-size: 14px;
-  background: #e6a23c;
-  border-radius: 4px; */
-}
-
-/* .importExcel >>> .el-upload:hover {
-  background: #e6a23c;
-  opacity: 0.7;
-} */
 
 .importExcel >>> .el-upload-list__item:first-child {
   margin: 0px;
@@ -879,11 +913,11 @@ export default {
   text-align: center;
   /* border:1px solid red; */
   /* 限制文字显示行数 */
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  overflow: hidden;
+  overflow: hidden; */
 }
 
 /* 电影名称列 */
@@ -897,17 +931,18 @@ export default {
 /* 标签列 */
 .table >>> .el-table td:nth-child(4) div,
 .table >>> .el-table td:nth-child(6) div,
+.table >>> .el-table td:nth-child(8) div,
 .table >>> .el-table td:nth-child(9) div {
   text-align: left;
   display: flex;
   flex-flow: wrap;
   justify-content: center;
-
   /* border: 1px solid red; */
 }
 
 .table >>> .el-table td:nth-child(4) div .el-tag,
 .table >>> .el-table td:nth-child(6) div .el-tag,
+.table >>> .el-table td:nth-child(8) div .el-tag,
 .table >>> .el-table td:nth-child(9) div .el-tag {
   margin: 2px;
 }
@@ -1037,7 +1072,7 @@ export default {
   border: 1px dashed var(--lightTheme);
   display: flex;
   height: 100px;
-  width: 100px;
+  width: 200px;
   line-height: 100px;
   justify-content: center;
   align-items: center;
