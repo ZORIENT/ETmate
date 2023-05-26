@@ -307,6 +307,7 @@ router.beforeEach(async (to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next();
     } else {
+      ElementUI.Message.error("尚未登录，请登录！");
       next(`/LoginRegister?redirect=${to.path}`);
     }
   }

@@ -20,7 +20,7 @@ export function selectBulletinById(id) {
 // 根据id批量删除公告
 export function deleteBulletinByIds(ids) {
   return request({
-    url: "/bulletin" + ids,
+    url: "/bulletin/" + ids,
     method: "delete",
   });
 }

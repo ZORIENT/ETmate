@@ -190,7 +190,7 @@
 
       <!-- 编辑区域 -->
       <el-dialog :title="type===1?'电影信息修改':'电影信息添加'"
-                 width="500px"
+                 width="600px"
                  :close-on-click-modal="false"
                  :visible.sync="dialogFormVisible">
         <!-- 表单 -->
@@ -215,14 +215,6 @@
                  class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
-
-          <!-- <el-form-item label="封面地址"
-                        prop="cover">
-            <el-input v-model="dialogData.cover"
-                      prefix-icon="el-icon-video-camera"
-                      placeholder="封面地址">
-            </el-input>
-          </el-form-item> -->
 
           <el-form-item label="电影名称"
                         prop="filmName"
@@ -336,7 +328,7 @@
             <el-input v-model="dialogData.storyline"
                       placeholder="电影简介"
                       type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 4}">
+                      :autosize="true" >
             </el-input>
           </el-form-item>
 
@@ -996,7 +988,7 @@ export default {
   align-items: center;
   justify-content: center;
   display: flex;
-  width: 380px;
+  width: 480px;
   height: 35px;
   line-height: 35px;
 }

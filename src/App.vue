@@ -13,9 +13,14 @@ export default {
 
   mounted () {
     let token = getToken();
-    let id = jwtDecode(token).id;
 
-    this.$store.dispatch("getUserInfo", id);
+    // console.log("@@@", token)
+
+    if (token != null) {
+      let id = jwtDecode(token).id;
+
+      this.$store.dispatch("getUserInfo", id);
+    }
   },
 };
 </script>
@@ -107,9 +112,10 @@ body {
 
 /* ************************************************ */
 /* $message 中的button按钮样式 */
-.el-message-box__btns .el-button:nth-child(1)，
-.el-message-box__btns .el-button:nth-child(2){
-  
+.el-message-box__btns
+  .el-button:nth-child(1)，
+  .el-message-box__btns
+  .el-button:nth-child(2) {
   width: 100px;
   padding: 10px;
   border: none;
@@ -121,7 +127,7 @@ body {
   font-weight: bold;
 }
 
-.el-message-box__btns .el-button:nth-child(2){
+.el-message-box__btns .el-button:nth-child(2) {
   /* border: 1px solid red; */
   background: var(--primaryColor);
   position: relative;
@@ -136,7 +142,7 @@ body {
   font-weight: bold;
 }
 
-.el-message-box__btns .el-button:nth-child(1){
+.el-message-box__btns .el-button:nth-child(1) {
   /* border: 1px solid green; */
   background: var(--lightTheme);
   position: relative;
@@ -151,7 +157,7 @@ body {
   font-weight: bold;
 }
 
-.el-message-box__btns .el-button::before{
+.el-message-box__btns .el-button::before {
   content: '';
   position: absolute;
   background: linear-gradient(
@@ -169,17 +175,14 @@ body {
   background-position: right bottom;
 }
 
-.el-message-box__btns .el-button:hover::before{
+.el-message-box__btns .el-button:hover::before {
   background-position: left bottom;
 }
 
-.el-message-box__title{
+.el-message-box__title {
   color: var(--primaryColor) !important;
   font-weight: bold;
 }
-
-
-
 </style>
 
 

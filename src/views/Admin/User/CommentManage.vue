@@ -4,9 +4,18 @@
     <div class="filters">
       <div class="input">
         <div class="item">
-          <p>用户名：</p>
-          <el-input v-model="conditionList.filmName"
-                    placeholder="请输入用户名"></el-input>
+          <p>用户昵称：</p>
+          <el-input v-model="conditionList.username"
+                    prefix-icon="el-icon-user"
+                    placeholder="请输入用户昵称"></el-input>
+        </div>
+
+        <div class="item">
+          <p>来源：</p>
+          <el-input v-model="conditionList.itemName"
+                    prefix-icon="el-icon-notebook-2"
+                    placeholder="电影书籍游戏名称">
+          </el-input>
         </div>
 
         <div class="item">
@@ -20,13 +29,6 @@
             <el-option label="书籍"
                        :value="3"></el-option>
           </el-select>
-        </div>
-
-        <div class="item">
-          <p>来源：</p>
-          <el-input v-model="conditionList.itemName"
-                    placeholder="电影/书籍/游戏名称">
-          </el-input>
         </div>
 
         <div class="item timePicker">
@@ -128,9 +130,9 @@
         <el-table-column prop="updateTime"
                          label="最后修改时间"
                          width="175">
-                         <template slot-scope="scope">
+          <template slot-scope="scope">
             {{ scope.row.updateTime?scope.row.updateTime.replace('T',' '):'' }}
-          </template>     
+          </template>
         </el-table-column>
 
         <el-table-column fixed="right"
@@ -168,6 +170,8 @@
                         prop="comment"
                         :rules="[{required: true, message: '请输入评论内容！', trigger: 'blur'}]">
             <el-input v-model="dialogData.comment"
+                      type="textarea"
+                      :autosize="true"
                       placeholder="输入评论内容">
             </el-input>
           </el-form-item>
@@ -438,14 +442,12 @@ export default {
 <style scoped>
 .CommentManage {
   display: flex;
-  /* border: 1px solid red; */
   flex-direction: column;
 }
 
 /* *************************************************** */
 .filters {
   margin: 10px 0px;
-  /* border: 1px solid orange; */
   border-bottom: 1px solid var(--lightTheme);
 }
 
@@ -459,6 +461,11 @@ export default {
 
 .filters .input .item {
   display: flex;
+}
+
+.filters .input .item:not(:nth-child(5)) {
+  /* border: 1px solid red; */
+  margin-right: 20px;
 }
 
 .filters .input .item .el-input,
@@ -498,6 +505,9 @@ export default {
   grid-row-end: 2;
 }
 
+.filters .input .item >>> .el-select .el-input .el-select__caret {
+  display: none;
+}
 /* *************************************************** */
 
 .table >>> .el-table th.el-table__cell > .cell,
@@ -565,6 +575,10 @@ export default {
   line-height: 35px;
   display: flex;
   align-items: center;
+}
+
+.CommentManage >>> .el-input__icon {
+  margin-left: 5px;
 }
 
 .CommentManage >>> .table .el-input__inner,
@@ -637,8 +651,6 @@ export default {
   >>> .el-pagination.is-background
   .el-pager
   li:not(.disabled).active {
-  /* color: var(--primaryColor); */
-  /* color: red; */
   background: rgba(14, 85, 113, 0.95);
 }
 </style>

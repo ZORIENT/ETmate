@@ -78,7 +78,7 @@
             <el-button style="margin-left: 10px;"
                        type="primary"
                        v-loading="excelLoading"
-                       @click="handleInsert()">添加电影</el-button>
+                       @click="handleInsert()">添加游戏</el-button>
             <el-button slot="trigger"
                        type="success"
                        :disabled="excelList.length!=0">选取xls文件</el-button>
@@ -164,7 +164,7 @@
 
       <!-- 编辑区域 -->
       <el-dialog :title="type===1?'游戏信息修改':'游戏信息添加'"
-                 width="500px"
+                 width="600px"
                  :close-on-click-modal="false"
                  :visible.sync="dialogFormVisible">
         <!-- 表单 -->
@@ -270,7 +270,7 @@
 
           <el-form-item label="游戏类型"
                         prop="genres"
-                        :rules="[{required: true, message: '请输入电影类型！', trigger: 'blur'}]">
+                        :rules="[{required: true, message: '请输入游戏类型！', trigger: 'blur'}]">
             <el-input v-model="dialogData.genres"
                       prefix-icon="el-icon-tickets"
                       placeholder="游戏类型">
@@ -304,9 +304,9 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="电影标签"
+          <el-form-item label="游戏标签"
                         prop="tags"
-                        :rules="[{required: true, message: '请输入电影标签！', trigger: 'blur'}]">
+                        :rules="[{required: true, message: '请输入游戏标签！', trigger: 'blur'}]">
             <el-input v-model="dialogData.tags"
                       placeholder="不同标签间以 / 分隔"
                       type="textarea"
@@ -319,7 +319,7 @@
             <el-input v-model="dialogData.evalute"
                       placeholder="游戏评测"
                       type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 4}">
+                      :autosize="true">
             </el-input>
           </el-form-item>
 
@@ -329,7 +329,7 @@
             <el-input v-model="dialogData.introduce"
                       placeholder="游戏简介"
                       type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 4}">
+                      :autosize="true">
             </el-input>
           </el-form-item>
         </el-form>
@@ -389,7 +389,7 @@ export default {
       excelList: [],
       // 复选框选中数据集合
       multipleSelection: [],
-      //   电影信息数据
+      //   游戏信息数据
       tableData: [],
       // type，1 更新，2 添加
       type: 1,
@@ -476,7 +476,7 @@ export default {
     splitTags (tags) {
       return tags.split('/').map(tag => tag.trim()).filter(item => item.trim() != '');
     },
-    // 批量删除电影
+    // 批量删除游戏
     deleteByIds () {
       this.$confirm("是否删除所选信息？", "提示", {
         confirmButtonText: "删除",
@@ -500,7 +500,7 @@ export default {
         this.$message.info("已取消批量删除");
       });
     },
-    // 批量上传电影信息
+    // 批量上传游戏信息
     importExcel (params) {
       this.excelLoading = true;
       const { file } = params;
@@ -535,7 +535,7 @@ export default {
               tags: item["tags"],
               gameUrl: item["gameUrl"]
             }
-            // 添加电影信息
+            // 添加游戏信息
             insertGame(excelData).then(res => {
               if (res.code === 1) {
                 count++;
@@ -733,7 +733,7 @@ export default {
         }
       });
     },
-    // 添加电影信息
+    // 添加游戏信息
     insertInfo () {
       this.dialogLoading = true;
 
@@ -755,7 +755,7 @@ export default {
       })
     },
 
-    // 更新电影信息
+    // 更新游戏信息
     updateInfo () {
       this.dialogLoading = true;
 
@@ -878,7 +878,7 @@ export default {
     overflow: hidden; */
 }
 
-/* 电影名称列 */
+/* 游戏名称列 */
 .table >>> .el-table td:nth-child(2) div {
   display: flex;
   flex-direction: column;
@@ -950,7 +950,7 @@ export default {
   align-items: center;
   justify-content: center;
   display: flex;
-  width: 380px;
+  width: 480px;
   height: 35px;
   line-height: 35px;
 }
@@ -1030,6 +1030,7 @@ export default {
   line-height: 100px;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 .cover-uploader .el-upload:hover {

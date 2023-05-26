@@ -205,10 +205,9 @@ export default {
               privilege: 2,
             };
 
-            register(user)
-              .then((res) => {
+            register(user).then((res) => {
                 if (res.code == 1) {
-                  console.log(res);
+                  // console.log(res);
                   this.isLogin = true;
                   this.loginForm.account = user.email;
 
@@ -216,9 +215,9 @@ export default {
                   this.loading = false;
                 } else {
                   this.$message.error(res.msg);
+                  this.loading = false;
                 }
-              })
-              .catch((err) => {
+              }).catch((err) => {
                 console.log(err);
               });
           } else if (formName === "loginForm") {

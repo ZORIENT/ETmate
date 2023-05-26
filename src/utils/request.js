@@ -45,15 +45,26 @@ request.interceptors.response.use(
     // 响应时进度条结束
     NProgress.done();
 
-    if (res.data.code === 0 && res.data.msg === "NOT_LOGIN") {
+    // if (res.data.code === 0 && res.data.msg === "NOT_LOGIN") {
+    //   ElementUI.Message.closeAll();
+    //   ElementUI.Message.error("尚未登录，请登录");
+    //   removeToken();
+    //   router.push("/LoginRegister");
+    //   return res.data;
+    // } else {
+    //   return res.data;
+    // }
+    // console.log("@响应拦截：",res.data)
+
+    if (res.data.code === 1000) {
       ElementUI.Message.closeAll();
-      ElementUI.Message.error("尚未登录，请登录");
       removeToken();
       router.push("/LoginRegister");
       return res.data;
     } else {
       return res.data;
     }
+
   },
   (error) => {
     // 响应时进度条结束
@@ -61,7 +72,7 @@ request.interceptors.response.use(
     console.log("err" + error);
     let { message } = error;
     if (message == "Network Error") {
-      message = "后端接口连接异常";
+      message = "系统接口连接异常";
       ElementUI.Message.error(message);
     } else if (message.includes("timeout")) {
       message = "系统接口请求超时";

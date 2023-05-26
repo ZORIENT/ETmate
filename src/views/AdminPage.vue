@@ -49,10 +49,12 @@
       <!-- 面包屑导航条 -->
       <div class="top">
         <div class="bread">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb separator-class="el-icon-arrow-right" >
             <el-breadcrumb-item v-for="(item, index) in breadList"
                                 :key="index"
-                                :to="{ path: item.path }">{{ item.meta.title }}</el-breadcrumb-item>
+                                :to="{ path: item.path }">{{ item.meta.title }}
+                                
+            </el-breadcrumb-item>
           </el-breadcrumb>
         </div>
 

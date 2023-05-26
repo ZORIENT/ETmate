@@ -1,64 +1,61 @@
 <template>
-  <div class="BarChart"
-       id="BarChart"></div>
+  <div class="GameBarChart" id="GameBarChart"></div>
 </template>
-  
-  <script>
+
+<script>
 import * as echarts from "echarts";
+import {getGameStats} from "@/api/stats"
 
 export default {
-  name: "BarChart",
+  name: "GameBarChart",
 
   data () {
     return {
-      chartData: {
-        title: "系统统计数据电影、游戏、书籍",
-        max: 3500,
-        interval: 500,
-        seriesData: [
-          //每个模块的名字和值
-          { name: "英语", value: 3183 },
-          { name: "日语", value: 1151 },
-          { name: "粤语", value: 711 },
-          { name: "法语", value: 483 },
-          { name: "汉语普通话", value: 461 },
-          { name: "韩语", value: 340 },
-          { name: "意大利语", value: 129 },
-          { name: "英语 / 西班牙语", value: 128 },
-          { name: "英语 / 法语", value: 109 },
-          { name: "德语", value: 901 },
-        ],
-      },
+			chartData:{
+          title: "游戏类型统计",
+          seriesData: [],
+			}
     };
   },
 
-  mounted: function () {
-    this.$nextTick(this.getPie());
+  mounted() {
+    this.getGameStats();
   },
 
   computed: {
     xData () {
       let xData = [];
       this.chartData.seriesData.forEach((item) => {
-        xData.push(item.value);
+        xData.push(item.count);
       });
-
       return xData;
     },
+
     yData () {
       let yData = [];
       this.chartData.seriesData.forEach((item) => {
-        yData.push(item.name);
+        yData.push(item.categoryName);
       });
-
       return yData;
     },
+
+    max(){
+      let count=this.chartData.seriesData[0].count;
+
+      return (parseInt(count/100)+(this.interval)/100)*100;
+    },
+
+    interval(){
+      let count=this.chartData.seriesData[0].count;
+      
+      return (parseInt(count/700)+1)*100;
+    }
   },
 
   methods: {
-    getPie () {
+    getBar () {
       // 绘制图表
-      var myChart = echarts.init(document.getElementById("BarChart"));
+      var myChart = echarts.init(document.getElementById("GameBarChart"));
 
       // 指定图表的配置项和数据
       var option = {
@@ -80,8 +77,8 @@ export default {
         xAxis: {
           type: "value",
           boundaryGap: false,
-          max: this.chartData.max, //Math.ceil(max / 4) * 5 || 10,
-          interval: this.chartData.interval,
+          max: this.max, //Math.ceil(max / 4) * 5 || 10,
+          interval: this.interval,
           axisLine: { show: true, lineStyle: { color: "#ccc" } },
           axisTick: { show: false },
           axisLabel: { color: "#0e5571" },
@@ -107,26 +104,24 @@ export default {
               borderRadius: [0, 8, 8, 0],
             },
             itemStyle: {
-              color: "#52A8FF",
-              normal: {
-                borderRadius: [0, 8, 8, 0],
-                color: function (params) {
-                  // 定义一个颜色集合
-                  let colorList = [
-                    "#52A8FF",
-                    "#00B389",
-                    "#FFA940",
-                    "#FF5A57",
-                    "#29EFC4",
-                    "#F8AEA4",
-                    "#FFC53D",
-                    "#009982",
-                    "#C099FC",
-                    "#F5855F",
-                  ];
-                  // 对每个bar显示一种颜色
-                  return colorList[params.dataIndex];
-                },
+              // color: "#52A8FF",
+              borderRadius: [0, 8, 8, 0],
+              color: function (params) {
+                // 定义一个颜色集合
+                let colorList = [
+                  "#52A8FF",
+                  "#00B389",
+                  "#FFA940",
+                  "#FF5A57",
+                  "#29EFC4",
+                  "#F8AEA4",
+                  "#FFC53D",
+                  "#009982",
+                  "#C099FC",
+                  "#F5855F",
+                ];
+                // 对每个bar显示一种颜色
+                return colorList[params.dataIndex];
               },
             },
             barMaxWidth: 16,
@@ -143,13 +138,26 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
     },
+
+		getGameStats(){
+			getGameStats().then(res=>{
+				if(res.code===1){
+					this.chartData.seriesData=res.data;
+					this.getBar();
+				}else{
+					this.$message.error(res.msg);
+				}
+			}).catch(err=>{
+				console.log(err);
+			})
+		}
   },
 };
 </script>
   
-  <style scoped>
-.BarChart {
-  border: 1px solid green;
+<style scoped>
+.GameBarChart {
+  /* border: 1px solid green; */
   height: 100%;
   width: 100%;
 }

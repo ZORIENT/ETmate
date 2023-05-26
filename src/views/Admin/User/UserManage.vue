@@ -1,396 +1,653 @@
 <template>
-  <div class="CommentManage">
-    <!-- 条件筛选区域 -->
+  <div class="userManage">
+    <!-- 条件筛选区 -->
     <div class="filters">
-      <el-form label-position="left"
-               :model="searchComment">
-        <el-form-item label="用户名">
-          <el-input v-model="searchComment.username"
-                    placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item label="类别">
-          <el-select v-model="searchComment.type"
-                     placeholder="请选择">
-            <el-option label="电影"
-                       value="1"></el-option>
-            <el-option label="游戏"
-                       value="2"></el-option>
-            <el-option label="书籍"
-                       value="3"></el-option>
+      <div class="input">
+        <div class="item">
+          <p>用户昵称：</p>
+          <el-input v-model="conditionList.username"
+                    prefix-icon="el-icon-user"
+                    placeholder="用户昵称"></el-input>
+        </div>
+        <div class="item">
+          <p>Email：</p>
+          <el-input v-model="conditionList.email"
+                    prefix-icon="el-icon-message"
+                    placeholder="电子邮箱"></el-input>
+        </div>
+
+        <div class="item">
+          <p>用户权限：</p>
+          <el-select v-model="conditionList.privilege"
+                     placeholder="请选择用户权限">
+            <el-option label="管理员"
+                       :value="1"></el-option>
+            <el-option label="普通用户"
+                       :value="2"></el-option>
+            <el-option label="封禁用户"
+                       :value="3"></el-option>
           </el-select>
-        </el-form-item>
+        </div>
 
-        <el-form-item label="来源">
-          <el-input v-model="searchComment.name"
-                    placeholder="电影/游戏/书籍名"></el-input>
-        </el-form-item>
+        <div class="item">
+          <p>用户性别：</p>
+          <el-select v-model="conditionList.gender"
+                     placeholder="请选择用户性别">
+            <el-option label="男"
+                       :value="1"></el-option>
+            <el-option label="女"
+                       :value="2"></el-option>
+          </el-select>
+        </div>
 
-        <el-form-item label="评论时间">
-          <el-date-picker v-model="commentDate"
-                          clearable
-                          value-format="yyyy-MM-dd"
-                          type="daterange"
-                          placeholder="选择日期"
-                          range-separator="至"
-                          start-placeholder="开始日期"
-                          end-placeholder="结束日期"></el-date-picker>
-        </el-form-item>
-
-        <el-form-item>
+        <div class="item button">
           <el-button type="primary"
-                     @click="onSubmit">查询</el-button>
+                     @click="query(1)">查询</el-button>
           <el-button type="info"
-                     @click="clear">清空</el-button>
-          <el-button type="danger"
-                     :disabled="!multipleSelection.length">批量删除</el-button>
-        </el-form-item>
-      </el-form>
+                     @click="clear()">清空</el-button>
+        </div>
+      </div>
     </div>
 
-    <!-- 内容展示区域 -->
+    <!-- 表单展示区 -->
     <div class="table">
       <el-table border
-                height="500"
-                :data="commentData"
-                @selection-change="handleSelectionChange">
-        <el-table-column type="selection"
-                         width="40"></el-table-column>
-
-        <el-table-column prop="type"
-                         label="类型"
+                :height="tableHeight"
+                :data="tableData">
+        <el-table-column prop="id"
+                         label="ID"
                          width="80">
         </el-table-column>
 
-        <el-table-column prop="name"
-                         label="来源"
-                         width="200">
+        <el-table-column prop="avatar"
+                         label="头像"
+                         width="150">
           <template slot-scope="scope">
-            <img :src="scope.row.img"
-                 style="width: 50px" />
-            <span>《{{ scope.row.name }}》</span>
+            <img :src="scope.row.avatar"
+                 style="width: 60px;border-radius: 4px;" />
           </template>
         </el-table-column>
 
+        <el-table-column prop="email"
+                         label="Email"
+                         width="160">
+        </el-table-column>
+
         <el-table-column prop="username"
-                         label="用户"
-                         width="150"></el-table-column>
+                         label="用户昵称"
+                         width="160">
+        </el-table-column>
 
-        <el-table-column prop="comment"
-                         label="评论内容"> </el-table-column>
+        <el-table-column prop="gender"
+                         label="性别"
+                         width="100">
+          <template slot-scope="scope">
+            <div v-show="scope.row.gender">
+              {{ scope.row.gender===1?"男":"女" }}
+            </div>
+          </template>
+        </el-table-column>
 
-        <el-table-column prop="releaseTime"
-                         label="发布时间"
-                         width="160"></el-table-column>
+        <el-table-column prop="privilege"
+                         label="权限"
+                         width="120">
+          <template slot-scope="scope">
+            <el-tag type="warning"
+                    size="medium"
+                    v-show="scope.row.privilege===1">管理员</el-tag>
+
+            <el-tag type="primary"
+                    size="medium"
+                    v-show="scope.row.privilege===2">普通用户</el-tag>
+
+            <el-tag type="danger"
+                    size="medium"
+                    v-show="scope.row.privilege===3">封禁用户</el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createTime"
+                         label="注册时间"
+                         width="200">
+          <template slot-scope="scope">
+            {{ scope.row.createTime?scope.row.createTime.replace('T',' '):'' }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="updateTime"
+                         label="最后修改时间"
+                         width="200">
+          <template slot-scope="scope">
+            {{ scope.row.updateTime?scope.row.updateTime.replace('T',' '):'' }}
+          </template>
+        </el-table-column>
 
         <el-table-column fixed="right"
                          label="操作"
                          width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)"
+            <el-button @click="handleEdit(scope.row)"
+                        v-show="scope.row.privilege!=3"
                        type="text">编辑</el-button>
+
+            <!-- <el-button type="text"
+                       v-show="scope.row.privilege!=1"
+                       @click="handlerDelete(scope.row)">删除</el-button> -->
+
             <el-button type="text"
-                       @click="deleteComment(scope.row)">删除</el-button>
+                       @click="handleBan(scope.row)"
+                       v-show="scope.row.privilege!=3 && scope.row.privilege!=1">封禁</el-button>
+
+            <el-button type="text"
+                       @click="handleDisban(scope.row)"
+                       v-show="scope.row.privilege===3">解封</el-button>
+
           </template>
         </el-table-column>
       </el-table>
 
-      <el-dialog title="修改评论"
-      :close-on-click-modal = "false"
+      <!-- 编辑区域 -->
+      <el-dialog title="用户信息修改"
+                 width="500px"
+                 :close-on-click-modal="false"
                  :visible.sync="dialogFormVisible">
-        <el-form :model="commentDialog">
-          <el-form-item label="评论"
-                        :label-width="formLabelWidth">
-            <el-input v-model="commentDialog.comment"
-                      type="textarea"
-                      autosize
-                      auto-complete="off"></el-input>
+        <!-- 表单 -->
+        <el-form :model="dialogData"
+                 ref="dialogForm"
+                 label-position="right"
+                 label-width="80px">
+
+          <el-form-item label="用户头像"
+                        prop="avatar"
+                        :rules="[{required: true, message: '请上传用户头像', trigger: 'blur'}]">
+            <el-upload class="cover-uploader"
+                       action=""
+                       :http-request="uploadCover"
+                       :show-file-list="false"
+                       :before-upload="beforeCoverUpload"
+                       v-loading="uploadLoading">
+              <img v-if="dialogData.avatar"
+                   :src="dialogData.avatar"
+                   class="cover" />
+              <i v-else
+                 class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
+
+          <el-form-item label="Email">
+            <el-input v-model="dialogData.email"
+                      :disabled="true"
+                      prefix-icon="el-icon-message"
+                      placeholder="Email">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="用户昵称">
+            <el-input v-model="dialogData.username"
+                      prefix-icon="el-icon-user"
+                      placeholder="用户昵称">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="用户性别">
+            <el-select v-model="dialogData.gender"
+                       placeholder="请选择用户性别">
+              <el-option label="男"
+                         :value="1"></el-option>
+              <el-option label="女"
+                         :value="2"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="用户权限">
+            <el-select v-model="dialogData.privilege"
+                       placeholder="请选择用户权限">
+              <el-option label="管理员"
+                         :value="1">
+              </el-option>
+              <el-option label="普通用户"
+                         :value="2">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
+
+        <!-- 底部footer -->
         <div slot="footer"
              class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button @click="dialogFormVisible = false;dialogLoading = false;">取 消</el-button>
           <el-button type="primary"
-                     @click="dialogFormVisible = false">确 定</el-button>
+                     v-loading="dialogLoading"
+                     @click="submit()">确 定</el-button>
         </div>
       </el-dialog>
     </div>
 
-    <!-- 底部分页 -->
+    <!-- 页码选择区 -->
     <div class="pagination">
       <el-pagination background
-                     layout="prev, pager, next"
+                     layout="prev, pager, next,jumper"
                      :total="pagination.total"
-                     @current-change="currentPageChanged">
+                     :page-size="10"
+                     @current-change="currentPageChanged"
+                     :current-page.sync="pagination.currentPage">
       </el-pagination>
     </div>
   </div>
 </template>
-
+  
 <script>
+import { upload } from "@/api/upload"
+import { selectByCondition, updateUser,banUser,disbanUser } from "@/api/user"
+
 export default {
-  name: "CommentManage",
+  name: "userManage",
 
   data () {
     return {
+      // 表单的高度
+      tableHeight: 560,
       // 分页条相关数据
       pagination: {
-        total: 200,
+        total: 1,
         currentPage: 1,
       },
-
-      //   评论修改相关数据
-      commentDialog: {
-        type: "",
-        name: "",
-        comment: "",
-        data: "",
-        img: "",
-      },
-
-      //   评论的数据
-      commentData: [
-        {
-          type: "电影",
-          name: "疾速追杀4",
-          username: "暴走d姜撞奶",
-          comment:
-            "好想看疾速追杀4啊！",
-          data: "2023-10-25 10:15:20",
-          img: "https://1b2a.net/img/tv/ZXXG.webp",
-          releaseTime: "2023-05-01 12:15:24",
-        },
-        {
-          type: "游戏",
-          name: "GTA5",
-          username: "暴走d姜撞奶",
-          comment: "GTA6什么时候才能出啊，太期待了",
-          data: "2023-10-25 10:15:20",
-          img: "https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime: "2023-05-01 12:15:24",
-        },
-        {
-          type: "书籍",
-          name: "假如给我三天光明",
-          username: "暴走d姜撞奶",
-          comment: "海伦凯勒教会我坚强",
-          data: "2023-10-25 10:15:20",
-          img: "https://1b2a.net/img/tv/ZXXG.webp",
-          releaseTime: "2023-05-01 12:15:24",
-        },
-        {
-          type: "电影",
-          name: "复仇者联盟",
-          comment: "这里是一条评论",
-          username: "复联4之后再无漫威",
-          data: "2023-10-25 10:15:20",
-          img: "https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime: "2023-05-01 12:15:24",
-        },
-        {
-          type: "电影",
-          name: "龙与地下城",
-          comment: "十分不错的爆米花电影，五星好评",
-          username: "暴走d姜撞奶",
-          data: "2023-10-25 10:15:20",
-          img: "https://1b2a.net/img/tv/67Xw.webp",
-          releaseTime: "2023-05-01 12:15:24",
-        },
-      ],
-      formLabelWidth: "50px",
-      //   弹框表单是否显示
-      dialogFormVisible: false,
-
-      // 复选框选中数据集合
-      multipleSelection: [],
-
-      searchComment: {
+      // 筛选条件
+      conditionList: {
+        email: "",
         username: "",
-        type: "",
-        name: "",
+        gender: "",
+        privilege: ""
       },
+      // 用户数据
+      tableData: [],
 
-      beginTime: "",
-      endTime: "",
-      commentDate: [],
+      // 上传加载
+      uploadLoading: false,
+      uploadLoading2: false,
+      dialogLoading: false,
+
+      // 弹出表单的数据
+      dialogData: {
+        id: "",
+        email: "",
+        username: "",
+        gender: "",
+        avatar: "",
+        privilege: "",
+        createTime: "",
+        updateTime: ""
+      },
+      // 弹框表单是否显示
+      dialogFormVisible: false,
     };
   },
 
-  mounted () { },
+  mounted () {
+    this.query(1);
+  },
 
   methods: {
-    handleClick (row) {
-      // row是一个对象
-      this.dialogFormVisible = !this.dialogFormVisible;
-      this.commentDialog = row;
-      console.log(row);
-    },
-    deleteComment (row) {
-      this.commentData.splice(this.commentData.indexOf(row), 1);
-      // console.log("删除成功",obj);
-    },
-
+    // 修改页码
     currentPageChanged (currentPage) {
       this.pagination.currentPage = currentPage;
-      // console.log(this.pagination.currentPage);
     },
-    // 复选框被选中之后执行的方法
-    handleSelectionChange (val) {
-      // console.log("选中了：",val);
-      // val是一个对象数组，对象是每一条评论的具体信息
-      this.multipleSelection = val;
-      // console.log(this.multipleSelection.length)
+    // 查询游戏信息
+    query (page) {
+      let params = {
+        ...this.conditionList,
+        page: 1,
+        pageSize: 10,
+      }
+      params.page = page;
+
+      selectByCondition(params).then(res => {
+        if (res.code === 1) {
+          this.tableData = res.data.rows;
+          this.pagination.total = res.data.total;
+          this.pagination.currentPage = page;
+          this.tableHeight = 560;
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(err => {
+        console.log(err);
+      });
     },
 
-    // 查询方法
-    onSubmit () {
-      this.currentPage = 1;
-      //   this.page();
-      console.log(this.beginTime, this.endTime);
-    },
-    // 清除
+    // 清空选项
     clear () {
-      this.searchComment = {
+      let empty = {
+        email: "",
         username: "",
-        type: "",
+        gender: "",
+        privilege: ""
       };
 
-      (this.beginTime = ""), (this.endTime = "");
-      this.commentDate = [];
+      this.conditionList = empty;
+      this.query(1);
+    },
 
-      console.log("清除成功");
+    // 点击添加按钮
+    handleInsert () {
+      // 正常添加一条数据
+      this.dialogData = {
+        id: "",
+        email: "",
+        username: "",
+        gender: "",
+        avatar: "",
+        privilege: "",
+        createTime: "",
+        updateTime: ""
+      }
+      this.dialogFormVisible = !this.dialogFormVisible;
+    },
+
+    // 点击编辑
+    handleEdit (row) {
+      this.dialogFormVisible = !this.dialogFormVisible;
+      this.dialogData.id = row.id;
+      this.dialogData.email = row.email;
+      this.dialogData.username = row.username;
+      this.dialogData.gender = row.gender;
+      this.dialogData.avatar = row.avatar;
+      this.dialogData.privilege = row.privilege;
+      this.dialogData.createTime = row.createTime;
+      this.dialogData.updateTime = row.updateTime;
+    },
+
+    // 点击删除
+    // handlerDelete (row) {
+    //   this.$confirm("是否删除所选用户？", "提示", {
+    //     confirmButtonText: "删除",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //   }).then(() => {
+    //     // 成功的回调
+    //     deleteByIds(row.id).then(res => {
+    //       if (res.code === 1) {
+    //         this.query(this.pagination.currentPage);
+    //         this.$message.success("用户删除成功！");
+    //       } else {
+    //         this.$message.error(res.msg);
+    //       }
+    //     }).catch(err => {
+    //       console.log(err);
+    //     })
+    //   }).catch(() => {
+    //     // 取消的回调
+    //     this.$message.info("已取消删除");
+    //   });
+    // },
+
+    // 封禁用户
+    handleBan(row){
+      this.$confirm("是否封禁所选用户？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        // 成功的回调
+        banUser(row.id).then(res => {
+          if (res.code === 1) {
+            this.query(this.pagination.currentPage);
+            this.$message.success("用户封禁成功！");
+          } else {
+            this.$message.error(res.msg);
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      }).catch(() => {
+        // 取消的回调
+        this.$message.info("封禁已取消");
+      });
+    },
+      
+    // 解封用户
+    handleDisban(row){
+      this.$confirm("是否解封所选用户？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        // 成功的回调
+        disbanUser(row.id).then(res => {
+          if (res.code === 1) {
+            this.query(this.pagination.currentPage);
+            this.$message.success("用户解封成功！");
+          } else {
+            this.$message.error(res.msg);
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      }).catch(() => {
+        // 取消的回调
+        this.$message.info("解封已取消");
+      });
+    },
+
+    // 上传封面
+    uploadCover (params) {
+      const { file } = params;
+      const formData = new FormData();
+      // 加载中
+      this.uploadLoading = true;
+      formData.append("file", file);
+
+      upload(formData).then((res) => {
+        if (res.code === 1) {
+          this.dialogData.avatar = res.data;
+          this.uploadLoading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    },
+
+    // 上传前
+    beforeCoverUpload (file) {
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("头像只能是 JPG/PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("头像大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+
+    // 点击dialog的确定按钮
+    submit () {
+      this.$refs['dialogForm'].validate((valid) => {
+        if (valid) {
+          this.updateInfo();
+        } else {
+          console.log('Error submit!');
+          return false;
+        }
+      });
+    },
+
+    // 更新电影信息
+    updateInfo () {
+      this.dialogLoading = true;
+
+      updateUser(this.dialogData).then(res => {
+        if (res.code === 1) {
+          this.query(this.pagination.currentPage);
+          this.dialogLoading = false;
+          this.$message.success("用户信息更新成功！");
+          this.dialogFormVisible = false;
+        } else {
+          this.$message.error(res.msg);
+          this.dialogFormVisible = false;
+        }
+      }).catch(err => {
+        console.log(err);
+      })
     },
   },
 
   watch: {
-    commentDate (val) {
-      // console.log("@", val);
-      if (val && val.length >= 2) {
-        this.beginTime = val[0];
-        this.endTime = val[1];
-      } else {
-        this.beginTime = "";
-        this.endTime = "";
+    pagination: {
+      deep: true,
+      handler () {
+        this.query(this.pagination.currentPage);
       }
     },
-  },
-};
-</script>
-
-<style scoped>
-.CommentManage {
-  /* border: 1px solid red; */
-  /* background: red; */
-  /* height: 100%; */
+  }
+}
+  </script>
+  
+  <style scoped>
+.userManage {
   display: flex;
   flex-direction: column;
-  /* margin: 0px 20px; */
 }
-
-/* ************************************************************************ */
+/* *************************************************** */
 .filters {
-  /* border: 1px solid red; */
   margin: 10px 0px;
-}
-
-.filters .el-form {
-  /* border: 1px solid green; */
-  display: grid;
-  grid-template-columns: repeat(4, 25%);
   border-bottom: 1px solid var(--lightTheme);
 }
 
-.filters >>> .el-form .el-form-item__label {
-  font-size: 14px;
-}
-
-.filters >>> .el-form .el-form-item {
-  display: flex;
-  margin: 10px 0px;
-}
-
-.filters >>> .el-form .el-input__inner {
-  width: 250px;
-  /* height: 30px; */
-  border-radius: 4px;
-}
-
-.filters >>> .el-form .el-range-separator {
-  margin-right: 15px;
-}
-
-.filters >>> .el-form .el-form-item:last-child .el-form-item__content {
-  display: flex;
+.filters .input {
+  display: grid;
   width: 100%;
+  grid-template-columns: repeat(5, 20%);
+  grid-gap: 10px 0px;
+  margin-bottom: 10px;
 }
 
-/* ************************************************************************* */
-.table {
-  /* border: 1px solid red; */
-  margin: 10px 0px;
+.filters .input .item {
+  display: flex;
 }
+
+.filters .input .item:not(:nth-child(5)) {
+  /* border: 1px solid red; */
+  margin-right: 20px;
+}
+
+.filters .input .item .el-input,
+.filters .input .item .el-select {
+  width: 280px;
+}
+
+.filters .input .item p {
+  width: 120px;
+  line-height: 35px;
+  text-align: center;
+}
+
+.filters .input .item >>> .el-select .el-input .el-select__caret {
+  display: none;
+}
+
+/* *************************************************** */
+.filters .button {
+  display: flex;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  height: 40px;
+}
+
+/* *************************************************** */
 
 .table >>> .el-table th.el-table__cell > .cell,
 .table >>> .el-table .cell {
   text-align: center;
 }
 
-/* 表格第二列 */
-.table >>> .el-table td:nth-child(3) div {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center; */
-  align-items: center;
-}
-
-/* 表格第四列 */
-.table >>> .el-table td:nth-child(5) div {
-  text-align: left;
-  /* border: 1px solid red; */
-}
-
-/* 表格第六列 */
-.table >>> .el-table td:nth-child(7) div {
-  text-align: center;
-}
-
-.table >>> .el-table td:nth-child(7) div button {
+.table >>> .el-table td:last-child div button {
   color: var(--primaryColor);
 }
 
-.table >>> .el-table td:nth-child(7) div button:hover {
+.table >>> .el-table td:last-child div button:hover {
   opacity: 0.9;
 }
 
-.table >>> .el-table td:nth-child(7) div button:nth-child(2) {
+.table >>> .el-table td:last-child div button:nth-child(2) {
   color: #dd0000;
 }
 
-.table >>> .el-table td:nth-child(7) div button:nth-child(2):hover {
+.table >>> .el-table td:last-child div button:nth-child(2):hover {
   color: #dd0000;
   opacity: 0.9;
 }
+/* **************************************************** */
+.filters .button {
+  display: flex;
+  /* justify-content: space-between; */
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 2;
+}
 
-/* ***************************************************************** */
-.CommentManage >>> .el-dialog {
+/* **************************************************** */
+.userManage >>> .el-dialog {
   /* border: 1px solid red; */
   border-radius: 4px;
 }
 
-.CommentManage >>> .el-dialog__header span {
+.userManage >>> .el-dialog__body {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.userManage >>> .el-dialog__header span {
   color: var(--primaryColor);
   font-size: 16px;
   font-weight: bold;
 }
 
-.CommentManage >>> .el-dialog__headerbtn .el-dialog__close:hover {
+.userManage >>> .el-input__icon,
+.userManage >>> .el-input__inner {
+  /* border:1px solid red; */
+  height: 35px;
+  line-height: 35px;
+  display: flex;
+  align-items: center;
+}
+
+.userManage >>> .table .el-input__inner,
+.userManage >>> .table .el-input-number {
+  /* border: 1px solid red; */
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 380px;
+  height: 35px;
+  line-height: 35px;
+}
+
+.userManage >>> .table .el-input-number__decrease,
+.userManage >>> .table .el-input-number__increase {
+  /* top:0px !important; */
+  height: 33px;
+}
+
+.userManage >>> .el-input__icon {
+  margin-left: 5px;
+}
+
+.userManage >>> .el-dialog__headerbtn .el-dialog__close:hover {
   color: var(--primaryColor);
 }
 
-.CommentManage >>> .el-textarea__inner {
+.userManage >>> .el-textarea__inner:active {
   border-color: var(--primaryColor);
 }
 
-.CommentManage >>> .el-dialog__footer div button {
+.userManage >>> .el-dialog__footer div button {
   width: 100px;
   padding: 10px;
   background: var(--primaryColor);
@@ -404,7 +661,7 @@ export default {
   position: relative;
 }
 
-.CommentManage >>> .el-dialog__footer div button::before {
+.userManage >>> .el-dialog__footer div button::before {
   content: '';
   position: absolute;
   background: linear-gradient(
@@ -422,11 +679,44 @@ export default {
   background-position: right bottom;
 }
 
-.CommentManage >>> .el-dialog__footer div button:hover::before {
+.userManage >>> .el-dialog__footer div button:hover::before {
   background-position: left bottom;
 }
 
-/* *********************************************************************** */
+/* *************************************************** */
+.cover-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-uploader >>> .el-upload {
+  border: 1px dashed var(--lightTheme);
+  display: flex;
+  height: 100px;
+  width: 100px;
+  line-height: 100px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cover-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.cover-uploader >>> .cover-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  text-align: center;
+}
+
+.cover {
+  height: 100px;
+}
+/* ****************************************************** */
 .pagination {
   display: flex;
   flex-direction: column;
@@ -444,10 +734,5 @@ export default {
   /* color: var(--primaryColor); */
   /* color: red; */
   background: rgba(14, 85, 113, 0.95);
-}
-
-.pagination >>> .el-pager li:hover {
-  color: var(--primaryColor) !important;
-  /* color: red !important; */
 }
 </style>

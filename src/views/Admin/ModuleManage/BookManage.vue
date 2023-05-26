@@ -3,17 +3,18 @@
     <!-- 条件筛选区 -->
     <div class="filters">
       <div class="input">
-        <div class="item">
-          <p>IBSN：</p>
-          <el-input v-model="conditionList.ibsn"
-                    prefix-icon="el-icon-magic-stick"
-                    placeholder="书籍IBSN"></el-input>
-        </div>
+
         <div class="item">
           <p>书籍名称：</p>
           <el-input v-model="conditionList.bookName"
                     prefix-icon="el-icon-collection"
                     placeholder="书籍的准确名称"></el-input>
+        </div>
+        <div class="item">
+          <p>IBSN：</p>
+          <el-input v-model="conditionList.ibsn"
+                    prefix-icon="el-icon-magic-stick"
+                    placeholder="书籍IBSN"></el-input>
         </div>
         <div class="item">
           <p>书籍作者：</p>
@@ -171,7 +172,7 @@
 
       <!-- 编辑区域 -->
       <el-dialog :title="type===1?'书籍信息修改':'书籍信息添加'"
-                 width="500px"
+                 width="600px"
                  :close-on-click-modal="false"
                  :visible.sync="dialogFormVisible">
         <!-- 表单 -->
@@ -291,7 +292,7 @@
             <el-input v-model="dialogData.introduction"
                       placeholder="书籍简介"
                       type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 4}">
+                      :autosize="true">
             </el-input>
           </el-form-item>
 
@@ -299,7 +300,7 @@
             <el-input v-model="dialogData.authorIntro"
                       placeholder="作者简介"
                       type="textarea"
-                      :autosize="{ minRows: 2, maxRows: 4}">
+                      :autosize="true">
             </el-input>
           </el-form-item>
         </el-form>
@@ -357,7 +358,7 @@ export default {
         tags: "",
         sortId: 1
       },
-      //   电影信息数据
+      //   书籍信息数据
       tableData: [],
       // 弹框表单是否显示
       dialogFormVisible: false,
@@ -501,7 +502,7 @@ export default {
       });
     },
 
-    // 添加电影信息
+    // 添加书籍信息
     insertInfo () {
       this.dialogLoading = true;
 
@@ -520,7 +521,7 @@ export default {
       })
     },
 
-    // 查询电影信息
+    // 查询书籍信息
     query (page) {
       let params = {
         ...this.conditionList,
@@ -559,7 +560,7 @@ export default {
       this.query(1);
     },
 
-    // 批量删除电影
+    // 批量删除书籍
     deleteByIds () {
       this.$confirm("是否删除所选信息？", "提示", {
         confirmButtonText: "删除",
@@ -584,7 +585,7 @@ export default {
       });
     },
 
-    // 更新电影信息
+    // 更新书籍信息
     updateInfo () {
       this.dialogLoading = true;
 
@@ -627,7 +628,7 @@ export default {
 
     // 上传前
     beforeCoverUpload (file) {
-      const isJPG = file.type === "image/jpeg"|| file.type==="image/png";
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
       const isLt5M = file.size / 1024 / 1024 < 5;
 
       if (!isJPG) {
@@ -675,7 +676,7 @@ export default {
               tags: item["tags"],
               cover: item["cover"]
             }
-            // 添加电影信息
+            // 添加书籍信息
             insertBook(excelData).then(res => {
 
               if (res.code === 1) {
@@ -741,7 +742,7 @@ export default {
 }
   </script>
   
-  <style scoped>
+<style scoped>
 .BookManage {
   display: flex;
   flex-direction: column;
@@ -799,7 +800,7 @@ export default {
 .table >>> .el-table .cell {
   text-align: center;
 }
-/* 电影名称列 */
+/* 书籍名称列 */
 .table >>> .el-table td:nth-child(2) div {
   display: flex;
   flex-direction: column;
@@ -855,7 +856,7 @@ export default {
   align-items: center;
   justify-content: center;
   display: flex;
-  width: 380px;
+  width: 480px;
   height: 35px;
   line-height: 35px;
 }

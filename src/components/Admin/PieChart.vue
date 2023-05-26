@@ -1,35 +1,33 @@
 <template>
-  <div class="PieChart"
-       id="PieChart"></div>
+  <div class="PieChart" id="PieChart"></div>
 </template>
 
 <script>
 import * as echarts from "echarts";
+import { getStats } from "@/api/stats"
 
 export default {
   name: "PieChart",
 
-  data () {
-    return {
-      chartData: {
-        title: "系统统计数据电影、游戏、书籍",
-        // series: ["电影", "游戏", "书籍"],
-        color: ["#32dadd", "#b6a2de", "#5ab1ef"],
+  data(){
+      return {
+        pieData: {
+        title: "电影、游戏、书籍数据统计",
+        color: ["#52A8FF", "#00B389", "#FFA940"],
         seriesData: [
           //每个模块的名字和值
-          { name: "中信出版社", value: 171 },
-          { name: "电子工业出版社", value: 100 },
-          { name: "人民邮电出版社", value: 93 },
+          { name: "电影数量", value: 0 },
+          { name: "游戏数量", value: 0 },
+          { name: "书籍数量", value: 0 },
         ],
       },
-    };
+      }
   },
 
   mounted: function () {
-    this.$nextTick(
-      this.getPie()
-    );
+    this.getPieData();
   },
+
 
   methods: {
     getPie () {
@@ -42,7 +40,7 @@ export default {
       var option = {
         //标题
         title: {
-          text: this.chartData.title,
+          text: this.pieData.title,
           x: "center", //标题位置
           top: 10,
           textStyle: {
@@ -72,11 +70,11 @@ export default {
           //   // color: "#000",
           //   // fontSize: 13,
           // },
-          // data: this.chartData.series,
+          // data: this.pieData.series,
           // data: ["未领取", "处理中", "已完成"], //图例上显示的饼图各模块上的名字
         },
         //饼图中各模块的颜色
-        color: this.chartData.color,
+        color: this.pieData.color,
         // 饼图数据
         series: {
           // name: 'bug分布',
@@ -84,7 +82,7 @@ export default {
           radius: "70%", //饼图中饼状部分的大小所占整个父元素的百分比
           center: ["50%", "50%"], //整个饼图在整个父元素中的位置
           // data:''               //饼图数据
-          data: this.chartData.seriesData,
+          data: this.pieData.seriesData,
           label: {
             color: "#0e5571",
             // show: true, //饼图上是否出现标注文字 标注各模块代表什么  默认是true
@@ -102,13 +100,27 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
     },
+
+    getPieData(){
+      getStats().then(res=>{
+        if(res.code===1){
+          this.pieData.seriesData[0].value=res.data.filmCount;
+          this.pieData.seriesData[1].value=res.data.gameCount;
+          this.pieData.seriesData[2].value=res.data.bookCount;
+          this.getPie();
+        }else{
+          this.$message.error(res.msg);
+        }
+      }).catch(err=>{
+        console.log(err);
+      })
+    }
   },
 };
 </script>
 
 <style scoped>
 .PieChart {
-  border: 1px solid green;
   height: 100%;
   width: 100%;
 }

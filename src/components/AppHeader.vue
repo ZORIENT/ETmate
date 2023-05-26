@@ -152,7 +152,7 @@ export default {
 
     isAdmin () {
       let privilege = getPrivilege();
-      console.log(privilege);
+      // console.log(privilege);
       if (privilege === 1) {
         this.settingList.forEach(setting => {
           if (setting.id == 5) {

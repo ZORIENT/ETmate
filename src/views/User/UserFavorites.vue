@@ -25,7 +25,7 @@
            v-for="collection in filmCollections.rows"
            :key="collection.id">
         <FilmCard :item="collection.film"></FilmCard>
-        <button @click="deleteCollection(collection.id)">取消收藏</button>
+        <button @click="deleteCollection(collection.id)" :id="'id'+collection.id">取消收藏</button>
       </div>
 
       <div class="collection"
@@ -33,7 +33,7 @@
            v-for="collection in gameCollections.rows"
            :key="collection.id">
         <GameCard :item="collection.game"></GameCard>
-        <button @click="deleteCollection(collection.id)">取消收藏</button>
+        <button @click="deleteCollection(collection.id)" :id="'id'+collection.id">取消收藏</button>
       </div>
 
       <div class="collection"
@@ -41,7 +41,7 @@
            v-for="collection in bookCollections.rows"
            :key="collection.id">
         <BookCard :item="collection.book"></BookCard>
-        <button @click="deleteCollection(collection.id)">取消收藏</button>
+        <button @click="deleteCollection(collection.id)" :id="'id'+collection.id">取消收藏</button>
       </div>
     </div>
   </div>
@@ -166,13 +166,17 @@ export default {
 
     // 取消收藏
     deleteCollection (id) {
+      const loading = this.$loading({target:'#id'+id});
+
       // console.log(id);
       deleteCollection(id).then(res => {
         if (res.code === 1) {
           this.$message.success("取消收藏成功！");
+          loading.close();
           // 更新收藏信息
           this.selectCollection();
         } else {
+          loading.close();
           this.$message.error(res.msg);
         }
       }).catch(err => {
